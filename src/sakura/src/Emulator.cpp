@@ -1,4 +1,5 @@
 #include "sakura/Emulator.hpp"
+#include "sakura/Memory.hpp"
 #include "sakura/Processor.hpp"
 #include <iostream>
 

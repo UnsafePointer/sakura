@@ -2,8 +2,12 @@
 #define SAKURA_PROCESSOR_HPP
 
 #include <cstdint>
+#include <memory>
 
 namespace Sakura::HuC6280 {
+namespace Mapping {
+class Controller;
+} // namespace Mapping
 
 union Status {
   struct {
@@ -48,6 +52,7 @@ struct Registers {
 class Processor {
 private:
   Registers m_registers;
+  std::unique_ptr<Mapping::Controller> m_mapping_controller;
 
 public:
   Processor();

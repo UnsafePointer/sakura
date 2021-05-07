@@ -1,4 +1,5 @@
 add_library(libsakura
+    src/Memory.cpp
     src/Processor.cpp
     src/Emulator.cpp)
 target_compile_features(libsakura PUBLIC cxx_std_17)
