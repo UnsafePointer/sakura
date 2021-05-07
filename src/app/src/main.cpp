@@ -3,6 +3,7 @@
 auto main(int argc, char *argv[]) -> int {
   (void)argc;
   (void)argv;
-  Sakura::Emulator::emulate();
+  Sakura::Emulator emulator = Sakura::Emulator();
+  emulator.emulate();
   return 0;
 }

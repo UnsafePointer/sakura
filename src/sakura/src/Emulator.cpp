@@ -1,8 +1,12 @@
 #include "sakura/Emulator.hpp"
+#include "sakura/Memory.hpp"
+#include "sakura/Processor.hpp"
 #include <iostream>
 
 using namespace Sakura;
 
-Emulator::Emulator() = default;
+Emulator::Emulator() : m_processor(std::make_unique<HuC6280::Processor>()){};
 
-void Emulator::emulate() { std::cout << "Hello, world!" << std::endl; }
+Emulator::~Emulator() = default;
+
+void Emulator::emulate() { m_processor->fetch_instruction(); }

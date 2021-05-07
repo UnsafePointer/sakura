@@ -13,7 +13,6 @@ repos:
       - id: clang-tidy
         args:
           - "-p=build/"
-          - "-checks=clang-analyzer-*,concurrency-*,modernize-*,performance-*,readability-*,llvm-*"
           - "-fix"
           - "--header-filter=.*"
           - "--warnings-as-errors=*"
