@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 
 namespace Sakura::HuC6280::Mapping {
 
@@ -25,11 +26,14 @@ union Registers {
 class Controller {
 private:
   Registers m_registers;
-  std::array<uint8_t, 0x2000> m_RAM; // NOLINT(readability-magic-numbers)
+  std::array<uint8_t, 0x2000> m_RAM;   // NOLINT(readability-magic-numbers)
+  std::array<uint8_t, 0x100000> m_ROM; // NOLINT(readability-magic-numbers)
 
 public:
   Controller();
   ~Controller() = default;
+
+  void load_rom(const std::filesystem::path &path);
 
   auto load(uint16_t logical_address) -> uint8_t;
   void store(uint16_t logical_address, uint8_t value);

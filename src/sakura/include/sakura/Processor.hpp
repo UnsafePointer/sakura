@@ -2,6 +2,7 @@
 #define SAKURA_PROCESSOR_HPP
 
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 
 namespace Sakura::HuC6280 {
@@ -58,6 +59,7 @@ public:
   Processor();
   ~Processor() = default;
 
+  void initialize(const std::filesystem::path &rom);
   void fetch_instruction();
 };
 }; // namespace Sakura::HuC6280

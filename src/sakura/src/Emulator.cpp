@@ -10,3 +10,7 @@ Emulator::Emulator() : m_processor(std::make_unique<HuC6280::Processor>()){};
 Emulator::~Emulator() = default;
 
 void Emulator::emulate() { m_processor->fetch_instruction(); }
+
+void Emulator::initialize(const std::filesystem::path &rom) {
+  m_processor->initialize(rom);
+}

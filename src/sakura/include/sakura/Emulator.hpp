@@ -1,6 +1,7 @@
 #ifndef SAKURA_EMULATOR_HPP
 #define SAKURA_EMULATOR_HPP
 
+#include <filesystem>
 #include <memory>
 
 namespace Sakura {
@@ -17,6 +18,7 @@ public:
   ~Emulator();
 
   void emulate();
+  void initialize(const std::filesystem::path &rom);
 };
 }; // namespace Sakura
 
