@@ -1,4 +1,6 @@
-add_executable(sakura src/main.cpp)
+add_executable(sakura
+    src/ArgumentParser.cpp
+    src/main.cpp)
 target_compile_features(sakura PRIVATE cxx_std_17)
 target_compile_options(sakura PRIVATE -Werror -Wall -Wextra)
 
