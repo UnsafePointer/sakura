@@ -10,6 +10,12 @@ namespace Mapping {
 class Controller;
 } // namespace Mapping
 
+static const uint16_t RESET_VECTOR_INTERRUPT_REQUEST_2 = 0xFFF6;
+static const uint16_t RESET_VECTOR_INTERRUPT_REQUEST_1 = 0xFFF8;
+static const uint16_t RESET_VECTOR_Timer = 0xFFFA;
+static const uint16_t RESET_VECTOR_NONMASKABLE_INTERRUPT = 0xFFFC;
+static const uint16_t RESET_VECTOR_RESET = 0xFFFE;
+
 union Status {
   struct {
     uint8_t carry : 1;

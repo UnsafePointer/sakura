@@ -18,9 +18,9 @@ void Processor::initialize(const std::filesystem::path &rom) {
   m_registers.status.memory_operation = 0;
   m_mapping_controller->load_rom(rom);
   m_registers.program_counter.program_counter_high =
-      m_mapping_controller->load(0x1FFF); // NOLINT(readability-magic-numbers)
+      m_mapping_controller->load(RESET_VECTOR_RESET + 1);
   m_registers.program_counter.program_counter_low =
-      m_mapping_controller->load(0x1FFE); // NOLINT(readability-magic-numbers)
+      m_mapping_controller->load(RESET_VECTOR_RESET);
 }
 
 void Processor::fetch_instruction() {
