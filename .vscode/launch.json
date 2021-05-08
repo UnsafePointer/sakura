@@ -7,7 +7,11 @@
             "name": "Debug",
             "program": "${command:cmake.launchTargetPath}",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "initCommands": [
+                "type format add --format hex uint8_t",
+                "type format add --format hex uint16_t"
+            ]
         }
     ]
 }
