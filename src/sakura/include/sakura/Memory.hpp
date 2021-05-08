@@ -33,6 +33,7 @@ public:
   Controller();
   ~Controller() = default;
 
+  void initialize();
   void load_rom(const std::filesystem::path &path);
 
   auto load(uint16_t logical_address) -> uint8_t;

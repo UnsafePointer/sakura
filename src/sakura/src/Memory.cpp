@@ -6,6 +6,8 @@ using namespace Sakura::HuC6280::Mapping;
 
 Controller::Controller() = default;
 
+void Controller::initialize() { m_registers.mapping_register_7 = 0x0; }
+
 void Controller::load_rom(const std::filesystem::path &path) {
   std::ifstream rom_file = std::ifstream();
   rom_file.open(path, std::ios::binary | std::ios::ate);

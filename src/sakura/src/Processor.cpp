@@ -9,8 +9,18 @@ Processor::Processor()
     : m_mapping_controller(std::make_unique<Mapping::Controller>()){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
-  // TODO: initialize processor
+  m_registers.status.interrupt_disable = 1;
+  m_registers.status.decimal = 0;
+  m_mapping_controller->initialize();
+  // TODO: reset interrupt disable register
+  // TODO: reset Timer Interrupt Request (TIQ)
+  // TODO: Set low speed mode
+  m_registers.status.memory_operation = 0;
   m_mapping_controller->load_rom(rom);
+  m_registers.program_counter.program_counter_high =
+      m_mapping_controller->load(0x1FFF); // NOLINT(readability-magic-numbers)
+  m_registers.program_counter.program_counter_low =
+      m_mapping_controller->load(0x1FFE); // NOLINT(readability-magic-numbers)
 }
 
 void Processor::fetch_instruction() {
