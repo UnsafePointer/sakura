@@ -18,7 +18,7 @@ union Registers {
     uint8_t mapping_register_6;
     uint8_t mapping_register_7;
   };
-  std::array<uint8_t, 8> values; // NOLINT(readability-magic-numbers)
+  std::array<uint8_t, 8> values;
 
   Registers() : values() {}
 };
@@ -26,8 +26,8 @@ union Registers {
 class Controller {
 private:
   Registers m_registers;
-  std::array<uint8_t, 0x2000> m_RAM;   // NOLINT(readability-magic-numbers)
-  std::array<uint8_t, 0x100000> m_ROM; // NOLINT(readability-magic-numbers)
+  std::array<uint8_t, 0x2000> m_RAM;
+  std::array<uint8_t, 0x100000> m_ROM;
 
 public:
   Controller();
