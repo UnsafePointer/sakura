@@ -23,6 +23,9 @@ void Processor::initialize(const std::filesystem::path &rom) {
       m_mapping_controller->load(RESET_VECTOR_RESET);
 }
 
-void Processor::fetch_instruction() {
-  m_mapping_controller->load(m_registers.program_counter.value);
+auto Processor::fetch_instruction() -> uint8_t {
+  uint8_t opcode =
+      m_mapping_controller->load(m_registers.program_counter.value);
+  m_registers.program_counter.value += 1;
+  return opcode;
 }

@@ -66,7 +66,7 @@ public:
   ~Processor() = default;
 
   void initialize(const std::filesystem::path &rom);
-  void fetch_instruction();
+  auto fetch_instruction() -> uint8_t;
 };
 }; // namespace Sakura::HuC6280
 
