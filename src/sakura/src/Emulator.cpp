@@ -1,6 +1,6 @@
 #include "sakura/Emulator.hpp"
-#include "sakura/Memory.hpp"
-#include "sakura/Processor.hpp"
+#include "Memory.hpp"
+#include "Processor.hpp"
 #include <iostream>
 
 using namespace Sakura;

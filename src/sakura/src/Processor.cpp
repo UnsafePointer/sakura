@@ -1,7 +1,7 @@
 #include <utility>
 
-#include "sakura/Memory.hpp"
-#include "sakura/Processor.hpp"
+#include "Memory.hpp"
+#include "Processor.hpp"
 
 using namespace Sakura::HuC6280;
 
