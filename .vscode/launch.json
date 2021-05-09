@@ -10,7 +10,8 @@
             "cwd": "${workspaceFolder}",
             "initCommands": [
                 "type format add --format hex uint8_t",
-                "type format add --format hex uint16_t"
+                "type format add --format hex uint16_t",
+                "type format add --format hex uint32_t",
             ]
         }
     ]
