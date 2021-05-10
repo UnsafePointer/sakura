@@ -61,12 +61,15 @@ private:
   Registers m_registers;
   std::unique_ptr<Mapping::Controller> m_mapping_controller;
 
+  template <typename T>
+  friend auto SEI(std::unique_ptr<Processor> &processor) -> T;
+
 public:
   Processor();
   ~Processor() = default;
 
   void initialize(const std::filesystem::path &rom);
-  void fetch_instruction();
+  auto fetch_instruction() -> uint8_t;
 };
 }; // namespace Sakura::HuC6280
 

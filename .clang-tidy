@@ -30,3 +30,7 @@ CheckOptions:
     value: UPPER_CASE
   - key: readability-identifier-naming.GlobalConstantPrefix
     value: ""
+  - key: readability-identifier-naming.GlobalFunctionCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.GlobalFunctionPrefix
+    value: ""
