@@ -16,6 +16,7 @@ Emulator::~Emulator() = default;
 
 void Emulator::emulate() {
   uint8_t opcode = m_processor->fetch_instruction();
+  m_disassembler->disassemble(opcode);
   HuC6280::InstructionHandler<uint8_t> handler =
       HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
   handler(m_processor);
