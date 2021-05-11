@@ -6,6 +6,7 @@
 #include <memory>
 
 namespace Sakura::HuC6280 {
+class Disassembler;
 namespace Mapping {
 class Controller;
 } // namespace Mapping
@@ -58,6 +59,8 @@ struct Registers {
 
 class Processor {
 private:
+  friend Disassembler;
+
   Registers m_registers;
   std::unique_ptr<Mapping::Controller> m_mapping_controller;
 
