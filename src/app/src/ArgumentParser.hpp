@@ -1,5 +1,5 @@
-#ifndef _ARGUMENTPARSER_HPP
-#define _ARGUMENTPARSER_HPP
+#ifndef ARGUMENTPARSER_HPP
+#define ARGUMENTPARSER_HPP
 
 #include <filesystem>
 
