@@ -1,2 +1,2 @@
-Checks: "-llvm-header-guard"
+Checks: "-llvm-header-guard,-readability-redundant-declaration"
 InheritParentConfig: true
