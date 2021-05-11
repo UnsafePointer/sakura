@@ -7,11 +7,13 @@
 namespace Sakura {
 namespace HuC6280 {
 class Processor;
+class Disassembler;
 } // namespace HuC6280
 
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Processor> m_processor;
+  std::unique_ptr<HuC6280::Disassembler> m_disassembler;
 
 public:
   Emulator();

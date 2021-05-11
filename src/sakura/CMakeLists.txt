@@ -1,4 +1,5 @@
 add_library(libsakura
+    src/Disassembler.cpp
     src/Memory.cpp
     src/Processor.cpp
     src/Emulator.cpp)

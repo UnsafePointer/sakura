@@ -1,4 +1,5 @@
 #include "sakura/Emulator.hpp"
+#include "Disassembler.hpp"
 #include "Instructions.hpp"
 #include "Memory.hpp"
 #include "Processor.hpp"
@@ -7,7 +8,9 @@
 
 using namespace Sakura;
 
-Emulator::Emulator() : m_processor(std::make_unique<HuC6280::Processor>()){};
+Emulator::Emulator()
+    : m_processor(std::make_unique<HuC6280::Processor>()),
+      m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};
 
 Emulator::~Emulator() = default;
 
