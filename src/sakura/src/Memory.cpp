@@ -1,4 +1,5 @@
 #include "Memory.hpp"
+#include <common/Formatter.hpp>
 #include <fstream>
 #include <iostream>
 
@@ -12,10 +13,13 @@ void Controller::load_rom(const std::filesystem::path &path) {
   std::ifstream rom_file = std::ifstream();
   rom_file.open(path, std::ios::binary | std::ios::ate);
   if (!rom_file.is_open()) {
-    std::cout << "Unable to open ROM at path " << path.string() << std::endl;
+    std::cout << Common::Formatter::format("Unable to open ROM at path %s",
+                                           path.c_str())
+              << std::endl;
   }
   std::streampos file_size = rom_file.tellg();
-  std::cout << "Opened ROM file of size: " << std::hex << file_size
+  std::cout << Common::Formatter::format("Opened ROM file of size: %#x",
+                                         file_size)
             << std::endl;
 
   rom_file.seekg(0, std::ifstream::beg);
@@ -46,8 +50,10 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
     std::cout << "Accessing unused memory map range: 0xFC-0xFE" << std::endl;
     return 0xFF;
   } // bank == 0xFF
-  std::cout << "Unhandled hardware page access at physical address: "
-            << std::hex << physical_address << std::endl;
+  std::cout << Common::Formatter::format(
+                   "Unhandled hardware page access at physical address: %#x",
+                   physical_address)
+            << std::endl;
   exit(1); // NOLINT(concurrency-mt-unsafe)
 }
 
@@ -74,8 +80,10 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
               << std::endl;
     exit(1); // NOLINT(concurrency-mt-unsafe)
   } else {   // bank == 0xFF
-    std::cout << "Unhandled hardware page access at physical address: "
-              << std::hex << physical_address << std::endl;
+    std::cout << Common::Formatter::format(
+                     "Unhandled hardware page access at physical address: %#x",
+                     physical_address)
+              << std::endl;
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
