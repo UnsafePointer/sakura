@@ -9,6 +9,7 @@ using namespace Sakura::HuC6280;
 
 template <>
 auto Sakura::HuC6280::SEI(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.interrupt_disable = 1;
   return 2;
 }
