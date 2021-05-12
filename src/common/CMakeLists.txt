@@ -1,4 +1,5 @@
 add_library(libcommon
+    src/Bits.cpp
     src/Formatter.cpp)
 target_compile_features(libcommon PUBLIC cxx_std_17)
 target_compile_options(libcommon PRIVATE -Werror -Wall -Wextra)
