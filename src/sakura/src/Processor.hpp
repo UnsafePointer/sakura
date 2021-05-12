@@ -74,6 +74,8 @@ private:
   friend auto SEI(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto CSL(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto LDA_IMM(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();

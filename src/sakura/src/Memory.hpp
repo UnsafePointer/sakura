@@ -5,7 +5,10 @@
 #include <cstdint>
 #include <filesystem>
 
-namespace Sakura::HuC6280::Mapping {
+namespace Sakura::HuC6280 {
+class Disassembler;
+
+namespace Mapping {
 
 union Registers {
   struct {
@@ -25,6 +28,8 @@ union Registers {
 
 class Controller {
 private:
+  friend Disassembler;
+
   Registers m_registers;
   std::array<uint8_t, 0x2000> m_RAM;
   std::array<uint8_t, 0x100000> m_ROM;
@@ -39,6 +44,7 @@ public:
   auto load(uint16_t logical_address) -> uint8_t;
   void store(uint16_t logical_address, uint8_t value);
 };
-}; // namespace Sakura::HuC6280::Mapping
+}; // namespace Mapping
+}; // namespace Sakura::HuC6280
 
 #endif
