@@ -87,3 +87,7 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
+
+void Controller::set_mapping_register(uint8_t index, uint8_t value) {
+  m_registers.values[index] = value;
+}

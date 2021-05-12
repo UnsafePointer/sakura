@@ -2,6 +2,7 @@
 #define SAKURA_PROCESSOR_TCC
 
 #include "Processor.hpp"
+#include <common/Bits.hpp>
 #include <cstdint>
 #include <memory>
 
@@ -29,6 +30,20 @@ auto Sakura::HuC6280::LDA_IMM(std::unique_ptr<Processor> &processor)
   processor->m_registers.program_counter.value += 1;
   processor->m_registers.accumulator = imm;
   return 2;
+}
+
+template <>
+auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  int bit_position = Common::Bits::test_power_of_2(imm);
+
+  processor->m_mapping_controller->set_mapping_register(
+      bit_position, processor->m_registers.accumulator);
+
+  return 5;
 }
 
 #endif
