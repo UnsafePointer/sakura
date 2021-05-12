@@ -14,4 +14,11 @@ auto Sakura::HuC6280::SEI(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::CSL(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_speed = Speed::Low;
+  return 3;
+}
+
 #endif

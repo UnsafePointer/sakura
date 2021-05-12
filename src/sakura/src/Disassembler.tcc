@@ -14,4 +14,11 @@ auto Sakura::HuC6280::SEI(std::unique_ptr<Processor> &processor)
   return "SEI";
 }
 
+template <>
+auto Sakura::HuC6280::CSL(std::unique_ptr<Processor> &processor)
+    -> std::string {
+  (void)processor;
+  return "CLS";
+}
+
 #endif
