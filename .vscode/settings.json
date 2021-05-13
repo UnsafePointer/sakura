@@ -1,5 +1,8 @@
 {
     "cmake.sourceDirectory": "${workspaceFolder}/src",
     "cmake.generator": "Ninja",
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "~/GitHub/Microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    }
 }

@@ -7,6 +7,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        uses: UnsafePointer/cmake-clang-ninja-build-github-action@v1.1
+        uses: UnsafePointer/cmake-clang-ninja-build-github-action@v1.2
         with:
           dir: "src"

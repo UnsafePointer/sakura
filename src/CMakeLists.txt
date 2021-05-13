@@ -6,6 +6,9 @@ project(
     DESCRIPTION "An instruction accurate PC Engine/TurboGrafx-16 emulator"
     LANGUAGES CXX)
 
+include(CTest)
+
 add_subdirectory(common)
+add_subdirectory(common/tests)
 add_subdirectory(sakura)
 add_subdirectory(app)

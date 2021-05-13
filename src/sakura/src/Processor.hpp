@@ -57,15 +57,27 @@ struct Registers {
   Registers() = default;
 };
 
+enum class Speed {
+  Low,
+  High,
+};
+
 class Processor {
 private:
   friend Disassembler;
 
   Registers m_registers;
   std::unique_ptr<Mapping::Controller> m_mapping_controller;
+  Speed m_speed{};
 
   template <typename T>
   friend auto SEI(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto CSL(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto LDA_IMM(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto TAM_I(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
