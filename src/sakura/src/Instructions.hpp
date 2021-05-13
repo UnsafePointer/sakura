@@ -8,6 +8,11 @@
 namespace Sakura::HuC6280 {
 class Processor;
 
+struct Disassembled {
+  std::string mnemonic;
+  uint8_t length;
+};
+
 template <typename T>
 using InstructionHandler = T (*)(std::unique_ptr<Processor> &processor);
 

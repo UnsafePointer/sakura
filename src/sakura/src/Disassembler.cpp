@@ -1,5 +1,5 @@
 #include "Disassembler.hpp"
-#include "Disassembler.tcc"
+#include "Disassembler_Impl.hpp"
 #include "Instructions.hpp"
 #include "Processor.hpp"
 #include <common/Formatter.hpp>
@@ -19,9 +19,9 @@ auto Disassembler::previous_program_counter() -> std::string {
 }
 
 void Disassembler::disassemble(uint8_t opcode) {
-  InstructionHandler<DisassembledInstruction> handler =
-      INSTRUCTION_TABLE<DisassembledInstruction>[opcode];
-  DisassembledInstruction instruction = handler(m_processor);
+  InstructionHandler<Disassembled> handler =
+      INSTRUCTION_TABLE<Disassembled>[opcode];
+  Disassembled instruction = handler(m_processor);
   std::stringstream machine_code = std::stringstream();
   machine_code << "; ";
   machine_code << Common::Formatter::colorize(

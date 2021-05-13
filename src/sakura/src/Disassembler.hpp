@@ -6,11 +6,6 @@
 namespace Sakura::HuC6280 {
 class Processor;
 
-struct DisassembledInstruction {
-  std::string mnemonic;
-  uint8_t length;
-};
-
 class Disassembler {
 private:
   std::unique_ptr<Processor> &m_processor;
