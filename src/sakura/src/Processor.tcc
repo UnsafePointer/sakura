@@ -3,7 +3,9 @@
 
 #include "Processor.hpp"
 #include <common/Bits.hpp>
+#include <common/Formatter.hpp>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 
 using namespace Sakura::HuC6280;
@@ -39,6 +41,11 @@ auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor) -> uint8_t {
   processor->m_registers.program_counter.value += 1;
 
   int bit_position = Common::Bits::test_power_of_2(imm);
+  if (bit_position == -1) {
+    std::cout << Common::Formatter::format("Invalid TAMi argument: %02x", imm)
+              << std::endl;
+    exit(1);
+  }
 
   processor->m_mapping_controller->set_mapping_register(
       bit_position, processor->m_registers.accumulator);
