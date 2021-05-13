@@ -1,6 +1,7 @@
-#ifndef SAKURA_PROCESSOR_TCC
-#define SAKURA_PROCESSOR_TCC
+#ifndef SAKURA_INSTRUCTIONS_IMPL_HPP
+#define SAKURA_INSTRUCTIONS_IMPL_HPP
 
+#include "Memory.hpp"
 #include "Processor.hpp"
 #include <common/Bits.hpp>
 #include <common/Formatter.hpp>
@@ -44,7 +45,7 @@ auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor) -> uint8_t {
   if (bit_position == -1) {
     std::cout << Common::Formatter::format("Invalid TAMi argument: %02x", imm)
               << std::endl;
-    exit(1);
+    exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 
   processor->m_mapping_controller->set_mapping_register(

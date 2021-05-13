@@ -1,9 +1,9 @@
 #include "sakura/Emulator.hpp"
 #include "Disassembler.hpp"
 #include "Instructions.hpp"
+#include "Instructions_Impl.hpp"
 #include "Memory.hpp"
 #include "Processor.hpp"
-#include "Processor.tcc"
 #include <common/Formatter.hpp>
 #include <iostream>
 
