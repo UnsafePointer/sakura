@@ -8,10 +8,14 @@ sakura (桜) is an instruction accurate PC Engine/TurboGrafx-16 emulator written
 
 ## Building
 
-This project can be build in Linux with CMake, Clang and Ninja. Other operating systems, compilers and generators combinations might build this project but they're not actively used or supported.
+This project can be build in Linux with CMake, Clang, Ninja and [`vcpkg`](https://github.com/Microsoft/vcpkg). Other operating systems, compilers, generators and package managers combinations might build this project but they're not actively used or supported.
+
+`vcpkg` packages needed:
+
+* `catch2`
 
 ```Shell Session
-$ cmake -Bbuild -GNinja -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ src/
+$ cmake -Bbuild -GNinja -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake src/
 -- The CXX compiler identification is Clang 12.0.0
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
