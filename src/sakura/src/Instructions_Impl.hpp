@@ -130,4 +130,18 @@ auto Sakura::HuC6280::CSH(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 3;
 }
 
+template <>
+auto Sakura::HuC6280::LDX_IMM(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  processor->m_registers.x = imm;
+
+  processor->m_registers.status.negative = (imm >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = imm == 0;
+  return 2;
+}
+
 #endif
