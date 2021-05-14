@@ -69,4 +69,14 @@ auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor)
   return {.mnemonic = Common::Formatter::format("AND #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::BEQ(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BEQ %04x", destination),
+          .length = 2};
+}
+
 #endif
