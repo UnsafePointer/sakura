@@ -1,11 +1,15 @@
 #include "Memory.hpp"
+#include "IO.hpp"
 #include <common/Formatter.hpp>
 #include <fstream>
 #include <iostream>
 
 using namespace Sakura::HuC6280::Mapping;
 
-Controller::Controller() = default;
+Controller::Controller()
+    : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()){};
+
+Controller::~Controller() = default;
 
 void Controller::initialize() { m_registers.mapping_register_7 = 0x0; }
 

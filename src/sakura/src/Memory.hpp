@@ -4,8 +4,13 @@
 #include <array>
 #include <cstdint>
 #include <filesystem>
+#include <memory>
 
 namespace Sakura::HuC6280 {
+namespace IO {
+class Controller;
+} // namespace IO
+
 class Disassembler;
 
 namespace Mapping {
@@ -34,9 +39,11 @@ private:
   std::array<uint8_t, 0x2000> m_RAM;
   std::array<uint8_t, 0x100000> m_ROM;
 
+  std::unique_ptr<IO::Controller> m_IO_controller;
+
 public:
   Controller();
-  ~Controller() = default;
+  ~Controller();
 
   void initialize();
   void load_rom(const std::filesystem::path &path);
