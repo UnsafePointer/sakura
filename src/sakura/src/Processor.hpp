@@ -92,6 +92,8 @@ private:
   friend auto LDX_IMM(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto TXS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();

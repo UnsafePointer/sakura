@@ -152,4 +152,18 @@ auto Sakura::HuC6280::TXS(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::STA_ZP(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_mapping_controller->store(address,
+                                         processor->m_registers.accumulator);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 2;
+}
+
 #endif
