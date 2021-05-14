@@ -61,4 +61,12 @@ auto Sakura::HuC6280::LDA_ABS(std::unique_ptr<Processor> &processor)
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("AND #%02x", imm), .length = 2};
+}
+
 #endif

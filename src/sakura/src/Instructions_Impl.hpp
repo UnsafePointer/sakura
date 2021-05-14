@@ -71,4 +71,18 @@ auto Sakura::HuC6280::LDA_ABS(std::unique_ptr<Processor> &processor)
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled AND (IMM) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  processor->m_registers.accumulator = processor->m_registers.accumulator & imm;
+  return 2;
+}
+
 #endif

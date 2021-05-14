@@ -21,6 +21,7 @@ template <typename T> auto CSL(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto LDA_IMM(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto TAM_I(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto LDA_ABS(std::unique_ptr<Processor> &processor) -> T;
+template <typename T> auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
 
 // clang-format off
 template <typename T>
@@ -28,7 +29,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   //     +0    +1    +2    +3     +4    +5    +6    +7    +8    +9       +A    +B    +C    +D       +E    +F
   /*0+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*1+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
-  /*2+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
+  /*2+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, AND_IMM, NULL, NULL, NULL, NULL,    NULL, NULL,
   /*3+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*4+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*5+*/ NULL, NULL, NULL, TAM_I, CSL,  NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
