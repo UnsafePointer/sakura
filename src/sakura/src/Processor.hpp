@@ -80,6 +80,22 @@ private:
   friend auto TAM_I(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto LDA_ABS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto BEQ(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto CLD(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto CSH(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto LDX_IMM(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto TXS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
