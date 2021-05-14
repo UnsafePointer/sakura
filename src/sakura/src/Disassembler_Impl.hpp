@@ -79,4 +79,11 @@ auto Sakura::HuC6280::BEQ(std::unique_ptr<Processor> &processor)
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLD(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "CLD", .length = 1};
+}
+
 #endif

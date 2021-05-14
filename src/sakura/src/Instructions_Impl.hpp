@@ -115,4 +115,11 @@ auto Sakura::HuC6280::BEQ(std::unique_ptr<Processor> &processor) -> uint8_t {
   return cycles;
 }
 
+template <>
+auto Sakura::HuC6280::CLD(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.decimal = 0;
+  return 2;
+}
+
 #endif

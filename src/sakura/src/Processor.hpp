@@ -84,6 +84,8 @@ private:
   friend auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto BEQ(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto CLD(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
