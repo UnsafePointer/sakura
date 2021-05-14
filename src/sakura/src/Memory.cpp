@@ -1,11 +1,15 @@
 #include "Memory.hpp"
+#include "IO.hpp"
 #include <common/Formatter.hpp>
 #include <fstream>
 #include <iostream>
 
 using namespace Sakura::HuC6280::Mapping;
 
-Controller::Controller() = default;
+Controller::Controller()
+    : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()){};
+
+Controller::~Controller() = default;
 
 void Controller::initialize() { m_registers.mapping_register_7 = 0x0; }
 
@@ -50,6 +54,11 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
     std::cout << "Accessing unused memory map range: 0xFC-0xFE" << std::endl;
     return 0xFF;
   } // bank == 0xFF
+
+  if (IO_RANGE.contains(physical_address)) {
+    return m_IO_controller->load();
+  }
+
   std::cout << Common::Formatter::format(
                    "Unhandled hardware page access at physical address: %#x",
                    physical_address)
@@ -80,6 +89,11 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
               << std::endl;
     exit(1); // NOLINT(concurrency-mt-unsafe)
   } else {   // bank == 0xFF
+    if (IO_RANGE.contains(physical_address)) {
+      m_IO_controller->store(value);
+      return;
+    }
+
     std::cout << Common::Formatter::format(
                      "Unhandled hardware page access at physical address: %#x",
                      physical_address)
