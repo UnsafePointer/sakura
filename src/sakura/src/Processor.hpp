@@ -90,6 +90,8 @@ private:
   friend auto CSH(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto LDX_IMM(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto TXS(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();

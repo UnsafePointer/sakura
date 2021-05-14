@@ -101,4 +101,11 @@ auto Sakura::HuC6280::LDX_IMM(std::unique_ptr<Processor> &processor)
   return {.mnemonic = Common::Formatter::format("LDX #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::TXS(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "TXS", .length = 1};
+}
+
 #endif
