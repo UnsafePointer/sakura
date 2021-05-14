@@ -7,7 +7,11 @@
 #include <filesystem>
 #include <memory>
 
-namespace Sakura::HuC6280 {
+namespace Sakura {
+namespace HuC6270 {
+class Controller;
+} // namespace HuC6270
+namespace HuC6280 {
 namespace IO {
 class Controller;
 } // namespace IO
@@ -18,6 +22,9 @@ namespace Mapping {
 
 const Common::Range<uint32_t> IO_RANGE =
     Common::Range<uint32_t>(0x1FF000, 0x400);
+
+const Common::Range<uint32_t> VIDEO_DISPLAY_CONTROLLER_RANGE =
+    Common::Range<uint32_t>(0x1FE000, 0x400);
 
 union Registers {
   struct {
@@ -44,6 +51,7 @@ private:
   std::array<uint8_t, 0x100000> m_ROM;
 
   std::unique_ptr<IO::Controller> m_IO_controller;
+  std::unique_ptr<HuC6270::Controller> m_video_display_controller;
 
 public:
   Controller();
@@ -58,6 +66,7 @@ public:
   void set_mapping_register(uint8_t index, uint8_t value);
 };
 }; // namespace Mapping
-}; // namespace Sakura::HuC6280
+}; // namespace HuC6280
+}; // namespace Sakura
 
 #endif

@@ -1,5 +1,6 @@
 #include "Memory.hpp"
 #include "IO.hpp"
+#include "VideoDisplayController.hpp"
 #include <common/Formatter.hpp>
 #include <fstream>
 #include <iostream>
@@ -7,7 +8,8 @@
 using namespace Sakura::HuC6280::Mapping;
 
 Controller::Controller()
-    : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()){};
+    : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()),
+      m_video_display_controller(std::make_unique<HuC6270::Controller>()){};
 
 Controller::~Controller() = default;
 
@@ -58,6 +60,10 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
   if (IO_RANGE.contains(physical_address)) {
     return m_IO_controller->load();
   }
+  auto offset_hw = VIDEO_DISPLAY_CONTROLLER_RANGE.contains(physical_address);
+  if (offset_hw) {
+    return m_video_display_controller->load(*offset_hw);
+  }
 
   std::cout << Common::Formatter::format(
                    "Unhandled hardware page access at physical address: %#x",
@@ -91,6 +97,11 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
   } else {   // bank == 0xFF
     if (IO_RANGE.contains(physical_address)) {
       m_IO_controller->store(value);
+      return;
+    }
+    auto offset_hw = VIDEO_DISPLAY_CONTROLLER_RANGE.contains(physical_address);
+    if (offset_hw) {
+      m_video_display_controller->store(*offset_hw, value);
       return;
     }
 
