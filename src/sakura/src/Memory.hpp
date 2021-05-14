@@ -2,6 +2,7 @@
 #define SAKURA_MEMORY_HPP
 
 #include <array>
+#include <common/Range.hpp>
 #include <cstdint>
 #include <filesystem>
 #include <memory>
@@ -14,6 +15,9 @@ class Controller;
 class Disassembler;
 
 namespace Mapping {
+
+const Common::Range<uint32_t> IO_RANGE =
+    Common::Range<uint32_t>(0x1FF000, 0x400);
 
 union Registers {
   struct {
