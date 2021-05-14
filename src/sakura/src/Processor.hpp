@@ -94,6 +94,8 @@ private:
   friend auto TXS(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
