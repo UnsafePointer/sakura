@@ -122,4 +122,12 @@ auto Sakura::HuC6280::CLD(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::CSH(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->m_speed = Speed::High;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif

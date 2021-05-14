@@ -24,6 +24,7 @@ template <typename T> auto LDA_ABS(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto BEQ(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto CLD(std::unique_ptr<Processor> &processor) -> T;
+template <typename T> auto CSH(std::unique_ptr<Processor> &processor) -> T;
 
 // clang-format off
 template <typename T>
@@ -42,7 +43,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*A+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, LDA_IMM, NULL, NULL, NULL, LDA_ABS, NULL, NULL,
   /*B+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*C+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
-  /*D+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, CLD,  NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
+  /*D+*/ NULL, NULL, NULL, NULL,  CSH,  NULL, NULL, NULL, CLD,  NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*E+*/ NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
   /*F+*/ BEQ,  NULL, NULL, NULL,  NULL, NULL, NULL, NULL, NULL, NULL,    NULL, NULL, NULL, NULL,    NULL, NULL,
 };

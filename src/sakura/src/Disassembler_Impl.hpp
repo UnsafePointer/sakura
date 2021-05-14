@@ -86,4 +86,11 @@ auto Sakura::HuC6280::CLD(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "CLD", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::CSH(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "CSH", .length = 1};
+}
+
 #endif
