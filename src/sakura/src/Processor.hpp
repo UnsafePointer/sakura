@@ -70,6 +70,8 @@ private:
   std::unique_ptr<Mapping::Controller> m_mapping_controller;
   Speed m_speed{};
 
+  void push_into_stack(uint8_t value);
+  auto pop_from_stack() -> uint8_t;
   void execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl, uint8_t dh,
                               uint8_t ll, uint8_t lh);
 

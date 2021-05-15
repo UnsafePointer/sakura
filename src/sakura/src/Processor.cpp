@@ -30,13 +30,31 @@ auto Processor::fetch_instruction() -> uint8_t {
   return opcode;
 }
 
+void Processor::push_into_stack(uint8_t value) {
+  uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
+  m_registers.stack_pointer--;
+  m_mapping_controller->store(stack_address, value);
+}
+
+auto Processor::pop_from_stack() -> uint8_t {
+  m_registers.stack_pointer++;
+  uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
+  uint8_t value = m_mapping_controller->load(stack_address);
+  return value;
+}
+
 void Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
                                        uint8_t dh, uint8_t ll, uint8_t lh) {
+  push_into_stack(m_registers.y);
+  push_into_stack(m_registers.accumulator);
+  push_into_stack(m_registers.x);
   (void)sl;
   (void)sh;
   (void)dl;
   (void)dh;
   (void)ll;
   (void)lh;
-  (void)m_registers;
+  m_registers.x = pop_from_stack();
+  m_registers.accumulator = pop_from_stack();
+  m_registers.y = pop_from_stack();
 }
