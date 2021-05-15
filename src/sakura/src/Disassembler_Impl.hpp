@@ -182,4 +182,11 @@ auto Sakura::HuC6280::PHX(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "PHX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::PHY(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "PHY", .length = 1};
+}
+
 #endif

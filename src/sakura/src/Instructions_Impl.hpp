@@ -250,4 +250,11 @@ auto Sakura::HuC6280::PHX(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 3;
 }
 
+template <>
+auto Sakura::HuC6280::PHY(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(processor->m_registers.y);
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif

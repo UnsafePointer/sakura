@@ -33,6 +33,7 @@ template <typename T> auto STZ_ABS(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto STZ_ZP(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto TAI(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto PHX(std::unique_ptr<Processor> &processor) -> T;
+template <typename T> auto PHY(std::unique_ptr<Processor> &processor) -> T;
 
 // clang-format off
 template <typename T>
@@ -43,7 +44,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*2+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, AND_IMM, NULL, NULL, NULL,    NULL,    NULL, NULL,
   /*3+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    NULL, NULL, NULL,    NULL,    NULL, NULL,
   /*4+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    NULL, NULL, NULL,    NULL,    NULL, NULL,
-  /*5+*/ NULL, NULL, NULL,    TAM_I, CSL,    NULL,   NULL, NULL, NULL, NULL,    NULL, NULL, NULL,    NULL,    NULL, NULL,
+  /*5+*/ NULL, NULL, NULL,    TAM_I, CSL,    NULL,   NULL, NULL, NULL, NULL,    PHY,  NULL, NULL,    NULL,    NULL, NULL,
   /*6+*/ NULL, NULL, NULL,    NULL,  STZ_ZP, NULL,   NULL, NULL, NULL, NULL,    NULL, NULL, NULL,    NULL,    NULL, NULL,
   /*7+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, SEI,  NULL,    NULL, NULL, NULL,    NULL,    NULL, NULL,
   /*8+*/ NULL, NULL, NULL,    NULL,  NULL,   STA_ZP, NULL, NULL, NULL, NULL,    NULL, NULL, NULL,    STA_ABS, NULL, NULL,
