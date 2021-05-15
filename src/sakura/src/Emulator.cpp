@@ -21,7 +21,7 @@ void Emulator::emulate() {
     HuC6280::InstructionHandler<uint8_t> handler =
         HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
     if (handler == nullptr) {
-      std::cout << Common::Formatter::format("Unhandled opcode: %#x", opcode)
+      std::cout << Common::Formatter::format("Unhandled opcode: %#04x", opcode)
                 << std::endl;
       break;
     }
