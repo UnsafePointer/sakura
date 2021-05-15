@@ -98,6 +98,8 @@ private:
   friend auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto STZ_ABS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STZ_ZP(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
