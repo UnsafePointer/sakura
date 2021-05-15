@@ -45,15 +45,61 @@ auto Processor::pop_from_stack() -> uint8_t {
 
 void Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
                                        uint8_t dh, uint8_t ll, uint8_t lh) {
+  if (ll == 0x0 && lh == 0x0) {
+    ll = 0xFF;
+    lh = 0xFF;
+  }
+
   push_into_stack(m_registers.y);
   push_into_stack(m_registers.accumulator);
   push_into_stack(m_registers.x);
-  (void)sl;
-  (void)sh;
-  (void)dl;
-  (void)dh;
-  (void)ll;
-  (void)lh;
+
+  m_registers.y = dl;
+  m_registers.destination_high = dh;
+  m_registers.accumulator = ll;
+  m_registers.length_high = lh;
+  m_registers.x = sl;
+  m_registers.source_high = sh;
+
+  bool flip = true;
+
+  for (;;) {
+    uint16_t length = m_registers.length_high;
+    length = (length << 8) | m_registers.accumulator;
+    if (length <= 0) {
+      break;
+    }
+    uint16_t source = m_registers.source_high;
+    source = (source << 8) | m_registers.x;
+    uint16_t destination = m_registers.destination_high;
+    destination = (destination << 8) | m_registers.y;
+
+    uint8_t value = m_mapping_controller->load(source);
+    m_mapping_controller->store(destination, value);
+
+    if (flip) {
+      m_registers.x++;
+      if (m_registers.x == 0) {
+        m_registers.source_high++;
+      }
+    } else {
+      m_registers.x--;
+      if (m_registers.x == 0xFF) {
+        m_registers.source_high--;
+      }
+    }
+    flip = !flip;
+
+    m_registers.y++;
+    if (m_registers.y == 0) {
+      m_registers.destination_high++;
+    }
+    m_registers.accumulator--;
+    if (m_registers.accumulator == 0xFF) {
+      m_registers.length_high--;
+    }
+  }
+
   m_registers.x = pop_from_stack();
   m_registers.accumulator = pop_from_stack();
   m_registers.y = pop_from_stack();
