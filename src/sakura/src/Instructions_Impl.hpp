@@ -214,4 +214,32 @@ auto Sakura::HuC6280::STZ_ZP(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
+  processor->m_registers.status.memory_operation = 0;
+  return 5;
+}
+
 #endif

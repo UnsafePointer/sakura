@@ -34,7 +34,7 @@ void Disassembler::disassemble(uint8_t opcode) {
         Common::Formatter::format(" %02X", byte), Common::Formatter::Magenta,
         false);
   }
-  std::string separator(20 - instruction.mnemonic.length(), ' ');
+  std::string separator(30 - instruction.mnemonic.length(), ' ');
   std::cout << Common::Formatter::format(
                    "%s: %s%s%s", previous_program_counter().c_str(),
                    instruction.mnemonic.c_str(), separator.c_str(),

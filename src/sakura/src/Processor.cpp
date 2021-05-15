@@ -29,3 +29,14 @@ auto Processor::fetch_instruction() -> uint8_t {
   m_registers.program_counter.value += 1;
   return opcode;
 }
+
+void Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
+                                       uint8_t dh, uint8_t ll, uint8_t lh) {
+  (void)sl;
+  (void)sh;
+  (void)dl;
+  (void)dh;
+  (void)ll;
+  (void)lh;
+  (void)m_registers;
+}
