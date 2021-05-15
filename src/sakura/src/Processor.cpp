@@ -43,12 +43,16 @@ auto Processor::pop_from_stack() -> uint8_t {
   return value;
 }
 
-void Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
-                                       uint8_t dh, uint8_t ll, uint8_t lh) {
+auto Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
+                                       uint8_t dh, uint8_t ll, uint8_t lh)
+    -> uint16_t {
   if (ll == 0x0 && lh == 0x0) {
     ll = 0xFF;
     lh = 0xFF;
   }
+
+  uint16_t total_length = lh;
+  total_length = (total_length << 8) | ll;
 
   push_into_stack(m_registers.y);
   push_into_stack(m_registers.accumulator);
@@ -103,4 +107,6 @@ void Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
   m_registers.x = pop_from_stack();
   m_registers.accumulator = pop_from_stack();
   m_registers.y = pop_from_stack();
+
+  return total_length;
 }

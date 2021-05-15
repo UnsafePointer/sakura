@@ -237,9 +237,10 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor) -> uint8_t {
       processor->m_registers.program_counter.value);
   processor->m_registers.program_counter.value += 1;
 
-  processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
+  uint16_t total_length =
+      processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
   processor->m_registers.status.memory_operation = 0;
-  return 5;
+  return 17 + 6 * total_length;
 }
 
 #endif
