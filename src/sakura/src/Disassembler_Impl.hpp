@@ -222,4 +222,11 @@ auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "PHA", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::INC_ACC(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "INC A", .length = 1};
+}
+
 #endif

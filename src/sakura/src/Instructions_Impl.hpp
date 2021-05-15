@@ -306,4 +306,16 @@ auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 3;
 }
 
+template <>
+auto Sakura::HuC6280::INC_ACC(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  processor->m_registers.accumulator++;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 2;
+}
+
 #endif
