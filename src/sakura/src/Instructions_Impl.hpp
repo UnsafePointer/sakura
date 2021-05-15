@@ -163,7 +163,7 @@ auto Sakura::HuC6280::STA_ZP(std::unique_ptr<Processor> &processor) -> uint8_t {
                                          processor->m_registers.accumulator);
 
   processor->m_registers.status.memory_operation = 0;
-  return 2;
+  return 4;
 }
 
 template <>
