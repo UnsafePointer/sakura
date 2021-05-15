@@ -130,4 +130,18 @@ auto Sakura::HuC6280::STA_ABS(std::unique_ptr<Processor> &processor)
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::STZ_ABS(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("STZ %04x", address),
+          .length = 3};
+}
+
 #endif
