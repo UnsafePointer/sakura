@@ -115,6 +115,8 @@ private:
   friend auto JSR(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto TMA_I(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto PHA(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();

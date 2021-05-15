@@ -215,4 +215,11 @@ auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor)
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "PHA", .length = 1};
+}
+
 #endif

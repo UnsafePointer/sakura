@@ -299,4 +299,11 @@ auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(processor->m_registers.accumulator);
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif
