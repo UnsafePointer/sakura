@@ -64,6 +64,7 @@ public:
   void store(uint16_t logical_address, uint8_t value);
 
   void set_mapping_register(uint8_t index, uint8_t value);
+  auto mapping_register(uint8_t index) -> uint8_t;
 };
 }; // namespace Mapping
 }; // namespace HuC6280

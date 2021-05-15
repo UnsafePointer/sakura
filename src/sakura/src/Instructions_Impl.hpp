@@ -278,4 +278,25 @@ auto Sakura::HuC6280::JSR(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  int bit_position = Common::Bits::test_power_of_2(imm);
+  if (bit_position == -1) {
+    std::cout << Common::Formatter::format("Invalid TMAi argument: %02x", imm)
+              << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+
+  uint8_t value =
+      processor->m_mapping_controller->mapping_register(bit_position);
+  processor->m_registers.accumulator = value;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 4;
+}
+
 #endif
