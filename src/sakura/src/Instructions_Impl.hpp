@@ -163,7 +163,7 @@ auto Sakura::HuC6280::STA_ZP(std::unique_ptr<Processor> &processor) -> uint8_t {
                                          processor->m_registers.accumulator);
 
   processor->m_registers.status.memory_operation = 0;
-  return 2;
+  return 4;
 }
 
 template <>
@@ -182,6 +182,65 @@ auto Sakura::HuC6280::STA_ABS(std::unique_ptr<Processor> &processor)
 
   processor->m_registers.status.memory_operation = 0;
   return 5;
+}
+
+template <>
+auto Sakura::HuC6280::STZ_ABS(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  processor->m_mapping_controller->store(address, 0x00);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::STZ_ZP(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_mapping_controller->store(address, 0x00);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t total_length =
+      processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
+  processor->m_registers.status.memory_operation = 0;
+  return 17 + 6 * total_length;
 }
 
 #endif

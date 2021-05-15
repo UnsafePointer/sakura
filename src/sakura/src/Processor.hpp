@@ -70,6 +70,11 @@ private:
   std::unique_ptr<Mapping::Controller> m_mapping_controller;
   Speed m_speed{};
 
+  void push_into_stack(uint8_t value);
+  auto pop_from_stack() -> uint8_t;
+  auto execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl, uint8_t dh,
+                              uint8_t ll, uint8_t lh) -> uint16_t;
+
   template <typename T>
   friend auto SEI(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
@@ -96,6 +101,12 @@ private:
   friend auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STZ_ABS(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto STZ_ZP(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto TAI(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();

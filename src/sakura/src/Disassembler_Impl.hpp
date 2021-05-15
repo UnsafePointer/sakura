@@ -130,4 +130,49 @@ auto Sakura::HuC6280::STA_ABS(std::unique_ptr<Processor> &processor)
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::STZ_ABS(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("STZ %04x", address),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::STZ_ZP(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("STZ %02x", zp), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 2);
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 3);
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 4);
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 5);
+
+  return {.mnemonic = Common::Formatter::format(
+              "TAI %02x%02x, %02x%02x, %02x%02x", sh, sl, dh, dl, lh, ll),
+          .length = 7};
+}
+
 #endif
