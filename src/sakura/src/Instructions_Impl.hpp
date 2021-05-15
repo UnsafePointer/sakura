@@ -318,4 +318,18 @@ auto Sakura::HuC6280::INC_ACC(std::unique_ptr<Processor> &processor)
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::ASL_ACC(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  uint8_t carry = processor->m_registers.accumulator >> 7 & 0b1;
+  processor->m_registers.accumulator <<= 1;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  processor->m_registers.status.carry = carry;
+  return 2;
+}
+
 #endif

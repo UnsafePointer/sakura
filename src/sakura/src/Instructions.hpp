@@ -38,12 +38,13 @@ template <typename T> auto JSR(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto TMA_I(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto PHA(std::unique_ptr<Processor> &processor) -> T;
 template <typename T> auto INC_ACC(std::unique_ptr<Processor> &processor) -> T;
+template <typename T> auto ASL_ACC(std::unique_ptr<Processor> &processor) -> T;
 
 // clang-format off
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   //     +0    +1    +2       +3     +4      +5      +6    +7    +8    +9       +A       +B    +C       +D       +E    +F
-  /*0+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    NULL,    NULL, NULL,    NULL,    NULL, NULL,
+  /*0+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    ASL_ACC, NULL, NULL,    NULL,    NULL, NULL,
   /*1+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    INC_ACC, NULL, NULL,    NULL,    NULL, NULL,
   /*2+*/ JSR,  NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, AND_IMM, NULL,    NULL, NULL,    NULL,    NULL, NULL,
   /*3+*/ NULL, NULL, NULL,    NULL,  NULL,   NULL,   NULL, NULL, NULL, NULL,    NULL,    NULL, NULL,    NULL,    NULL, NULL,
