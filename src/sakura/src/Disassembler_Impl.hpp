@@ -236,4 +236,11 @@ auto Sakura::HuC6280::ASL_ACC(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "ASL A", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::TAX(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "TAX", .length = 1};
+}
+
 #endif

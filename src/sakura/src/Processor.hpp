@@ -121,6 +121,8 @@ private:
   friend auto INC_ACC(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto ASL_ACC(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto TAX(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
