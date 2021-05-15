@@ -243,4 +243,104 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor) -> uint8_t {
   return 17 + 6 * total_length;
 }
 
+template <>
+auto Sakura::HuC6280::PHX(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(processor->m_registers.x);
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
+template <>
+auto Sakura::HuC6280::PHY(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(processor->m_registers.y);
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
+template <>
+auto Sakura::HuC6280::JSR(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_high);
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_low);
+
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  processor->m_registers.program_counter.value = address;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor) -> uint8_t {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  int bit_position = Common::Bits::test_power_of_2(imm);
+  if (bit_position == -1) {
+    std::cout << Common::Formatter::format("Invalid TMAi argument: %02x", imm)
+              << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+
+  uint8_t value =
+      processor->m_mapping_controller->mapping_register(bit_position);
+  processor->m_registers.accumulator = value;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->push_into_stack(processor->m_registers.accumulator);
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
+template <>
+auto Sakura::HuC6280::INC_ACC(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  processor->m_registers.accumulator++;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::ASL_ACC(std::unique_ptr<Processor> &processor)
+    -> uint8_t {
+  uint8_t carry = processor->m_registers.accumulator >> 7 & 0b1;
+  processor->m_registers.accumulator <<= 1;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  processor->m_registers.status.carry = carry;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::TAX(std::unique_ptr<Processor> &processor) -> uint8_t {
+  processor->m_registers.x = processor->m_registers.accumulator;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.x >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.x == 0;
+  return 2;
+}
+
 #endif

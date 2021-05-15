@@ -175,4 +175,72 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor)
           .length = 7};
 }
 
+template <>
+auto Sakura::HuC6280::PHX(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "PHX", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::PHY(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "PHY", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::JSR(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("JSR %04x", address),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  int bit_position = Common::Bits::test_power_of_2(imm);
+
+  return {.mnemonic = Common::Formatter::format("TMA%d", bit_position),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::PHA(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "PHA", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::INC_ACC(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "INC A", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::ASL_ACC(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "ASL A", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::TAX(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  (void)processor;
+  return {.mnemonic = "TAX", .length = 1};
+}
+
 #endif

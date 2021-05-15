@@ -116,3 +116,7 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
 void Controller::set_mapping_register(uint8_t index, uint8_t value) {
   m_registers.values[index] = value;
 }
+
+auto Controller::mapping_register(uint8_t index) -> uint8_t {
+  return m_registers.values[index];
+}
