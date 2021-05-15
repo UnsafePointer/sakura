@@ -189,4 +189,18 @@ auto Sakura::HuC6280::PHY(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "PHY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::JSR(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("JSR %04x", address),
+          .length = 3};
+}
+
 #endif

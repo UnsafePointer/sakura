@@ -111,6 +111,8 @@ private:
   friend auto PHX(std::unique_ptr<Processor> &processor) -> T;
   template <typename T>
   friend auto PHY(std::unique_ptr<Processor> &processor) -> T;
+  template <typename T>
+  friend auto JSR(std::unique_ptr<Processor> &processor) -> T;
 
 public:
   Processor();
