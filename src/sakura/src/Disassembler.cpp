@@ -21,7 +21,7 @@ auto Disassembler::previous_program_counter() -> std::string {
 void Disassembler::disassemble(uint8_t opcode) {
   InstructionHandler<Disassembled> handler =
       INSTRUCTION_TABLE<Disassembled>[opcode];
-  Disassembled instruction = handler(m_processor);
+  Disassembled instruction = handler(m_processor, opcode);
   std::stringstream machine_code = std::stringstream();
   machine_code << "; ";
   machine_code << Common::Formatter::colorize(
