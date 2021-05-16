@@ -14,34 +14,35 @@ struct Disassembled {
 };
 
 template <typename T>
-using InstructionHandler = T (*)(std::unique_ptr<Processor> &processor);
+using InstructionHandler = T (*)(std::unique_ptr<Processor> &processor,
+                                 uint8_t opcode);
 
 // clang-format off
-template <typename T> auto SEI(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto CSL(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto LDA_IMM(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto TAM_I(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto LDA_ABS(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto BEQ(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto CLD(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto CSH(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto LDX_IMM(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto TXS(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto STZ_ABS(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto STZ_ZP(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto TAI(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto PHX(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto PHY(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto JSR(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto TMA_I(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto PHA(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto INC_ACC(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto ASL_ACC(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto TAX(std::unique_ptr<Processor> &processor) -> T;
-template <typename T> auto JMP_ABS_X(std::unique_ptr<Processor> &processor) -> T;
+template <typename T> auto SEI(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto CSL(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto LDA_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto TAM_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto LDA_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto AND_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto BEQ(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto CLD(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto CSH(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto LDX_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto TXS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto STA_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto STA_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto STZ_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto STZ_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto TAI(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto PHX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto PHY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto JSR(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto TMA_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto PHA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto INC_ACC(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto ASL_ACC(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto TAX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto JMP_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {

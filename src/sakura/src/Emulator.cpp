@@ -26,7 +26,7 @@ void Emulator::emulate() {
       break;
     }
     m_disassembler->disassemble(opcode);
-    handler(m_processor);
+    handler(m_processor, opcode);
   }
 }
 

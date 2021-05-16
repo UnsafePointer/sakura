@@ -75,56 +75,58 @@ private:
   auto execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl, uint8_t dh,
                               uint8_t ll, uint8_t lh) -> uint16_t;
 
+  // clang-format off
   template <typename T>
-  friend auto SEI(std::unique_ptr<Processor> &processor) -> T;
+  friend auto SEI(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto CSL(std::unique_ptr<Processor> &processor) -> T;
+  friend auto CSL(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto LDA_IMM(std::unique_ptr<Processor> &processor) -> T;
+  friend auto LDA_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto TAM_I(std::unique_ptr<Processor> &processor) -> T;
+  friend auto TAM_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto LDA_ABS(std::unique_ptr<Processor> &processor) -> T;
+  friend auto LDA_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto AND_IMM(std::unique_ptr<Processor> &processor) -> T;
+  friend auto AND_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto BEQ(std::unique_ptr<Processor> &processor) -> T;
+  friend auto BEQ(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto CLD(std::unique_ptr<Processor> &processor) -> T;
+  friend auto CLD(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto CSH(std::unique_ptr<Processor> &processor) -> T;
+  friend auto CSH(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto LDX_IMM(std::unique_ptr<Processor> &processor) -> T;
+  friend auto LDX_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto TXS(std::unique_ptr<Processor> &processor) -> T;
+  friend auto TXS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto STA_ZP(std::unique_ptr<Processor> &processor) -> T;
+  friend auto STA_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto STA_ABS(std::unique_ptr<Processor> &processor) -> T;
+  friend auto STA_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto STZ_ABS(std::unique_ptr<Processor> &processor) -> T;
+  friend auto STZ_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto STZ_ZP(std::unique_ptr<Processor> &processor) -> T;
+  friend auto STZ_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto TAI(std::unique_ptr<Processor> &processor) -> T;
+  friend auto TAI(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto PHX(std::unique_ptr<Processor> &processor) -> T;
+  friend auto PHX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto PHY(std::unique_ptr<Processor> &processor) -> T;
+  friend auto PHY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto JSR(std::unique_ptr<Processor> &processor) -> T;
+  friend auto JSR(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto TMA_I(std::unique_ptr<Processor> &processor) -> T;
+  friend auto TMA_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto PHA(std::unique_ptr<Processor> &processor) -> T;
+  friend auto PHA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto INC_ACC(std::unique_ptr<Processor> &processor) -> T;
+  friend auto INC_ACC(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto ASL_ACC(std::unique_ptr<Processor> &processor) -> T;
+  friend auto ASL_ACC(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto TAX(std::unique_ptr<Processor> &processor) -> T;
+  friend auto TAX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto JMP_ABS_X(std::unique_ptr<Processor> &processor) -> T;
+  friend auto JMP_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  // clang-format on
 
 public:
   Processor();
