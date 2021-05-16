@@ -243,4 +243,25 @@ auto Sakura::HuC6280::TAX(std::unique_ptr<Processor> &processor)
   return {.mnemonic = "TAX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::JMP_ABS_X(std::unique_ptr<Processor> &processor)
+    -> Disassembled {
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t destination = processor->m_mapping_controller->load(
+      address + processor->m_registers.x + 1);
+  destination <<= 8;
+  destination |=
+      processor->m_mapping_controller->load(address + processor->m_registers.x);
+
+  return {.mnemonic = Common::Formatter::format("JMP (%04x, X)  %04x", address,
+                                                destination),
+          .length = 3};
+}
+
 #endif
