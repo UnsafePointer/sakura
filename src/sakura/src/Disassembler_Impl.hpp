@@ -289,4 +289,16 @@ auto Sakura::HuC6280::JMP_ABS_X(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::SMB_I(std::unique_ptr<Processor> &processor,
+                            uint8_t opcode) -> Disassembled {
+  uint8_t index = opcode & 0x70;
+  index >>= 4;
+
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("SMB%d %02x", index, zz),
+          .length = 2};
+}
+
 #endif

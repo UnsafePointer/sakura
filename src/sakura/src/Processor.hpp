@@ -126,6 +126,8 @@ private:
   friend auto TAX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto JMP_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  template <typename T>
+  friend auto SMB_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   // clang-format on
 
 public:
