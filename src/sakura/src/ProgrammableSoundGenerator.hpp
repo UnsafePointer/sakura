@@ -27,11 +27,23 @@ union LowFrequencyOscillatorControl {
   LowFrequencyOscillatorControl() : value() {}
 };
 
+union ChannelSelect {
+  struct {
+    uint8_t ch_sel : 3;
+    uint8_t unused : 5;
+  };
+
+  uint8_t value;
+
+  ChannelSelect() : value() {}
+};
+
 class Controller {
 private:
   MainAmplitudeLevelAdjustment m_main_amplitude_level_adjustment;
   uint8_t m_low_frequency_oscillator_frequency;
   LowFrequencyOscillatorControl m_low_frequency_oscillator_control;
+  ChannelSelect m_channel_select;
 
 public:
   Controller() = default;
