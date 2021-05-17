@@ -15,6 +15,9 @@ namespace HuC6280 {
 namespace IO {
 class Controller;
 } // namespace IO
+namespace ProgrammableSoundGenerator {
+class Controller;
+} // namespace ProgrammableSoundGenerator
 
 class Disassembler;
 
@@ -25,6 +28,9 @@ const Common::Range<uint32_t> IO_RANGE =
 
 const Common::Range<uint32_t> VIDEO_DISPLAY_CONTROLLER_RANGE =
     Common::Range<uint32_t>(0x1FE000, 0x400);
+
+const Common::Range<uint32_t> PROGRAMMABLE_SOUND_GENERATOR_RANGE =
+    Common::Range<uint32_t>(0x1FE800, 0xC00);
 
 union Registers {
   struct {
@@ -52,6 +58,8 @@ private:
 
   std::unique_ptr<IO::Controller> m_IO_controller;
   std::unique_ptr<HuC6270::Controller> m_video_display_controller;
+  std::unique_ptr<ProgrammableSoundGenerator::Controller>
+      m_programmable_sound_generator_controller;
 
 public:
   Controller();
