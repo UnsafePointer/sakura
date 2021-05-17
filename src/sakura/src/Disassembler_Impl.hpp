@@ -425,4 +425,12 @@ auto Sakura::HuC6280::CLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "CLY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::NOP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "NOP", .length = 1};
+}
+
 #endif

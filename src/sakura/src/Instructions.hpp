@@ -56,6 +56,7 @@ template <typename T> auto PLY(std::unique_ptr<Processor> &processor, uint8_t op
 template <typename T> auto PLX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto LDA_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto CLY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto NOP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -74,7 +75,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*B+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, NULL, NULL,    NULL,    NULL, NULL,      NULL,    NULL,    NULL,
   /*C+*/ NULL,    NULL, CLY,     NULL,  NULL,   NULL,   NULL, SMB_I, NULL, NULL,    DEX,     NULL, NULL,      NULL,    NULL,    NULL,
   /*D+*/ NULL,    NULL, NULL,    NULL,  CSH,    NULL,   NULL, SMB_I, CLD,  NULL,    PHX,     NULL, NULL,      NULL,    NULL,    NULL,
-  /*E+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, NULL, NULL,    NULL,    NULL, NULL,      NULL,    NULL,    NULL,
+  /*E+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, NULL, NULL,    NOP,     NULL, NULL,      NULL,    NULL,    NULL,
   /*F+*/ BEQ,     NULL, NULL,    TAI,   NULL,   NULL,   NULL, SMB_I, NULL, NULL,    PLX,     NULL, NULL,      NULL,    NULL,    NULL,
 };
 // clang-format on
