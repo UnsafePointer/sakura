@@ -18,6 +18,7 @@ union MainAmplitudeLevelAdjustment {
 class Controller {
 private:
   MainAmplitudeLevelAdjustment m_main_amplitude_level_adjustment;
+  uint8_t m_low_frequency_oscillator_frequency;
 
 public:
   Controller() = default;

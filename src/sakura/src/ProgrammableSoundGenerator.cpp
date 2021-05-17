@@ -8,6 +8,8 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
   switch (offset & 0b1111) {
   case 0b0001:
     return m_main_amplitude_level_adjustment.value;
+  case 0b1000:
+    return m_low_frequency_oscillator_frequency;
   default:
     std::cout << Common::Formatter::format(
                      "Unhandled HuC6280 PSG load with offset: %04x", offset)
@@ -20,6 +22,9 @@ void Controller::store(uint16_t offset, uint8_t value) {
   switch (offset & 0b1111) {
   case 0b0001:
     m_main_amplitude_level_adjustment.value = value;
+    break;
+  case 0b1000:
+    m_low_frequency_oscillator_frequency = value;
     break;
   default:
     std::cout
