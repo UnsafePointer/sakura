@@ -348,4 +348,15 @@ auto Sakura::HuC6280::DEX(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "DEX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::BPL(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BPL %04x", destination),
+          .length = 2};
+}
+
 #endif

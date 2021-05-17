@@ -134,6 +134,8 @@ private:
   friend auto STX_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto DEX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  template <typename T>
+  friend auto BPL(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   // clang-format on
 
 public:
