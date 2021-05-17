@@ -400,4 +400,12 @@ auto Sakura::HuC6280::PLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "PLY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::PLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLX", .length = 1};
+}
+
 #endif
