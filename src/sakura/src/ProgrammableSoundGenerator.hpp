@@ -15,10 +15,23 @@ union MainAmplitudeLevelAdjustment {
   MainAmplitudeLevelAdjustment() : value() {}
 };
 
+union LowFrequencyOscillatorControl {
+  struct {
+    uint8_t lf_ctl : 2;
+    uint8_t unused : 5;
+    uint8_t lf_trg : 1;
+  };
+
+  uint8_t value;
+
+  LowFrequencyOscillatorControl() : value() {}
+};
+
 class Controller {
 private:
   MainAmplitudeLevelAdjustment m_main_amplitude_level_adjustment;
   uint8_t m_low_frequency_oscillator_frequency;
+  LowFrequencyOscillatorControl m_low_frequency_oscillator_control;
 
 public:
   Controller() = default;
