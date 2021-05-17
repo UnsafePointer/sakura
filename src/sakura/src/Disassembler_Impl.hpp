@@ -340,4 +340,12 @@ auto Sakura::HuC6280::STX_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::DEX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "DEX", .length = 1};
+}
+
 #endif
