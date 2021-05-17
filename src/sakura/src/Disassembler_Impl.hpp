@@ -292,13 +292,80 @@ auto Sakura::HuC6280::JMP_ABS_X(std::unique_ptr<Processor> &processor,
 template <>
 auto Sakura::HuC6280::SMB_I(std::unique_ptr<Processor> &processor,
                             uint8_t opcode) -> Disassembled {
-  uint8_t index = opcode & 0x70;
-  index >>= 4;
-
   uint8_t zz = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("SMB%d %02x", index, zz),
+
+  uint16_t address = 0x2000 | zz;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t index = opcode & 0x70;
+  index >>= 4;
+  value |= 1UL << index;
+
+  return {.mnemonic = Common::Formatter::format("SMB%d %02x  @%04x=%02x", index,
+                                                zz, address, value),
           .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::RMB_I(std::unique_ptr<Processor> &processor,
+                            uint8_t opcode) -> Disassembled {
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t address = 0x2000 | zz;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t index = opcode & 0x70;
+  index >>= 4;
+  value &= ~(1UL << index);
+
+  return {.mnemonic = Common::Formatter::format("RMB%d %02x  @%04x=%02x", index,
+                                                zz, address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STX_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("STX %04x", address),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::DEX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "DEX", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::BPL(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BPL %04x", destination),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::LDY_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("LDY #%02x", imm), .length = 2};
 }
 
 #endif
