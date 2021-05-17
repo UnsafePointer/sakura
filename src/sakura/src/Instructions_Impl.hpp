@@ -547,4 +547,17 @@ auto Sakura::HuC6280::RST(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::PLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.y = processor->pop_from_stack();
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.y >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.y == 0;
+  return 4;
+}
+
 #endif

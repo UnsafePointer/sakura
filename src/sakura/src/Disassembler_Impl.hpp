@@ -392,4 +392,12 @@ auto Sakura::HuC6280::RST(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "RST", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::PLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLY", .length = 1};
+}
+
 #endif
