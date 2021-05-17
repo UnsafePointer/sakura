@@ -148,6 +148,8 @@ private:
   friend auto PLY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto PLX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  template <typename T>
+  friend auto LDA_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   // clang-format on
 
 public:

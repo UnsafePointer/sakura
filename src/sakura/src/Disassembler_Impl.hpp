@@ -408,4 +408,13 @@ auto Sakura::HuC6280::PLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "PLX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("LDA %02x", zp), .length = 2};
+}
+
 #endif
