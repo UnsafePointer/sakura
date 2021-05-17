@@ -444,4 +444,22 @@ auto Sakura::HuC6280::RMB_I(std::unique_ptr<Processor> &processor,
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::STX_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  processor->m_mapping_controller->store(address, processor->m_registers.x);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 5;
+}
+
 #endif
