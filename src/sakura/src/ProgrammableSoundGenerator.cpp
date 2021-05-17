@@ -32,6 +32,7 @@ void Controller::store(uint16_t offset, uint8_t value) {
     break;
   case 0b1000:
     m_low_frequency_oscillator_frequency = value;
+    break;
   case 0b1001:
     m_low_frequency_oscillator_control.value = value;
     break;
