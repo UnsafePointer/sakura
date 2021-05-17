@@ -368,4 +368,12 @@ auto Sakura::HuC6280::LDY_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("LDY #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::TYA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "TYA", .length = 1};
+}
+
 #endif

@@ -508,4 +508,17 @@ auto Sakura::HuC6280::LDY_IMM(std::unique_ptr<Processor> &processor,
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::TYA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.accumulator = processor->m_registers.y;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 2;
+}
+
 #endif
