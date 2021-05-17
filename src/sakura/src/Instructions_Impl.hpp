@@ -592,4 +592,14 @@ auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::CLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.y = 0x0;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 2;
+}
+
 #endif

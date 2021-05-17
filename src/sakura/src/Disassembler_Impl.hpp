@@ -417,4 +417,12 @@ auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("LDA %02x", zp), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLY", .length = 1};
+}
+
 #endif
