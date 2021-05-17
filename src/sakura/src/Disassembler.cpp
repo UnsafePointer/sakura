@@ -21,6 +21,13 @@ auto Disassembler::previous_program_counter() -> std::string {
 void Disassembler::disassemble(uint8_t opcode) {
   InstructionHandler<Disassembled> handler =
       INSTRUCTION_TABLE<Disassembled>[opcode];
+  if (handler == nullptr) {
+    std::cout << Common::Formatter::format("%s: Unhandled opcode: %#04x",
+                                           previous_program_counter().c_str(),
+                                           opcode)
+              << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
   Disassembled instruction = handler(m_processor, opcode);
   std::stringstream machine_code = std::stringstream();
   machine_code << "; ";
