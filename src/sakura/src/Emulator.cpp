@@ -20,11 +20,6 @@ void Emulator::emulate() {
     uint8_t opcode = m_processor->fetch_instruction();
     HuC6280::InstructionHandler<uint8_t> handler =
         HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
-    if (handler == nullptr) {
-      std::cout << Common::Formatter::format("Unhandled opcode: %#04x", opcode)
-                << std::endl;
-      break;
-    }
     m_disassembler->disassemble(opcode);
     handler(m_processor, opcode);
   }

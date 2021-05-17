@@ -368,4 +368,88 @@ auto Sakura::HuC6280::LDY_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("LDY #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::TYA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "TYA", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::PLA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLA", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::RST(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "RST", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::PLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLY", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::PLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLX", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("LDA %02x", zp), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::CLY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLY", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::NOP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "NOP", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::LDA_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = Common::Formatter::format("LDA %04x, Y  @%04x=%02x",
+                                                address, address, value),
+          .length = 3};
+}
+
 #endif
