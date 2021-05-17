@@ -62,6 +62,7 @@ template <typename T> auto STA_ABS_Y(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto ORA_ABS_Y(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto EOR_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto EOR_ABS_Y(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto AND_ABS_Y(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -69,7 +70,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*0+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, RMB_I, NULL, NULL,      ASL_ACC, NULL, NULL,      NULL,    NULL,    NULL,
   /*1+*/ BPL,     NULL, NULL,    NULL,  NULL,   NULL,   NULL, RMB_I, NULL, ORA_ABS_Y, INC_ACC, NULL, NULL,      NULL,    NULL,    NULL,
   /*2+*/ JSR,     NULL, NULL,    NULL,  NULL,   NULL,   NULL, RMB_I, NULL, AND_IMM,   NULL,    NULL, NULL,      NULL,    NULL,    NULL,
-  /*3+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, RMB_I, NULL, NULL,      NULL,    NULL, NULL,      NULL,    NULL,    NULL,
+  /*3+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, RMB_I, NULL, AND_ABS_Y, NULL,    NULL, NULL,      NULL,    NULL,    NULL,
   /*4+*/ NULL,    NULL, NULL,    TMA_I, NULL,   NULL,   NULL, RMB_I, PHA,  EOR_IMM,   NULL,    NULL, NULL,      NULL,    NULL,    NULL,
   /*5+*/ NULL,    NULL, NULL,    TAM_I, CSL,    NULL,   NULL, RMB_I, NULL, EOR_ABS_Y, PHY,     NULL, NULL,      NULL,    NULL,    NULL,
   /*6+*/ RST,     NULL, NULL,    NULL,  STZ_ZP, NULL,   NULL, RMB_I, PLA,  NULL,      NULL,    NULL, NULL,      NULL,    NULL,    NULL,
