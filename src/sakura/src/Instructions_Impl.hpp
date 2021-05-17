@@ -392,6 +392,7 @@ auto Sakura::HuC6280::JMP_ABS_X(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
   uint16_t hh = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
 
   uint16_t address = hh << 8 | ll;
   processor->m_registers.program_counter.program_counter_low =
