@@ -756,4 +756,88 @@ auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::INY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.y++;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.y >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.y == 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::CPY_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t result = processor->m_registers.y - imm;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = processor->m_registers.y >= imm;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::BCC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.carry == 0) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
+template <>
+auto Sakura::HuC6280::CMP_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t result = processor->m_registers.accumulator - imm;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry =
+      processor->m_registers.accumulator >= imm;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::BNE(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.zero == 0) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
 #endif
