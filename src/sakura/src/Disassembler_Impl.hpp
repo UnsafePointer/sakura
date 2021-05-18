@@ -617,4 +617,13 @@ auto Sakura::HuC6280::INX(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "INX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::CPX_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("CPX #%02x", imm), .length = 2};
+}
+
 #endif
