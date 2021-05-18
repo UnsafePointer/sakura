@@ -840,4 +840,14 @@ auto Sakura::HuC6280::BNE(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return cycles;
 }
 
+template <>
+auto Sakura::HuC6280::CLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.x = 0x0;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 2;
+}
+
 #endif

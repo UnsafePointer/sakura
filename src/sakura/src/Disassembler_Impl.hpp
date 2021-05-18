@@ -582,4 +582,12 @@ auto Sakura::HuC6280::BNE(std::unique_ptr<Processor> &processor, uint8_t opcode)
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLX", .length = 1};
+}
+
 #endif
