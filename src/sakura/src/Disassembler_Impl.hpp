@@ -582,4 +582,73 @@ auto Sakura::HuC6280::BNE(std::unique_ptr<Processor> &processor, uint8_t opcode)
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLX", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::LDA_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.x);
+
+  return {.mnemonic = Common::Formatter::format("LDA %04x, Y  @%04x=%02x",
+                                                address, address, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::INX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "INX", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::CPX_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("CPX #%02x", imm), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::ST0(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("ST0 #%02x", imm), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::DEY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "DEY", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::TAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "TAY", .length = 1};
+}
+
 #endif
