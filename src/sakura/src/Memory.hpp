@@ -8,6 +8,9 @@
 #include <memory>
 
 namespace Sakura {
+namespace HuC6260 {
+class Controller;
+} // namespace HuC6260
 namespace HuC6270 {
 class Controller;
 } // namespace HuC6270
@@ -28,6 +31,9 @@ const Common::Range<uint32_t> IO_RANGE =
 
 const Common::Range<uint32_t> VIDEO_DISPLAY_CONTROLLER_RANGE =
     Common::Range<uint32_t>(0x1FE000, 0x400);
+
+const Common::Range<uint32_t> VIDEO_COLOR_ENCODER_RANGE =
+    Common::Range<uint32_t>(0x1FE400, 0x400);
 
 const Common::Range<uint32_t> PROGRAMMABLE_SOUND_GENERATOR_RANGE =
     Common::Range<uint32_t>(0x1FE800, 0xC00);
@@ -60,6 +66,7 @@ private:
   std::unique_ptr<HuC6270::Controller> m_video_display_controller;
   std::unique_ptr<ProgrammableSoundGenerator::Controller>
       m_programmable_sound_generator_controller;
+  std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
 
 public:
   Controller();
