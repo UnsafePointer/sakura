@@ -643,4 +643,12 @@ auto Sakura::HuC6280::DEY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "DEY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::TAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "TAY", .length = 1};
+}
+
 #endif
