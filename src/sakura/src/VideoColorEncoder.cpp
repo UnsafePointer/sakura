@@ -18,6 +18,12 @@ void Controller::store(uint16_t offset, uint8_t value) {
   case 0b011:
     m_color_table_address.high = value;
     break;
+  case 0b100:
+    m_color_table_data_write.low = value;
+    break;
+  case 0b101:
+    m_color_table_data_write.high = value;
+    break;
   default:
     std::cout << Common::Formatter::format(
                      "Unhandled HuC6260 store with offset: %04x, value: %02x",

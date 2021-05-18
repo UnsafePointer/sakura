@@ -19,8 +19,25 @@ union ColorTableAddress {
   ColorTableAddress() : value() {}
 };
 
+union ColorTableDataWrite {
+  struct {
+    uint8_t low : 8;
+    uint8_t high : 8;
+  };
+  struct {
+    uint16_t r : 3;
+    uint16_t g : 3;
+    uint16_t b : 3;
+    uint16_t unused : 7;
+  };
+  uint16_t value;
+
+  ColorTableDataWrite() : value() {}
+};
+
 class Controller {
   ColorTableAddress m_color_table_address;
+  ColorTableDataWrite m_color_table_data_write;
 
 public:
   Controller() = default;
