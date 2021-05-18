@@ -452,4 +452,86 @@ auto Sakura::HuC6280::LDA_ABS_Y(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::STA_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format(
+              "STA %04x, Y @%04x", address, address + processor->m_registers.y),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::ORA_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = Common::Formatter::format(
+              "ORA %04x, Y @%04x=%02x", address,
+              address + processor->m_registers.y, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::EOR_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("EOR #%02x", imm), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::EOR_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = Common::Formatter::format(
+              "EOR %04x, Y @%04x=%02x", address,
+              address + processor->m_registers.y, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = Common::Formatter::format(
+              "AND %04x, Y @%04x=%02x", address,
+              address + processor->m_registers.y, value),
+          .length = 3};
+}
+
 #endif

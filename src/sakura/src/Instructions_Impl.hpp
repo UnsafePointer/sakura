@@ -635,4 +635,125 @@ auto Sakura::HuC6280::LDA_ABS_Y(std::unique_ptr<Processor> &processor,
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::STA_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  processor->m_mapping_controller->store(address + processor->m_registers.y,
+                                         processor->m_registers.accumulator);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::ORA_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled ORA (ABS, Y) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+  processor->m_registers.accumulator |= value;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::EOR_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled EOR (IMM) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  processor->m_registers.accumulator ^= imm;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::EOR_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled EOR (ABS, Y) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+  processor->m_registers.accumulator ^= value;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled AND (ABS, Y) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+  processor->m_registers.accumulator &= value;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 5;
+}
+
 #endif
