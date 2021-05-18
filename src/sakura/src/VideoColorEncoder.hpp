@@ -38,6 +38,7 @@ union ColorTableDataWrite {
 class Controller {
   ColorTableAddress m_color_table_address;
   ColorTableDataWrite m_color_table_data_write;
+  uint8_t m_control;
 
 public:
   Controller() = default;

@@ -12,6 +12,9 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
 
 void Controller::store(uint16_t offset, uint8_t value) {
   switch (offset & 0b111) {
+  case 0b000:
+    m_control = value;
+    break;
   case 0b010:
     m_color_table_address.low = value;
     break;
