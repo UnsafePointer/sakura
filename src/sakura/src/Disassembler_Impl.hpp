@@ -635,4 +635,12 @@ auto Sakura::HuC6280::ST0(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = Common::Formatter::format("ST0 #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::DEY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "DEY", .length = 1};
+}
+
 #endif
