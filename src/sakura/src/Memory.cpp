@@ -137,6 +137,19 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
   }
 }
 
+void Controller::store_video_display_controller(uint32_t physical_address,
+                                                uint8_t value) {
+  auto offset_hw = VIDEO_DISPLAY_CONTROLLER_RANGE.contains(physical_address);
+  if (!offset_hw) {
+    std::cout << Common::Formatter::format(
+                     "Physical address: %#x doesn't belong to HuC6270 VDC",
+                     physical_address)
+              << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  m_video_display_controller->store(*offset_hw, value);
+}
+
 void Controller::set_mapping_register(uint8_t index, uint8_t value) {
   m_registers.values[index] = value;
 }

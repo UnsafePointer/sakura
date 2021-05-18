@@ -77,6 +77,7 @@ public:
 
   auto load(uint16_t logical_address) -> uint8_t;
   void store(uint16_t logical_address, uint8_t value);
+  void store_video_display_controller(uint32_t physical_address, uint8_t value);
 
   void set_mapping_register(uint8_t index, uint8_t value);
   auto mapping_register(uint8_t index) -> uint8_t;
