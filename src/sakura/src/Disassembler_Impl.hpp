@@ -534,4 +534,12 @@ auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::INY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "INY", .length = 1};
+}
+
 #endif
