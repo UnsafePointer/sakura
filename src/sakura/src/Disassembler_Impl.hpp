@@ -651,4 +651,21 @@ auto Sakura::HuC6280::TAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "TAY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::LDY_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("LDY %02x%02x  @%04x=%02x", hh,
+                                                ll, address, value),
+          .length = 3};
+}
+
 #endif
