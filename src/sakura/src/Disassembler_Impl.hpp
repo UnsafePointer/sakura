@@ -609,4 +609,12 @@ auto Sakura::HuC6280::LDA_ABS_X(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::INX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "INX", .length = 1};
+}
+
 #endif

@@ -70,6 +70,7 @@ template <typename T> auto CMP_IMM(std::unique_ptr<Processor> &processor, uint8_
 template <typename T> auto BNE(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto CLX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto LDA_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto INX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -88,7 +89,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*B+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, NULL, LDA_ABS_Y, NULL,    NULL, NULL,      LDA_ABS_X, NULL,    NULL,
   /*C+*/ CPY_IMM, NULL, CLY,     NULL,  NULL,   NULL,   NULL, SMB_I, INY,  CMP_IMM,   DEX,     NULL, NULL,      NULL,      NULL,    NULL,
   /*D+*/ BNE,     NULL, NULL,    NULL,  CSH,    NULL,   NULL, SMB_I, CLD,  NULL,      PHX,     NULL, NULL,      NULL,      NULL,    NULL,
-  /*E+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, NULL, NULL,      NOP,     NULL, NULL,      NULL,      NULL,    NULL,
+  /*E+*/ NULL,    NULL, NULL,    NULL,  NULL,   NULL,   NULL, SMB_I, INX,  NULL,      NOP,     NULL, NULL,      NULL,      NULL,    NULL,
   /*F+*/ BEQ,     NULL, NULL,    TAI,   NULL,   NULL,   NULL, SMB_I, NULL, NULL,      PLX,     NULL, NULL,      NULL,      NULL,    NULL,
 };
 // clang-format on
