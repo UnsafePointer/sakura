@@ -1114,4 +1114,13 @@ auto Sakura::HuC6280::CPX_ZP(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::SEC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.carry = 1;
+  return 2;
+}
+
 #endif

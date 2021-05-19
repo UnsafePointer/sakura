@@ -776,4 +776,12 @@ auto Sakura::HuC6280::CPX_ZP(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::SEC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "SEC", .length = 1};
+}
+
 #endif
