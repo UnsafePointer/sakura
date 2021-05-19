@@ -414,7 +414,12 @@ auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("LDA %02x", zp), .length = 2};
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("LDA %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
 }
 
 template <>
@@ -728,6 +733,64 @@ auto Sakura::HuC6280::CLC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   (void)processor;
   (void)opcode;
   return {.mnemonic = "CLC", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("ADC #%02x", imm), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STZ_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.x;
+
+  return {.mnemonic = Common::Formatter::format("STZ %02x%02x, X  @%04x", hh,
+                                                ll, address),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::CPX_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("CPX %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SEC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "SEC", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("SBC #%02x", imm), .length = 2};
 }
 
 #endif
