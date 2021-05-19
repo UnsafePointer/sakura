@@ -703,4 +703,23 @@ auto Sakura::HuC6280::STA_ABS_X(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::LDA_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = 0x2000 | zz;
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("LDA (%02x), Y  @%04x=%02x", zz,
+                                                address, value),
+          .length = 2};
+}
+
 #endif
