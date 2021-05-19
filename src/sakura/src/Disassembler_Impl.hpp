@@ -784,4 +784,13 @@ auto Sakura::HuC6280::SEC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "SEC", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("SBC #%02x", imm), .length = 2};
+}
+
 #endif

@@ -1123,4 +1123,34 @@ auto Sakura::HuC6280::SEC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled SBC (IMM) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    std::cout << "Unhandled SBC (IMM) with D flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t result = processor->m_registers.accumulator -
+                   (imm + processor->m_registers.status.carry);
+  auto carry =
+      static_cast<uint8_t>(processor->m_registers.accumulator <
+                           (imm + processor->m_registers.status.carry));
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 2;
+}
+
 #endif
