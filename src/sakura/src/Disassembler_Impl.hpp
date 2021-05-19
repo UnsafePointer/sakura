@@ -739,4 +739,21 @@ auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("ADC #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::STZ_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.x;
+
+  return {.mnemonic =
+              Common::Formatter::format("STZ %04x, X  @%04x", address, address),
+          .length = 3};
+}
+
 #endif
