@@ -730,4 +730,13 @@ auto Sakura::HuC6280::CLC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "CLC", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("ADC #%02x", imm), .length = 2};
+}
+
 #endif
