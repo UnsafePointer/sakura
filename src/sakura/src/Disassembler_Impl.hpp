@@ -722,4 +722,12 @@ auto Sakura::HuC6280::LDA_IND_Y(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLC", .length = 1};
+}
+
 #endif
