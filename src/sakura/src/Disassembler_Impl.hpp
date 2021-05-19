@@ -756,8 +756,8 @@ auto Sakura::HuC6280::STZ_ABS_X(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.x;
 
-  return {.mnemonic =
-              Common::Formatter::format("STZ %04x, X  @%04x", address, address),
+  return {.mnemonic = Common::Formatter::format("STZ %02x%02x, X  @%04x", hh,
+                                                ll, address),
           .length = 3};
 }
 
