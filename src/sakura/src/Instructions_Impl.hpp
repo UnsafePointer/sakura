@@ -1534,4 +1534,29 @@ auto Sakura::HuC6280::STX_ZP(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::ASL_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  zp += processor->m_registers.x;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t carry = value >> 7 & 0b1;
+  value <<= 1;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  processor->m_registers.status.carry = carry;
+  return 6;
+}
+
 #endif

@@ -1025,4 +1025,18 @@ auto Sakura::HuC6280::STX_ZP(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("STX %02x", zp), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::ASL_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("ASL %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
 #endif
