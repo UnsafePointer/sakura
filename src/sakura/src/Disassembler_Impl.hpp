@@ -999,7 +999,117 @@ auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
   uint8_t value = processor->m_mapping_controller->load(address);
   return {.mnemonic = Common::Formatter::format("INC %02x  @%04x=%02x", zp,
                                                 address, value),
-          .length = 1};
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STA_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+
+  uint16_t address = 0x2000 | zp;
+  return {.mnemonic =
+              Common::Formatter::format("STA %02x, X  @%04x", zp, address),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STX_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("STX %02x", zp), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::ASL_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("ASL %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::DEC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("DEC %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::LSR_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("LSR %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PHP", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::PLP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLP", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::LDX_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("LDX %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::INC_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint16_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("INC %04x @%04x=%02x", address,
+                                                address, value),
+          .length = 3};
 }
 
 #endif
