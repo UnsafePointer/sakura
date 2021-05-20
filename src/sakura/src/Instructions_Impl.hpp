@@ -1463,4 +1463,22 @@ auto Sakura::HuC6280::BSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 8;
 }
 
+template <>
+auto Sakura::HuC6280::BMI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.negative == 1) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
 #endif
