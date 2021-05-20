@@ -888,4 +888,12 @@ auto Sakura::HuC6280::STA_IND_Y(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLA", .length = 1};
+}
+
 #endif
