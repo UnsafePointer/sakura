@@ -850,7 +850,11 @@ auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ORA %02x", zp), .length = 2};
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("ORA %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
 }
 
 template <>
@@ -913,7 +917,11 @@ auto Sakura::HuC6280::ASL_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ASL %02x", zp), .length = 2};
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("ASL %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
 }
 
 template <>
@@ -922,7 +930,11 @@ auto Sakura::HuC6280::ROL_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ROL %02x", zp), .length = 2};
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = Common::Formatter::format("ROL %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
 }
 
 #endif
