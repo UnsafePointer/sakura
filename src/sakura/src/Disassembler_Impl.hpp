@@ -818,4 +818,19 @@ auto Sakura::HuC6280::CLI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "CLI", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::JMP_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t destination = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("JMP %04x", destination),
+          .length = 3};
+}
+
 #endif
