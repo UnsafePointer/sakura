@@ -1306,4 +1306,22 @@ auto Sakura::HuC6280::CLA(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::BCS(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.carry) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
 #endif
