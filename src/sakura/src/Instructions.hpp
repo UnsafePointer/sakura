@@ -107,11 +107,12 @@ template <typename T> auto STX_ZP(std::unique_ptr<Processor> &processor, uint8_t
 template <typename T> auto ASL_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto DEC_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto LSR_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto PHP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   //     +0       +1         +2       +3     +4      +5        +6        +7     +8    +9         +A       +B    +C         +D         +E         +F
-  /*0+*/ NULL,    NULL,      NULL,    ST0,   NULL,   ORA_ZP,   ASL_ZP,   RMB_I, NULL, ORA_IMM,   ASL_ACC, NULL, NULL,      NULL,      NULL,      NULL,
+  /*0+*/ NULL,    NULL,      NULL,    ST0,   NULL,   ORA_ZP,   ASL_ZP,   RMB_I, PHP,  ORA_IMM,   ASL_ACC, NULL, NULL,      NULL,      NULL,      NULL,
   /*1+*/ BPL,     NULL,      NULL,    NULL,  NULL,   NULL,     ASL_ZP_X, RMB_I, CLC,  ORA_ABS_Y, INC_ACC, NULL, NULL,      NULL,      NULL,      NULL,
   /*2+*/ JSR,     NULL,      NULL,    NULL,  NULL,   NULL,     ROL_ZP,   RMB_I, NULL, AND_IMM,   NULL,    NULL, NULL,      NULL,      NULL,      NULL,
   /*3+*/ BMI,     NULL,      NULL,    NULL,  NULL,   NULL,     NULL,     RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,      NULL,      NULL,      NULL,
