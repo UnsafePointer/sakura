@@ -1324,4 +1324,182 @@ auto Sakura::HuC6280::BCS(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return cycles;
 }
 
+template <>
+auto Sakura::HuC6280::ASL_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t carry = value >> 7 & 0b1;
+  value <<= 1;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  processor->m_registers.status.carry = carry;
+  return 6;
+}
+
+template <>
+auto Sakura::HuC6280::ROL_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t carry = value >> 7 & 0b1;
+  value <<= 1;
+  value |= processor->m_registers.status.carry;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  processor->m_registers.status.carry = carry;
+  return 6;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled ADC (IMM) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    std::cout << "Unhandled ADC (IMM) with D flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled ADC (IMM) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    std::cout << "Unhandled ADC (IMM) with D flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::BSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t rr = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_high);
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_low);
+
+  processor->m_registers.program_counter.value += rr;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 8;
+}
+
+template <>
+auto Sakura::HuC6280::BMI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.negative == 1) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
+template <>
+auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value++;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  return 6;
+}
+
 #endif
