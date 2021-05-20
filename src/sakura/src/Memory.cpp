@@ -1,5 +1,6 @@
 #include "Memory.hpp"
 #include "IO.hpp"
+#include "Interrupt.hpp"
 #include "ProgrammableSoundGenerator.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
@@ -14,8 +15,9 @@ Controller::Controller()
       m_video_display_controller(std::make_unique<HuC6270::Controller>()),
       m_programmable_sound_generator_controller(
           std::make_unique<ProgrammableSoundGenerator::Controller>()),
-      m_video_color_encoder_controller(
-          std::make_unique<HuC6260::Controller>()){};
+      m_video_color_encoder_controller(std::make_unique<HuC6260::Controller>()),
+      m_interrupt_controller(
+          std::make_unique<HuC6280::Interrupt::Controller>()){};
 
 Controller::~Controller() = default;
 

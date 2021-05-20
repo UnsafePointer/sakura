@@ -1,5 +1,6 @@
 add_library(libsakura
     src/Disassembler.cpp
+    src/Interrupt.cpp
     src/IO.cpp
     src/Memory.cpp
     src/Processor.cpp
