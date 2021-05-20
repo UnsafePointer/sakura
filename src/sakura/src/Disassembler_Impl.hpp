@@ -810,4 +810,12 @@ auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("ORA #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLI", .length = 1};
+}
+
 #endif

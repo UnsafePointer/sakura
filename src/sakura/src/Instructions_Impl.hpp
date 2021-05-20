@@ -1186,4 +1186,13 @@ auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::CLI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.interrupt_disable = 0;
+  return 2;
+}
+
 #endif
