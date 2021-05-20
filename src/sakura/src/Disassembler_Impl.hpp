@@ -810,4 +810,101 @@ auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("ORA #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::CLI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLI", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::JMP_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t destination = hh << 8 | ll;
+
+  return {.mnemonic = Common::Formatter::format("JMP %04x", destination),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::BRA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BRA %04x", destination),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("ORA %02x", zp), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STA_IND(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = 0x2000 | zz;
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  return {.mnemonic =
+              Common::Formatter::format("STA (%02x)  @%04x", zz, address),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::STA_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = 0x2000 | zz;
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  return {.mnemonic =
+              Common::Formatter::format("STA (%02x), Y  @%04x", zz, address),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::CLA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "CLA", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::BCS(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BCS %04x", destination),
+          .length = 2};
+}
+
 #endif
