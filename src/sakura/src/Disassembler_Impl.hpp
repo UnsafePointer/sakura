@@ -793,4 +793,12 @@ auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
   return {.mnemonic = Common::Formatter::format("SBC #%02x", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::DEC_ACC(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "DEC A", .length = 1};
+}
+
 #endif
