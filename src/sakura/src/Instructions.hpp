@@ -111,6 +111,9 @@ template <typename T> auto PHP(std::unique_ptr<Processor> &processor, uint8_t op
 template <typename T> auto PLP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto LDX_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto INC_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto LDX_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto LDY_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto SAY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -119,13 +122,13 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*1+*/ BPL,     NULL,      NULL,    NULL,  NULL,   NULL,     ASL_ZP_X, RMB_I, CLC,  ORA_ABS_Y, INC_ACC, NULL, NULL,      NULL,      NULL,      NULL,
   /*2+*/ JSR,     NULL,      NULL,    NULL,  NULL,   NULL,     ROL_ZP,   RMB_I, PLP,  AND_IMM,   NULL,    NULL, NULL,      NULL,      NULL,      NULL,
   /*3+*/ BMI,     NULL,      NULL,    NULL,  NULL,   NULL,     NULL,     RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,      NULL,      NULL,      NULL,
-  /*4+*/ NULL,    NULL,      NULL,    TMA_I, BSR,    NULL,     LSR_ZP,   RMB_I, PHA,  EOR_IMM,   NULL,    NULL, JMP_ABS,   NULL,      NULL,      NULL,
+  /*4+*/ NULL,    NULL,      SAY,     TMA_I, BSR,    NULL,     LSR_ZP,   RMB_I, PHA,  EOR_IMM,   NULL,    NULL, JMP_ABS,   NULL,      NULL,      NULL,
   /*5+*/ NULL,    NULL,      NULL,    TAM_I, CSL,    NULL,     NULL,     RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,      NULL,      NULL,      NULL,
   /*6+*/ RST,     NULL,      CLA,     NULL,  STZ_ZP, ADC_ZP,   NULL,     RMB_I, PLA,  ADC_IMM,   NULL,    NULL, NULL,      ADC_ABS,   NULL,      NULL,
   /*7+*/ NULL,    NULL,      NULL,    NULL,  NULL,   NULL,     NULL,     RMB_I, SEI,  NULL,      PLY,     NULL, JMP_ABS_X, NULL,      NULL,      NULL,
   /*8+*/ BRA,     NULL,      CLX,     NULL,  NULL,   STA_ZP,   STX_ZP,   SMB_I, DEY,  NULL,      NULL,    NULL, NULL,      STA_ABS,   STX_ABS,   NULL,
   /*9+*/ BCC,     STA_IND_Y, STA_IND, NULL,  NULL,   STA_ZP_X, NULL,     SMB_I, TYA,  STA_ABS_Y, TXS,     NULL, STZ_ABS,   STA_ABS_X, STZ_ABS_X, NULL,
-  /*A+*/ LDY_IMM, NULL,      LDX_IMM, NULL,  NULL,   LDA_ZP,   LDX_ZP,   SMB_I, TAY,  LDA_IMM,   TAX,     NULL, LDY_ABS,   LDA_ABS,   NULL,      NULL,
+  /*A+*/ LDY_IMM, NULL,      LDX_IMM, NULL,  LDY_ZP, LDA_ZP,   LDX_ZP,   SMB_I, TAY,  LDA_IMM,   TAX,     NULL, LDY_ABS,   LDA_ABS,   LDX_ABS,   NULL,
   /*B+*/ BCS,     LDA_IND_Y, LDA_IND, NULL,  NULL,   NULL,     NULL,     SMB_I, NULL, LDA_ABS_Y, NULL,    NULL, NULL,      LDA_ABS_X, NULL,      NULL,
   /*C+*/ CPY_IMM, NULL,      CLY,     NULL,  NULL,   NULL,     DEC_ZP,   SMB_I, INY,  CMP_IMM,   DEX,     NULL, NULL,      NULL,      NULL,      NULL,
   /*D+*/ BNE,     NULL,      NULL,    NULL,  CSH,    NULL,     NULL,     SMB_I, CLD,  NULL,      PHX,     NULL, NULL,      NULL,      NULL,      NULL,

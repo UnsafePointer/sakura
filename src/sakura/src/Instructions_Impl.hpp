@@ -1661,4 +1661,55 @@ auto Sakura::HuC6280::INC_ABS(std::unique_ptr<Processor> &processor,
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::LDX_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  processor->m_registers.x = value;
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::LDY_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_registers.y = processor->m_mapping_controller->load(address);
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.y >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.y == 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::SAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t accumulator = processor->m_registers.accumulator;
+  processor->m_registers.accumulator = processor->m_registers.y;
+  processor->m_registers.y = accumulator;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif
