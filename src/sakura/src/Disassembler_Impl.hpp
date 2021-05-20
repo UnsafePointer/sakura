@@ -1002,4 +1002,18 @@ auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
           .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::STA_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+
+  uint16_t address = 0x2000 | zp;
+  return {.mnemonic =
+              Common::Formatter::format("STA %02x, X  @%04x", zp, address),
+          .length = 2};
+}
+
 #endif
