@@ -1612,4 +1612,13 @@ auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 3;
 }
 
+template <>
+auto Sakura::HuC6280::PLP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.value = processor->pop_from_stack();
+
+  return 4;
+}
+
 #endif

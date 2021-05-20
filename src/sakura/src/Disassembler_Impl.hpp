@@ -1073,4 +1073,12 @@ auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "PHP", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::PLP(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "PLP", .length = 1};
+}
+
 #endif
