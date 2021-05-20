@@ -801,4 +801,13 @@ auto Sakura::HuC6280::DEC_ACC(std::unique_ptr<Processor> &processor,
   return {.mnemonic = "DEC A", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = Common::Formatter::format("ORA #%02x", imm), .length = 2};
+}
+
 #endif
