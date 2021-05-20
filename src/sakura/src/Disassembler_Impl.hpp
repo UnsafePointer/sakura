@@ -999,7 +999,7 @@ auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
   uint8_t value = processor->m_mapping_controller->load(address);
   return {.mnemonic = Common::Formatter::format("INC %02x  @%04x=%02x", zp,
                                                 address, value),
-          .length = 1};
+          .length = 2};
 }
 
 template <>
