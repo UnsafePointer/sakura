@@ -21,6 +21,9 @@ class Controller;
 namespace ProgrammableSoundGenerator {
 class Controller;
 } // namespace ProgrammableSoundGenerator
+namespace Interrupt {
+class Controller;
+} // namespace Interrupt
 
 class Disassembler;
 
@@ -28,6 +31,9 @@ namespace Mapping {
 
 const Common::Range<uint32_t> IO_RANGE =
     Common::Range<uint32_t>(0x1FF000, 0x400);
+
+const Common::Range<uint32_t> INTERRUPT_RANGE =
+    Common::Range<uint32_t>(0x1FF400, 0x400);
 
 const Common::Range<uint32_t> VIDEO_DISPLAY_CONTROLLER_RANGE =
     Common::Range<uint32_t>(0x1FE000, 0x400);
@@ -67,6 +73,7 @@ private:
   std::unique_ptr<ProgrammableSoundGenerator::Controller>
       m_programmable_sound_generator_controller;
   std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
+  std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
 
 public:
   Controller();
