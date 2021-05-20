@@ -1700,4 +1700,16 @@ auto Sakura::HuC6280::LDY_ZP(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::SAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t accumulator = processor->m_registers.accumulator;
+  processor->m_registers.accumulator = processor->m_registers.y;
+  processor->m_registers.y = accumulator;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif
