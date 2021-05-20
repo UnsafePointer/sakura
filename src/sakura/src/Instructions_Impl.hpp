@@ -1213,4 +1213,18 @@ auto Sakura::HuC6280::JMP_ABS(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::BRA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  processor->m_registers.program_counter.value += imm;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 4;
+}
+
 #endif
