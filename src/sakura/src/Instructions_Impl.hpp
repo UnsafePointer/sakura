@@ -1227,4 +1227,28 @@ auto Sakura::HuC6280::BRA(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    std::cout << "Unhandled ORA (ZP) with T flag set" << std::endl;
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator | value;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  return 4;
+}
+
 #endif
