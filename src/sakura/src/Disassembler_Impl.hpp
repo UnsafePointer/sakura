@@ -1081,4 +1081,18 @@ auto Sakura::HuC6280::PLP(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "PLP", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::LDX_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = Common::Formatter::format("LDX %02x  @%04x=%02x", zp,
+                                                address, value),
+          .length = 2};
+}
+
 #endif
