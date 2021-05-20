@@ -1481,4 +1481,25 @@ auto Sakura::HuC6280::BMI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return cycles;
 }
 
+template <>
+auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value++;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  return 6;
+}
+
 #endif
