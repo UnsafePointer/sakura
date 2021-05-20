@@ -967,4 +967,15 @@ auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::BSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = Common::Formatter::format("BSR %04x", destination),
+          .length = 2};
+}
+
 #endif
