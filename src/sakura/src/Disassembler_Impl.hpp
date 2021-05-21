@@ -5,8 +5,8 @@
 #include "Memory.hpp"
 #include "Processor.hpp"
 #include <common/Bits.hpp>
-#include <common/Formatter.hpp>
 #include <cstdint>
+#include <fmt/core.h>
 #include <memory>
 
 using namespace Sakura::HuC6280;
@@ -33,7 +33,7 @@ auto Sakura::HuC6280::LDA_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("LDA #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("LDA #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -45,8 +45,7 @@ auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor,
 
   int bit_position = Common::Bits::test_power_of_2(imm);
 
-  return {.mnemonic = Common::Formatter::format("TAM%d", bit_position),
-          .length = 2};
+  return {.mnemonic = fmt::format("TAM{:d}", bit_position), .length = 2};
 }
 
 template <>
@@ -61,8 +60,8 @@ auto Sakura::HuC6280::LDA_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDA %02x%02x  @%04x=%02x", hh,
-                                                ll, address, value),
+  return {.mnemonic = fmt::format("LDA {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -72,7 +71,7 @@ auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("AND #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("AND #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -82,8 +81,7 @@ auto Sakura::HuC6280::BEQ(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BEQ %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BEQ {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -108,7 +106,7 @@ auto Sakura::HuC6280::LDX_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("LDX #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("LDX #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -125,7 +123,7 @@ auto Sakura::HuC6280::STA_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("STA %02x", zp), .length = 2};
+  return {.mnemonic = fmt::format("STA {:#04x}", zp), .length = 2};
 }
 
 template <>
@@ -139,8 +137,7 @@ auto Sakura::HuC6280::STA_ABS(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format("STA %04x", address),
-          .length = 3};
+  return {.mnemonic = fmt::format("STA {:#06x}", address), .length = 3};
 }
 
 template <>
@@ -154,8 +151,7 @@ auto Sakura::HuC6280::STZ_ABS(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format("STZ %04x", address),
-          .length = 3};
+  return {.mnemonic = fmt::format("STZ {:#06x}", address), .length = 3};
 }
 
 template <>
@@ -164,7 +160,7 @@ auto Sakura::HuC6280::STZ_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("STZ %02x", zp), .length = 2};
+  return {.mnemonic = fmt::format("STZ {:#04x}", zp), .length = 2};
 }
 
 template <>
@@ -186,8 +182,9 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   uint8_t lh = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value + 5);
 
-  return {.mnemonic = Common::Formatter::format(
-              "TAI %02x%02x, %02x%02x, %02x%02x", sh, sl, dh, dl, lh, ll),
+  return {.mnemonic =
+              fmt::format("TAI {:#04x}{:#04x}, {:#04x}{:#04x}, {:#04x}{:#04x}",
+                          sh, sl, dh, dl, lh, ll),
           .length = 7};
 }
 
@@ -218,8 +215,7 @@ auto Sakura::HuC6280::JSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
 
   uint16_t address = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format("JSR %04x", address),
-          .length = 3};
+  return {.mnemonic = fmt::format("JSR {:#06x}", address), .length = 3};
 }
 
 template <>
@@ -231,8 +227,7 @@ auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor,
 
   int bit_position = Common::Bits::test_power_of_2(imm);
 
-  return {.mnemonic = Common::Formatter::format("TMA%d", bit_position),
-          .length = 2};
+  return {.mnemonic = fmt::format("TMA{:d}", bit_position), .length = 2};
 }
 
 template <>
@@ -284,8 +279,8 @@ auto Sakura::HuC6280::JMP_ABS_X(std::unique_ptr<Processor> &processor,
   destination |=
       processor->m_mapping_controller->load(address + processor->m_registers.x);
 
-  return {.mnemonic = Common::Formatter::format("JMP (%04x, X)  %04x", address,
-                                                destination),
+  return {.mnemonic =
+              fmt::format("JMP ({:#06x}, X)  {:#06x}", address, destination),
           .length = 3};
 }
 
@@ -302,8 +297,8 @@ auto Sakura::HuC6280::SMB_I(std::unique_ptr<Processor> &processor,
   index >>= 4;
   value |= 1UL << index;
 
-  return {.mnemonic = Common::Formatter::format("SMB%d %02x  @%04x=%02x", index,
-                                                zz, address, value),
+  return {.mnemonic = fmt::format("SMB{:d} {:#04x}  @{:#06x}={:#04x}", index,
+                                  zz, address, value),
           .length = 2};
 }
 
@@ -320,8 +315,8 @@ auto Sakura::HuC6280::RMB_I(std::unique_ptr<Processor> &processor,
   index >>= 4;
   value &= ~(1UL << index);
 
-  return {.mnemonic = Common::Formatter::format("RMB%d %02x  @%04x=%02x", index,
-                                                zz, address, value),
+  return {.mnemonic = fmt::format("RMB{:d} {:#04x}  @{:#06x}={:#04x}", index,
+                                  zz, address, value),
           .length = 2};
 }
 
@@ -336,8 +331,7 @@ auto Sakura::HuC6280::STX_ABS(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format("STX %04x", address),
-          .length = 3};
+  return {.mnemonic = fmt::format("STX {:#06x}", address), .length = 3};
 }
 
 template <>
@@ -355,8 +349,7 @@ auto Sakura::HuC6280::BPL(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BPL %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BPL {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -365,7 +358,7 @@ auto Sakura::HuC6280::LDY_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("LDY #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("LDY #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -417,8 +410,8 @@ auto Sakura::HuC6280::LDA_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDA %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("LDA {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -452,8 +445,8 @@ auto Sakura::HuC6280::LDA_ABS_Y(std::unique_ptr<Processor> &processor,
   uint16_t value =
       processor->m_mapping_controller->load(address + processor->m_registers.y);
 
-  return {.mnemonic = Common::Formatter::format("LDA %04x, Y  @%04x=%02x",
-                                                address, address, value),
+  return {.mnemonic = fmt::format("LDA {:#06x}, Y  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -468,8 +461,8 @@ auto Sakura::HuC6280::STA_ABS_Y(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format(
-              "STA %04x, Y @%04x", address, address + processor->m_registers.y),
+  return {.mnemonic = fmt::format("STA {:#06x}, Y @{:#06x}", address,
+                                  address + processor->m_registers.y),
           .length = 3};
 }
 
@@ -486,9 +479,8 @@ auto Sakura::HuC6280::ORA_ABS_Y(std::unique_ptr<Processor> &processor,
   uint16_t value =
       processor->m_mapping_controller->load(address + processor->m_registers.y);
 
-  return {.mnemonic = Common::Formatter::format(
-              "ORA %04x, Y @%04x=%02x", address,
-              address + processor->m_registers.y, value),
+  return {.mnemonic = fmt::format("ORA {:#06x}, Y @{:#06x}={:#04x}", address,
+                                  address + processor->m_registers.y, value),
           .length = 3};
 }
 
@@ -498,7 +490,7 @@ auto Sakura::HuC6280::EOR_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("EOR #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("EOR #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -514,9 +506,8 @@ auto Sakura::HuC6280::EOR_ABS_Y(std::unique_ptr<Processor> &processor,
   uint16_t value =
       processor->m_mapping_controller->load(address + processor->m_registers.y);
 
-  return {.mnemonic = Common::Formatter::format(
-              "EOR %04x, Y @%04x=%02x", address,
-              address + processor->m_registers.y, value),
+  return {.mnemonic = fmt::format("EOR {:#06x}, Y @{:#06x}={:#04x}", address,
+                                  address + processor->m_registers.y, value),
           .length = 3};
 }
 
@@ -533,9 +524,8 @@ auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
   uint16_t value =
       processor->m_mapping_controller->load(address + processor->m_registers.y);
 
-  return {.mnemonic = Common::Formatter::format(
-              "AND %04x, Y @%04x=%02x", address,
-              address + processor->m_registers.y, value),
+  return {.mnemonic = fmt::format("AND {:#06x}, Y @{:#06x}={:#04x}", address,
+                                  address + processor->m_registers.y, value),
           .length = 3};
 }
 
@@ -553,7 +543,7 @@ auto Sakura::HuC6280::CPY_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("CPY #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("CPY #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -563,8 +553,7 @@ auto Sakura::HuC6280::BCC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BCC %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BCC {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -573,7 +562,7 @@ auto Sakura::HuC6280::CMP_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("CMP #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("CMP #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -583,8 +572,7 @@ auto Sakura::HuC6280::BNE(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BNE %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BNE {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -609,8 +597,8 @@ auto Sakura::HuC6280::LDA_ABS_X(std::unique_ptr<Processor> &processor,
   uint16_t value =
       processor->m_mapping_controller->load(address + processor->m_registers.x);
 
-  return {.mnemonic = Common::Formatter::format("LDA %04x, X  @%04x=%02x",
-                                                address, address, value),
+  return {.mnemonic = fmt::format("LDA {:#06x}, X  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -628,7 +616,7 @@ auto Sakura::HuC6280::CPX_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("CPX #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("CPX #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -637,7 +625,7 @@ auto Sakura::HuC6280::ST0(std::unique_ptr<Processor> &processor, uint8_t opcode)
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ST0 #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("ST0 #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -668,8 +656,8 @@ auto Sakura::HuC6280::LDY_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDY %02x%02x  @%04x=%02x", hh,
-                                                ll, address, value),
+  return {.mnemonic = fmt::format("LDY {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -686,8 +674,8 @@ auto Sakura::HuC6280::LDA_IND(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("LDA (%02x)  @%04x=%02x", zz,
-                                                address, value),
+  return {.mnemonic = fmt::format("LDA ({:#04x})  @{:#06x}={:#04x}", zz,
+                                  address, value),
           .length = 2};
 }
 
@@ -703,8 +691,7 @@ auto Sakura::HuC6280::STA_ABS_X(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.x;
 
-  return {.mnemonic =
-              Common::Formatter::format("STA %04x, X  @%04x", address, address),
+  return {.mnemonic = fmt::format("STA {:#06x}, X  @{:#06x}", address, address),
           .length = 3};
 }
 
@@ -722,8 +709,8 @@ auto Sakura::HuC6280::LDA_IND_Y(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.y;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("LDA (%02x), Y  @%04x=%02x", zz,
-                                                address, value),
+  return {.mnemonic = fmt::format("LDA ({:#04x}), Y  @{:#06x}={:#04x}", zz,
+                                  address, value),
           .length = 2};
 }
 
@@ -741,7 +728,7 @@ auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ADC #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("ADC #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -756,8 +743,7 @@ auto Sakura::HuC6280::STZ_ABS_X(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.x;
 
-  return {.mnemonic = Common::Formatter::format("STZ %02x%02x, X  @%04x", hh,
-                                                ll, address),
+  return {.mnemonic = fmt::format("STZ {:#06x}, X  @{:#06x}", address, address),
           .length = 3};
 }
 
@@ -771,8 +757,8 @@ auto Sakura::HuC6280::CPX_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("CPX %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("CPX {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -790,7 +776,7 @@ auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("SBC #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("SBC #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -807,7 +793,7 @@ auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("ORA #%02x", imm), .length = 2};
+  return {.mnemonic = fmt::format("ORA #{:#04x}", imm), .length = 2};
 }
 
 template <>
@@ -829,8 +815,7 @@ auto Sakura::HuC6280::JMP_ABS(std::unique_ptr<Processor> &processor,
 
   uint16_t destination = hh << 8 | ll;
 
-  return {.mnemonic = Common::Formatter::format("JMP %04x", destination),
-          .length = 3};
+  return {.mnemonic = fmt::format("JMP {:#06x}", destination), .length = 3};
 }
 
 template <>
@@ -840,8 +825,7 @@ auto Sakura::HuC6280::BRA(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BRA %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BRA {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -852,8 +836,8 @@ auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("ORA %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("ORA {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -869,8 +853,7 @@ auto Sakura::HuC6280::STA_IND(std::unique_ptr<Processor> &processor,
   uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
-  return {.mnemonic =
-              Common::Formatter::format("STA (%02x)  @%04x", zz, address),
+  return {.mnemonic = fmt::format("STA ({:#04x})  @{:#06x}", zz, address),
           .length = 2};
 }
 
@@ -887,8 +870,7 @@ auto Sakura::HuC6280::STA_IND_Y(std::unique_ptr<Processor> &processor,
 
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.y;
-  return {.mnemonic =
-              Common::Formatter::format("STA (%02x), Y  @%04x", zz, address),
+  return {.mnemonic = fmt::format("STA ({:#04x}), Y  @{:#06x}", zz, address),
           .length = 2};
 }
 
@@ -907,8 +889,7 @@ auto Sakura::HuC6280::BCS(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BCS %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BCS {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -919,8 +900,8 @@ auto Sakura::HuC6280::ASL_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("ASL %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("ASL {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -932,8 +913,8 @@ auto Sakura::HuC6280::ROL_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("ROL %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("ROL {:#04x}  @%{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -945,8 +926,8 @@ auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("ADC #%02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("ADC {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -962,8 +943,8 @@ auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("ADC %02x%02x  @%04x=%02x", hh,
-                                                ll, address, value),
+  return {.mnemonic = fmt::format("ADC {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -974,8 +955,7 @@ auto Sakura::HuC6280::BSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BSR %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BSR {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -985,8 +965,7 @@ auto Sakura::HuC6280::BMI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   int8_t imm = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
   uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
-  return {.mnemonic = Common::Formatter::format("BMI %04x", destination),
-          .length = 2};
+  return {.mnemonic = fmt::format("BMI {:#06x}", destination), .length = 2};
 }
 
 template <>
@@ -997,8 +976,8 @@ auto Sakura::HuC6280::INC_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("INC %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("INC {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1011,8 +990,7 @@ auto Sakura::HuC6280::STA_ZP_X(std::unique_ptr<Processor> &processor,
   zp += processor->m_registers.x;
 
   uint16_t address = 0x2000 | zp;
-  return {.mnemonic =
-              Common::Formatter::format("STA %02x, X  @%04x", zp, address),
+  return {.mnemonic = fmt::format("STA {:#04x}, X  @{:#06x}", zp, address),
           .length = 2};
 }
 
@@ -1022,7 +1000,7 @@ auto Sakura::HuC6280::STX_ZP(std::unique_ptr<Processor> &processor,
   (void)opcode;
   uint8_t zp = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  return {.mnemonic = Common::Formatter::format("STX %02x", zp), .length = 2};
+  return {.mnemonic = fmt::format("STX {:#04x}", zp), .length = 2};
 }
 
 template <>
@@ -1034,8 +1012,8 @@ auto Sakura::HuC6280::ASL_ZP_X(std::unique_ptr<Processor> &processor,
   zp += processor->m_registers.x;
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("ASL %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic = fmt::format("ASL {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
           .length = 2};
 }
 
@@ -1047,8 +1025,8 @@ auto Sakura::HuC6280::DEC_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("DEC %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("DEC {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1060,8 +1038,8 @@ auto Sakura::HuC6280::LSR_ZP(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
-  return {.mnemonic = Common::Formatter::format("LSR %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("LSR {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1090,8 +1068,8 @@ auto Sakura::HuC6280::LDX_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDX %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("LDX {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1107,8 +1085,8 @@ auto Sakura::HuC6280::INC_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint16_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("INC %04x @%04x=%02x", address,
-                                                address, value),
+  return {.mnemonic = fmt::format("INC {:#04x} @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -1124,8 +1102,8 @@ auto Sakura::HuC6280::LDX_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDX %02x%02x  @%04x=%02x", hh,
-                                                ll, address, value),
+  return {.mnemonic = fmt::format("LDX {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
           .length = 3};
 }
 
@@ -1138,8 +1116,8 @@ auto Sakura::HuC6280::LDY_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = Common::Formatter::format("LDY %02x  @%04x=%02x", zp,
-                                                address, value),
+  return {.mnemonic =
+              fmt::format("LDY {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 

@@ -4,7 +4,7 @@
 #include "ProgrammableSoundGenerator.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
-#include <common/Formatter.hpp>
+#include <fmt/core.h>
 #include <fstream>
 #include <spdlog/spdlog.h>
 
@@ -28,14 +28,13 @@ void Controller::load_rom(const std::filesystem::path &path) {
   rom_file.open(path, std::ios::binary | std::ios::ate);
   if (!rom_file.is_open()) {
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format("Unable to open ROM at path %s",
-                                             path.c_str()));
+        ->critical(
+            fmt::format("Unable to open ROM at path {:s}", path.c_str()));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   std::streampos file_size = rom_file.tellg();
   spdlog::get(LOGGER_NAME)
-      ->debug(
-          Common::Formatter::format("Opened ROM file of size: %#x", file_size));
+      ->debug(fmt::format("Opened ROM file of size: {:#X}", file_size));
 
   rom_file.seekg(0, std::ifstream::beg);
   rom_file.read(reinterpret_cast<char *>(&m_ROM[0]), file_size);
@@ -89,8 +88,8 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
   }
 
   spdlog::get(LOGGER_NAME)
-      ->critical(Common::Formatter::format(
-          "Unhandled hardware page access at physical address: %#x",
+      ->critical(fmt::format(
+          "Unhandled hardware page access at physical address: {:#10x}",
           physical_address));
   exit(1); // NOLINT(concurrency-mt-unsafe)
 }
@@ -144,8 +143,8 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
     }
 
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format(
-            "Unhandled hardware page access at physical address: %#x",
+        ->critical(fmt::format(
+            "Unhandled hardware page access at physical address: {:#10x}",
             physical_address));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -156,8 +155,8 @@ void Controller::store_video_display_controller(uint32_t physical_address,
   auto offset_hw = VIDEO_DISPLAY_CONTROLLER_RANGE.contains(physical_address);
   if (!offset_hw) {
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format(
-            "Physical address: %#x doesn't belong to HuC6270 VDC",
+        ->critical(fmt::format(
+            "Physical address: {:#10x} doesn't belong to HuC6270 VDC",
             physical_address));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }

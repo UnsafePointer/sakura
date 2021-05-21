@@ -9,7 +9,6 @@
 #include "ProgrammableSoundGenerator.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
-#include <common/Formatter.hpp>
 #include <memory>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

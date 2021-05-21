@@ -1,5 +1,5 @@
 #include "VideoColorEncoder.hpp"
-#include <common/Formatter.hpp>
+#include <fmt/core.h>
 #include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6260;
@@ -29,9 +29,9 @@ void Controller::store(uint16_t offset, uint8_t value) {
     break;
   default:
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format(
-            "Unhandled HuC6260 store with offset: %04x, value: %02x", offset,
-            value));
+        ->critical(fmt::format(
+            "Unhandled HuC6260 store with offset: {:#06x}, value: {:#04x}",
+            offset, value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }

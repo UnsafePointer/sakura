@@ -1,5 +1,4 @@
 #include "ArgumentParser.hpp"
-#include <common/Formatter.hpp>
 #include <iostream>
 #include <unistd.h>
 
@@ -39,10 +38,8 @@ auto ArgumentParser::parse(int argc, char *argv[]) -> Configuration {
   std::filesystem::path rom =
       std::filesystem::current_path() / std::string(path);
   if (!std::filesystem::exists(rom)) {
-    std::cout << Common::Formatter::format(
-                     "The filepath provided as argument: %s doesn't exist.",
-                     rom.c_str())
-              << std::endl;
+    std::cout << "The filepath provided as argument: " << rom
+              << " doesn't exist." << std::endl;
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   return {rom};

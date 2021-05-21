@@ -1,5 +1,4 @@
 #include "ProgrammableSoundGenerator.hpp"
-#include <common/Formatter.hpp>
 #include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280::ProgrammableSoundGenerator;
@@ -17,8 +16,8 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
   case 0b0110:
   case 0b0111:
     spdlog::get(LOGGER_NAME)
-        ->warn(Common::Formatter::format(
-            "Unimplemented HuC6280 PSG load with offset: %04x", offset));
+        ->warn(fmt::format(
+            "Unimplemented HuC6280 PSG load with offset: {:#06x}", offset));
     return 0xFF;
   case 0b1000:
     return m_low_frequency_oscillator_frequency;
@@ -26,8 +25,8 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
     return m_low_frequency_oscillator_control.value;
   default:
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format(
-            "Unhandled HuC6280 PSG load with offset: %04x", offset));
+        ->critical(fmt::format(
+            "Unhandled HuC6280 PSG load with offset: {:#06x}", offset));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
@@ -47,9 +46,9 @@ void Controller::store(uint16_t offset, uint8_t value) {
   case 0b0110:
   case 0b0111:
     spdlog::get(LOGGER_NAME)
-        ->warn(Common::Formatter::format("Unimplemented HuC6280 PSG store "
-                                         "with offset: %04x, value: %02x",
-                                         offset, value));
+        ->warn(fmt::format("Unimplemented HuC6280 PSG store "
+                           "with offset: {:#06x}, value: {:#04x}",
+                           offset, value));
     break;
   case 0b1000:
     m_low_frequency_oscillator_frequency = value;
@@ -59,8 +58,8 @@ void Controller::store(uint16_t offset, uint8_t value) {
     break;
   default:
     spdlog::get(LOGGER_NAME)
-        ->critical(Common::Formatter::format(
-            "Unhandled HuC6280 PSG store with offset: %04x, value: %02x",
+        ->critical(fmt::format(
+            "Unhandled HuC6280 PSG store with offset: {:#06x}, value: {:#04x}",
             offset, value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }

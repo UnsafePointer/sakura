@@ -4,7 +4,6 @@
 #include "Memory.hpp"
 #include "Processor.hpp"
 #include <common/Bits.hpp>
-#include <common/Formatter.hpp>
 #include <cstdint>
 #include <memory>
 #include <spdlog/spdlog.h>
@@ -56,8 +55,7 @@ auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor,
   int bit_position = Common::Bits::test_power_of_2(imm);
   if (bit_position == -1) {
     spdlog::get(LOGGER_NAME)
-        ->critical(
-            Common::Formatter::format("Invalid TAMi argument: %02x", imm));
+        ->critical(fmt::format("Invalid TAMi argument: {:#04x}", imm));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 
@@ -322,8 +320,7 @@ auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor,
   int bit_position = Common::Bits::test_power_of_2(imm);
   if (bit_position == -1) {
     spdlog::get(LOGGER_NAME)
-        ->critical(
-            Common::Formatter::format("Invalid TMAi argument: %02x", imm));
+        ->critical(fmt::format("Invalid TMAi argument: {:#04x}", imm));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 
