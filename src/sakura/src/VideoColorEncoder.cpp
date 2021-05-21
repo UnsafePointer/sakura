@@ -1,6 +1,6 @@
 #include "VideoColorEncoder.hpp"
 #include <common/Formatter.hpp>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6260;
 
@@ -28,10 +28,10 @@ void Controller::store(uint16_t offset, uint8_t value) {
     m_color_table_data_write.high = value;
     break;
   default:
-    std::cout << Common::Formatter::format(
-                     "Unhandled HuC6260 store with offset: %04x, value: %02x",
-                     offset, value)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(Common::Formatter::format(
+            "Unhandled HuC6260 store with offset: %04x, value: %02x", offset,
+            value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }

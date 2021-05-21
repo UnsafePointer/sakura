@@ -6,7 +6,7 @@
 #include "VideoDisplayController.hpp"
 #include <common/Formatter.hpp>
 #include <fstream>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280::Mapping;
 
@@ -27,14 +27,15 @@ void Controller::load_rom(const std::filesystem::path &path) {
   std::ifstream rom_file = std::ifstream();
   rom_file.open(path, std::ios::binary | std::ios::ate);
   if (!rom_file.is_open()) {
-    std::cout << Common::Formatter::format("Unable to open ROM at path %s",
-                                           path.c_str())
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(Common::Formatter::format("Unable to open ROM at path %s",
+                                             path.c_str()));
+    exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   std::streampos file_size = rom_file.tellg();
-  std::cout << Common::Formatter::format("Opened ROM file of size: %#x",
-                                         file_size)
-            << std::endl;
+  spdlog::get(LOGGER_NAME)
+      ->debug(
+          Common::Formatter::format("Opened ROM file of size: %#x", file_size));
 
   rom_file.seekg(0, std::ifstream::beg);
   rom_file.read(reinterpret_cast<char *>(&m_ROM[0]), file_size);
@@ -52,7 +53,8 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
     return m_ROM[physical_address];
   }
   if (bank >= 0x80 && bank <= 0xF7) {
-    std::cout << "Accessing unused memory map range: 0x80-0xF7" << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->info("Accessing unused memory map range: 0x80-0xF7");
     return 0xFF;
   }
   if (bank >= 0xF8 && bank <= 0xFB) {
@@ -61,7 +63,8 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
     return m_RAM[offset];
   }
   if (bank >= 0xFC && bank <= 0xFE) {
-    std::cout << "Accessing unused memory map range: 0xFC-0xFE" << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->info("Accessing unused memory map range: 0xFC-0xFE");
     return 0xFF;
   } // bank == 0xFF
 
@@ -85,10 +88,10 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
     return m_interrupt_controller->load(*offset_hw);
   }
 
-  std::cout << Common::Formatter::format(
-                   "Unhandled hardware page access at physical address: %#x",
-                   physical_address)
-            << std::endl;
+  spdlog::get(LOGGER_NAME)
+      ->critical(Common::Formatter::format(
+          "Unhandled hardware page access at physical address: %#x",
+          physical_address));
   exit(1); // NOLINT(concurrency-mt-unsafe)
 }
 
@@ -100,19 +103,19 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
   uint32_t physical_address = mask | offset;
 
   if (bank <= 0x7F) {
-    std::cout << "Attempting to write ROM" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Attempting to write ROM");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   } else if (bank >= 0x80 && bank <= 0xF7) {
-    std::cout << "Attempting to write unused memory map range: 0x80-0xF7"
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical("Attempting to write unused memory map range: 0x80-0xF7");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   } else if (bank >= 0xF8 && bank <= 0xFB) {
     // pages 0xF9-0xFB mirror page 0xF8 so here we take the offset instead of
     // the physicall address
     m_RAM[offset] = value;
   } else if (bank >= 0xFC && bank <= 0xFE) {
-    std::cout << "Attempting to write unused memory map range: 0xFC-0xFE"
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical("Attempting to write unused memory map range: 0xFC-0xFE");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   } else {   // bank == 0xFF
     if (IO_RANGE.contains(physical_address)) {
@@ -140,10 +143,10 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
       return;
     }
 
-    std::cout << Common::Formatter::format(
-                     "Unhandled hardware page access at physical address: %#x",
-                     physical_address)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(Common::Formatter::format(
+            "Unhandled hardware page access at physical address: %#x",
+            physical_address));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
@@ -152,10 +155,10 @@ void Controller::store_video_display_controller(uint32_t physical_address,
                                                 uint8_t value) {
   auto offset_hw = VIDEO_DISPLAY_CONTROLLER_RANGE.contains(physical_address);
   if (!offset_hw) {
-    std::cout << Common::Formatter::format(
-                     "Physical address: %#x doesn't belong to HuC6270 VDC",
-                     physical_address)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(Common::Formatter::format(
+            "Physical address: %#x doesn't belong to HuC6270 VDC",
+            physical_address));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   m_video_display_controller->store(*offset_hw, value);

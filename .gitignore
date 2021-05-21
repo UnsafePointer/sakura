@@ -84,3 +84,7 @@ build
 # PC Engine
 
 *.pce
+
+# Sakura
+
+*.log

@@ -2,8 +2,11 @@
 #define SAKURA_INTERRUPT_HPP
 
 #include <cstdint>
+#include <string>
 
 namespace Sakura::HuC6280::Interrupt {
+
+static const std::string LOGGER_NAME = "interrupt";
 
 union Request {
   struct {

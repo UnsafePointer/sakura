@@ -6,8 +6,8 @@
 #include <common/Bits.hpp>
 #include <common/Formatter.hpp>
 #include <cstdint>
-#include <iostream>
 #include <memory>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280;
 
@@ -55,8 +55,9 @@ auto Sakura::HuC6280::TAM_I(std::unique_ptr<Processor> &processor,
 
   int bit_position = Common::Bits::test_power_of_2(imm);
   if (bit_position == -1) {
-    std::cout << Common::Formatter::format("Invalid TAMi argument: %02x", imm)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(
+            Common::Formatter::format("Invalid TAMi argument: %02x", imm));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 
@@ -93,7 +94,7 @@ auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled AND (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled AND (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t imm = processor->m_mapping_controller->load(
@@ -320,8 +321,9 @@ auto Sakura::HuC6280::TMA_I(std::unique_ptr<Processor> &processor,
 
   int bit_position = Common::Bits::test_power_of_2(imm);
   if (bit_position == -1) {
-    std::cout << Common::Formatter::format("Invalid TMAi argument: %02x", imm)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(
+            Common::Formatter::format("Invalid TMAi argument: %02x", imm));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 
@@ -659,7 +661,8 @@ auto Sakura::HuC6280::ORA_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ORA (ABS, Y) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ORA (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
@@ -686,7 +689,7 @@ auto Sakura::HuC6280::EOR_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled EOR (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled EOR (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t imm = processor->m_mapping_controller->load(
@@ -707,7 +710,8 @@ auto Sakura::HuC6280::EOR_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled EOR (ABS, Y) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled EOR (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
@@ -734,7 +738,8 @@ auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled AND (ABS, Y) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled AND (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
@@ -1048,11 +1053,11 @@ auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ADC (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    std::cout << "Unhandled ADC (IMM) with D flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t imm = processor->m_mapping_controller->load(
@@ -1128,11 +1133,11 @@ auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled SBC (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    std::cout << "Unhandled SBC (IMM) with D flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (IMM) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t imm = processor->m_mapping_controller->load(
@@ -1171,7 +1176,7 @@ auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ORA (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ORA (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t imm = processor->m_mapping_controller->load(
@@ -1232,7 +1237,7 @@ auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ORA (ZP) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ORA (ZP) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t zp = processor->m_mapping_controller->load(
@@ -1376,11 +1381,11 @@ auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ADC (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    std::cout << "Unhandled ADC (IMM) with D flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t zp = processor->m_mapping_controller->load(
@@ -1411,11 +1416,11 @@ auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    std::cout << "Unhandled ADC (IMM) with T flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    std::cout << "Unhandled ADC (IMM) with D flag set" << std::endl;
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(

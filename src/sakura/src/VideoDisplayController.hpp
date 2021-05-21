@@ -2,8 +2,11 @@
 #define SAKURA_VIDEO_DISPLAY_CONTROLLER_HPP
 
 #include <cstdint>
+#include <string>
 
 namespace Sakura::HuC6270 {
+
+static const std::string LOGGER_NAME = "huc6270";
 
 union Address {
   struct {

@@ -1,11 +1,19 @@
 #include "sakura/Emulator.hpp"
 #include "Disassembler.hpp"
+#include "IO.hpp"
 #include "Instructions.hpp"
 #include "Instructions_Impl.hpp"
+#include "Interrupt.hpp"
 #include "Memory.hpp"
 #include "Processor.hpp"
+#include "ProgrammableSoundGenerator.hpp"
+#include "VideoColorEncoder.hpp"
+#include "VideoDisplayController.hpp"
 #include <common/Formatter.hpp>
-#include <iostream>
+#include <memory>
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura;
 
@@ -25,6 +33,48 @@ void Emulator::emulate() {
   }
 }
 
+void Emulator::register_loggers() {
+  auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+      "sakura.log", 1024 * 1024 * 250, 10, true);
+  auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+
+  auto disassembler_logger = std::make_shared<spdlog::logger>(
+      DISASSEMBLER_LOGGER_NAME,
+      spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(disassembler_logger);
+
+  auto interrupt_controller_logger = std::make_shared<spdlog::logger>(
+      Interrupt::LOGGER_NAME,
+      spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(interrupt_controller_logger);
+
+  auto io_logger = std::make_shared<spdlog::logger>(
+      IO::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(io_logger);
+
+  auto mapping_controller_logger = std::make_shared<spdlog::logger>(
+      Mapping::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(mapping_controller_logger);
+
+  auto processor_logger = std::make_shared<spdlog::logger>(
+      LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(processor_logger);
+
+  auto programmable_sound_generator_logger = std::make_shared<spdlog::logger>(
+      ProgrammableSoundGenerator::LOGGER_NAME,
+      spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(programmable_sound_generator_logger);
+
+  auto video_color_encoder_logger = std::make_shared<spdlog::logger>(
+      HuC6260::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(video_color_encoder_logger);
+
+  auto video_display_controller_logger = std::make_shared<spdlog::logger>(
+      HuC6270::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  spdlog::register_logger(video_display_controller_logger);
+}
+
 void Emulator::initialize(const std::filesystem::path &rom) {
+  Emulator::register_loggers();
   m_processor->initialize(rom);
 }

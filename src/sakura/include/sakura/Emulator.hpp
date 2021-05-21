@@ -15,6 +15,8 @@ private:
   std::unique_ptr<HuC6280::Processor> m_processor;
   std::unique_ptr<HuC6280::Disassembler> m_disassembler;
 
+  static void register_loggers();
+
 public:
   Emulator();
   ~Emulator();

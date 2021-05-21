@@ -3,7 +3,7 @@
 #include "Instructions.hpp"
 #include "Processor.hpp"
 #include <common/Formatter.hpp>
-#include <iostream>
+#include <spdlog/spdlog.h>
 #include <sstream>
 
 using namespace Sakura::HuC6280;
@@ -22,10 +22,10 @@ void Disassembler::disassemble(uint8_t opcode) {
   InstructionHandler<Disassembled> handler =
       INSTRUCTION_TABLE<Disassembled>[opcode];
   if (handler == nullptr) {
-    std::cout << Common::Formatter::format("%s: Unhandled opcode: %#04x",
-                                           previous_program_counter().c_str(),
-                                           opcode)
-              << std::endl;
+    spdlog::get(DISASSEMBLER_LOGGER_NAME)
+        ->critical(Common::Formatter::format("%s: Unhandled opcode: %#04x",
+                                             previous_program_counter().c_str(),
+                                             opcode));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   Disassembled instruction = handler(m_processor, opcode);
@@ -42,9 +42,9 @@ void Disassembler::disassemble(uint8_t opcode) {
         false);
   }
   std::string separator(30 - instruction.mnemonic.length(), ' ');
-  std::cout << Common::Formatter::format(
-                   "%s: %s%s%s", previous_program_counter().c_str(),
-                   instruction.mnemonic.c_str(), separator.c_str(),
-                   machine_code.str().c_str())
-            << std::endl;
+  std::string message = Common::Formatter::format(
+      "%s: %s%s%s", previous_program_counter().c_str(),
+      instruction.mnemonic.c_str(), separator.c_str(),
+      machine_code.str().c_str());
+  spdlog::get(DISASSEMBLER_LOGGER_NAME)->debug(message);
 }
