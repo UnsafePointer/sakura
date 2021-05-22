@@ -12,7 +12,7 @@ void ArgumentParser::print_usage() {
 }
 
 // NOLINTNEXTLINE(modernize-avoid-c-arrays)
-auto ArgumentParser::parse(int argc, char *argv[]) -> Configuration {
+auto ArgumentParser::parse(int argc, char *argv[]) -> Args {
   int c;
   while ((c = getopt(argc, argv, "h")) != -1) { // NOLINT(concurrency-mt-unsafe)
     switch (c) {

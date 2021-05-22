@@ -14,6 +14,7 @@ This project can be build in Linux with CMake, Clang, Ninja and [`vcpkg`](https:
 
 * `catch2`
 * `spdlog`
+* `nlohmann-json`
 
 ```Shell Session
 $ cmake -Bbuild -GNinja -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake src/
