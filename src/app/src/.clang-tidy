@@ -1,2 +1,7 @@
-Checks: "-llvm-header-guard"
 InheritParentConfig: true
+Checks: "-llvm-header-guard"
+CheckOptions:
+  - key: readability-identifier-naming.GlobalFunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalFunctionPrefix
+    value: ""

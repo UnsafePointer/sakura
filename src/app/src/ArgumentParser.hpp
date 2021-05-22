@@ -1,10 +1,10 @@
-#ifndef ARGUMENTPARSER_HPP
-#define ARGUMENTPARSER_HPP
+#ifndef APP_ARGUMENT_PARSER_HPP
+#define APP_ARGUMENT_PARSER_HPP
 
 #include <filesystem>
 
 namespace App {
-struct Configuration {
+struct Args {
   std::filesystem::path rom;
 };
 
@@ -14,7 +14,7 @@ private:
 
 public:
   // NOLINTNEXTLINE(modernize-avoid-c-arrays)
-  static auto parse(int argc, char *argv[]) -> Configuration;
+  static auto parse(int argc, char *argv[]) -> Args;
 };
 } // namespace App
 
