@@ -2,8 +2,11 @@
 #define SAKURA_VIDEO_COLOR_ENCODER
 
 #include <cstdint>
+#include <string>
 
 namespace Sakura::HuC6260 {
+
+static const std::string LOGGER_NAME = "--huc6260--";
 
 union ColorTableAddress {
   struct {

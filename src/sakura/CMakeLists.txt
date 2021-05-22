@@ -1,3 +1,5 @@
+find_package(spdlog CONFIG REQUIRED)
+
 add_library(libsakura
     src/Disassembler.cpp
     src/Interrupt.cpp
@@ -17,3 +19,4 @@ target_include_directories(libsakura PUBLIC
     PRIVATE src)
 
 target_link_libraries(libsakura PRIVATE libcommon)
+target_link_libraries(libsakura PRIVATE spdlog::spdlog spdlog::spdlog_header_only)

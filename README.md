@@ -13,6 +13,7 @@ This project can be build in Linux with CMake, Clang, Ninja and [`vcpkg`](https:
 `vcpkg` packages needed:
 
 * `catch2`
+* `spdlog`
 
 ```Shell Session
 $ cmake -Bbuild -GNinja -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake src/

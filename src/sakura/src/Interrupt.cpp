@@ -1,6 +1,6 @@
 #include "Interrupt.hpp"
-#include <common/Formatter.hpp>
-#include <iostream>
+#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280::Interrupt;
 
@@ -11,10 +11,9 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
   case 0b11:
     return m_request.value;
   default:
-    std::cout << Common::Formatter::format(
-                     "Unhandled HuC6280 interrupt load with offset: %04x",
-                     offset)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format(
+            "Unhandled HuC6280 interrupt load with offset: {:#06x}", offset));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
@@ -25,10 +24,10 @@ void Controller::store(uint16_t offset, uint8_t value) {
     m_disable.value = (value & 0b111);
     return;
   default:
-    std::cout << Common::Formatter::format("Unhandled HuC6280 interrupt write "
-                                           "with offset: %04x, value %02x",
-                                           offset, value)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format("Unhandled HuC6280 interrupt write "
+                               "with offset: {:#06x}, value {:#04x}",
+                               offset, value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }

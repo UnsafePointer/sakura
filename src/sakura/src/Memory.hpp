@@ -29,6 +29,8 @@ class Disassembler;
 
 namespace Mapping {
 
+static const std::string LOGGER_NAME = "--mapping--";
+
 const Common::Range<uint32_t> IO_RANGE =
     Common::Range<uint32_t>(0x1FF000, 0x400);
 

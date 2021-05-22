@@ -1,6 +1,5 @@
 #include "ProgrammableSoundGenerator.hpp"
-#include <common/Formatter.hpp>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280::ProgrammableSoundGenerator;
 
@@ -16,18 +15,18 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
   case 0b0101:
   case 0b0110:
   case 0b0111:
-    std::cout << Common::Formatter::format(
-                     "Unimplemented HuC6280 PSG load with offset: %04x", offset)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->warn(fmt::format(
+            "Unimplemented HuC6280 PSG load with offset: {:#06x}", offset));
     return 0xFF;
   case 0b1000:
     return m_low_frequency_oscillator_frequency;
   case 0b1001:
     return m_low_frequency_oscillator_control.value;
   default:
-    std::cout << Common::Formatter::format(
-                     "Unhandled HuC6280 PSG load with offset: %04x", offset)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format(
+            "Unhandled HuC6280 PSG load with offset: {:#06x}", offset));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
@@ -46,10 +45,10 @@ void Controller::store(uint16_t offset, uint8_t value) {
   case 0b0101:
   case 0b0110:
   case 0b0111:
-    std::cout << Common::Formatter::format("Unimplemented HuC6280 PSG store "
-                                           "with offset: %04x, value: %02x",
-                                           offset, value)
-              << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->warn(fmt::format("Unimplemented HuC6280 PSG store "
+                           "with offset: {:#06x}, value: {:#04x}",
+                           offset, value));
     break;
   case 0b1000:
     m_low_frequency_oscillator_frequency = value;
@@ -58,11 +57,10 @@ void Controller::store(uint16_t offset, uint8_t value) {
     m_low_frequency_oscillator_control.value = value;
     break;
   default:
-    std::cout
-        << Common::Formatter::format(
-               "Unhandled HuC6280 PSG store with offset: %04x, value: %02x",
-               offset, value)
-        << std::endl;
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format(
+            "Unhandled HuC6280 PSG store with offset: {:#06x}, value: {:#04x}",
+            offset, value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }

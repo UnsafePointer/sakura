@@ -2,8 +2,11 @@
 #define SAKURA_IO_HPP
 
 #include <cstdint>
+#include <string>
 
 namespace Sakura::HuC6280::IO {
+
+static const std::string LOGGER_NAME = "----i/o----";
 
 union Port {
   struct {

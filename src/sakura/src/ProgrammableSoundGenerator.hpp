@@ -2,8 +2,11 @@
 #define SAKURA_PROGRAMMABLE_SOUND_GENERATOR_HPP
 
 #include <cstdint>
+#include <string>
 
 namespace Sakura::HuC6280::ProgrammableSoundGenerator {
+
+static const std::string LOGGER_NAME = "huc6280_psg";
 
 union MainAmplitudeLevelAdjustment {
   struct {
