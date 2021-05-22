@@ -6,7 +6,7 @@
 namespace Sakura::HuC6280 {
 class Processor;
 
-static const std::string DISASSEMBLER_LOGGER_NAME = "disassembler";
+static const std::string DISASSEMBLER_LOGGER_NAME = "huc6280_asm";
 
 class Disassembler {
 private:

@@ -6,7 +6,7 @@
 
 namespace Sakura::HuC6270 {
 
-static const std::string LOGGER_NAME = "huc6270";
+static const std::string LOGGER_NAME = "--huc6270--";
 
 union Address {
   struct {

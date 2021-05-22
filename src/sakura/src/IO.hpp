@@ -6,7 +6,7 @@
 
 namespace Sakura::HuC6280::IO {
 
-static const std::string LOGGER_NAME = "io";
+static const std::string LOGGER_NAME = "----i/o----";
 
 union Port {
   struct {

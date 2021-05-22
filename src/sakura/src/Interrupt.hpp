@@ -6,7 +6,7 @@
 
 namespace Sakura::HuC6280::Interrupt {
 
-static const std::string LOGGER_NAME = "interrupt";
+static const std::string LOGGER_NAME = "-interrupt-";
 
 union Request {
   struct {
