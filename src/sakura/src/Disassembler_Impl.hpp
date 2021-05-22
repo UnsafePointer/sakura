@@ -914,7 +914,7 @@ auto Sakura::HuC6280::ROL_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = 0x2000 | zp;
   uint8_t value = processor->m_mapping_controller->load(address);
   return {.mnemonic =
-              fmt::format("ROL {:#04x}  @%{:#06x}={:#04x}", zp, address, value),
+              fmt::format("ROL {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1085,7 +1085,7 @@ auto Sakura::HuC6280::INC_ABS(std::unique_ptr<Processor> &processor,
   uint16_t address = hh << 8 | ll;
   uint16_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = fmt::format("INC {:#04x} @{:#06x}={:#04x}", address,
+  return {.mnemonic = fmt::format("INC {:#06x} @{:#06x}={:#04x}", address,
                                   address, value),
           .length = 3};
 }
