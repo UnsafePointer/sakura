@@ -145,6 +145,21 @@ union HorizontalDisplay {
   HorizontalDisplay() : value() {}
 };
 
+union VerticalSync {
+  struct {
+    uint16_t vertical_sync_pulse_width : 5;
+    uint16_t unused : 3;
+    uint16_t vertical_display_start_position : 8;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  VerticalSync() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -156,6 +171,7 @@ private:
   MemoryAccessWidth m_memory_access_width;
   HorizontalSync m_horizontal_sync;
   HorizontalDisplay m_horizontal_display;
+  VerticalSync m_vertical_sync;
 
   void store_register(bool low, uint8_t value);
 
