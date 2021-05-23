@@ -174,6 +174,20 @@ union VerticalDisplay {
   VerticalDisplay() : value() {}
 };
 
+union VerticalDisplayEndPosition {
+  struct {
+    uint16_t vertical_display_end_position : 8;
+    uint16_t unused : 8;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  VerticalDisplayEndPosition() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -187,6 +201,7 @@ private:
   HorizontalDisplay m_horizontal_display;
   VerticalSync m_vertical_sync;
   VerticalDisplay m_vertical_display;
+  VerticalDisplayEndPosition m_vertical_display_end_position;
 
   void store_register(bool low, uint8_t value);
 
