@@ -34,10 +34,33 @@ union Status {
   Status() : value() {}
 };
 
+union Control {
+  struct {
+    uint16_t interrupt_request_enable : 4;
+    uint16_t external_sync : 2;
+    uint16_t sprite_blanking : 1;
+    uint16_t background_blanking : 1;
+    uint16_t disp_output_select : 2;
+    uint16_t dynamic_ram_refresh : 1;
+    uint16_t memory_address_read_write_register_increment_select : 2;
+    uint16_t unused : 3;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  Control() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
   Status m_status;
+  Control m_control;
+
+  void store_register(bool low, uint8_t value);
 
 public:
   Controller() = default;

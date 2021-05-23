@@ -51,6 +51,23 @@ auto REGISTER_SYMBOL_FOR_ADDRESS(uint8_t address) -> std::string {
   }
 }
 
+void Controller::store_register(bool low, uint8_t value) {
+  switch (m_address.address) {
+  case 0b00101:
+    if (low) {
+      m_control.low = value;
+    } else {
+      m_control.high = value;
+    }
+    break;
+  default:
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format("Unhandled HuC6270 {} register store",
+                               REGISTER_SYMBOL_FOR_ADDRESS(m_address.address)));
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+}
+
 auto Controller::load(uint16_t offset) const -> uint8_t {
   switch (offset & 0b11) {
   case 0b00:
@@ -77,12 +94,14 @@ void Controller::store(uint16_t offset, uint8_t value) {
         ->info(fmt::format("[S] [{:^7}] [ll]: {:#04x}",
                            REGISTER_SYMBOL_FOR_ADDRESS(m_address.address),
                            value));
+    store_register(true, value);
     break;
   case 0b11:
     spdlog::get(LOGGER_NAME)
         ->info(fmt::format("[S] [{:^7}] [hh]: {:#04x}",
                            REGISTER_SYMBOL_FOR_ADDRESS(m_address.address),
                            value));
+    store_register(false, value);
     break;
   default:
     spdlog::get(LOGGER_NAME)
