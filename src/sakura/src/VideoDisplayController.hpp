@@ -68,12 +68,27 @@ union ScanningLineDetection {
   ScanningLineDetection() : value() {}
 };
 
+union BackgroundXScroll {
+  struct {
+    uint16_t bxr : 10;
+    uint16_t unused : 6;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  BackgroundXScroll() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
   Status m_status;
   Control m_control;
   ScanningLineDetection m_scanning_line_detection;
+  BackgroundXScroll m_background_x_scroll;
 
   void store_register(bool low, uint8_t value);
 
