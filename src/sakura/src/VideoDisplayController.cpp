@@ -60,6 +60,13 @@ void Controller::store_register(bool low, uint8_t value) {
       m_control.high = value;
     }
     break;
+  case 0b00110:
+    if (low) {
+      m_scanning_line_detection.low = value;
+    } else {
+      m_scanning_line_detection.high = value;
+    }
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6270 {} register store",
