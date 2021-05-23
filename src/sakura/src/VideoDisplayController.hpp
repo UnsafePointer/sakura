@@ -129,6 +129,22 @@ union HorizontalSync {
   HorizontalSync() : value() {}
 };
 
+union HorizontalDisplay {
+  struct {
+    uint16_t horizontal_display_width : 7;
+    uint16_t unused : 1;
+    uint16_t horizontal_display_end_position : 7;
+    uint16_t unused_2 : 1;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  HorizontalDisplay() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -139,6 +155,7 @@ private:
   BackgroundYScroll m_background_y_scroll;
   MemoryAccessWidth m_memory_access_width;
   HorizontalSync m_horizontal_sync;
+  HorizontalDisplay m_horizontal_display;
 
   void store_register(bool low, uint8_t value);
 
