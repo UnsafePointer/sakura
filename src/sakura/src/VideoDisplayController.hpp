@@ -96,6 +96,23 @@ union BackgroundYScroll {
   BackgroundYScroll() : value() {}
 };
 
+union MemoryAccessWidth {
+  struct {
+    uint16_t vram_access_width_mode : 2;
+    uint16_t sprite_access_width_mode : 2;
+    uint16_t screen : 3;
+    uint16_t cg_mode : 1;
+    uint16_t unused : 8;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  MemoryAccessWidth() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -104,6 +121,7 @@ private:
   ScanningLineDetection m_scanning_line_detection;
   BackgroundXScroll m_background_x_scroll;
   BackgroundYScroll m_background_y_scroll;
+  MemoryAccessWidth m_memory_access_width;
 
   void store_register(bool low, uint8_t value);
 
