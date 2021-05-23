@@ -74,6 +74,13 @@ void Controller::store_register(bool low, uint8_t value) {
       m_background_x_scroll.high = value;
     }
     break;
+  case 0b01000:
+    if (low) {
+      m_background_y_scroll.low = value;
+    } else {
+      m_background_y_scroll.high = value;
+    }
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6270 {} register store",

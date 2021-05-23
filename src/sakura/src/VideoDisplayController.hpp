@@ -82,6 +82,20 @@ union BackgroundXScroll {
   BackgroundXScroll() : value() {}
 };
 
+union BackgroundYScroll {
+  struct {
+    uint16_t byr : 9;
+    uint16_t unused : 7;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  BackgroundYScroll() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -89,6 +103,7 @@ private:
   Control m_control;
   ScanningLineDetection m_scanning_line_detection;
   BackgroundXScroll m_background_x_scroll;
+  BackgroundYScroll m_background_y_scroll;
 
   void store_register(bool low, uint8_t value);
 
