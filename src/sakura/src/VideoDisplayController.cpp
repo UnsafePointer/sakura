@@ -88,6 +88,13 @@ void Controller::store_register(bool low, uint8_t value) {
       m_memory_access_width.high = value;
     }
     break;
+  case 0b01010:
+    if (low) {
+      m_horizontal_sync.low = value;
+    } else {
+      m_horizontal_sync.high = value;
+    }
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6270 {} register store",
