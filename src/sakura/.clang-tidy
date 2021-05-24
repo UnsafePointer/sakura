@@ -1,2 +1,2 @@
-Checks: "-readability-magic-numbers"
+Checks: "-readability-magic-numbers,-readability-function-cognitive-complexity"
 InheritParentConfig: true
