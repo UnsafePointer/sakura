@@ -4,6 +4,12 @@
 
 using namespace Sakura::HuC6260;
 
+void Controller::store_color_table_ram() {
+  auto entry = ColorTableEntry(m_color_table_data_write.value);
+  m_color_table_RAM[m_color_table_address.cta] = entry;
+  m_color_table_address.value++;
+}
+
 auto Controller::load(uint16_t offset) const -> uint8_t {
   (void)m_control;
   switch (offset) {
@@ -41,6 +47,7 @@ void Controller::store(uint16_t offset, uint8_t value) {
     spdlog::get(LOGGER_NAME)
         ->info(fmt::format("[S] [{:^7}] [hh]: {:#04x}", "CTW", value));
     m_color_table_data_write.high = value;
+    store_color_table_ram();
     break;
   default:
     spdlog::get(LOGGER_NAME)
