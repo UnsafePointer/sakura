@@ -226,6 +226,16 @@ union MemoryAddressWrite {
   MemoryAddressWrite() : value() {}
 };
 
+union VRAMDataWrite {
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  VRAMDataWrite() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -243,6 +253,7 @@ private:
   BlockTransferControl m_block_transfer_control;
   BlockTransferSourceAddressVRAMSATB m_block_transfer_source_address_vram_satb;
   MemoryAddressWrite m_memory_address_write;
+  VRAMDataWrite m_vram_data_write;
 
   void store_register(bool low, uint8_t value);
 
