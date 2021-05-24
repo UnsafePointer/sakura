@@ -137,12 +137,34 @@ void Controller::store_register(bool low, uint8_t value) {
       m_block_transfer_source_address_vram_satb.high = value;
     }
     break;
+  case 0b00000:
+    if (low) {
+      m_memory_address_write.low = value;
+    } else {
+      m_memory_address_write.high = value;
+    }
+    break;
+  case 0b00010:
+    if (low) {
+      m_vram_data_write.low = value;
+    } else {
+      m_vram_data_write.high = value;
+      store_vram();
+    }
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6270 {} register store",
                                REGISTER_SYMBOL_FOR_ADDRESS(m_address.address)));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
+}
+
+void Controller::store_vram() {
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.low;
+  m_memory_address_write.value++;
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.high;
+  m_memory_address_write.value++;
 }
 
 auto Controller::load(uint16_t offset) const -> uint8_t {

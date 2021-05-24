@@ -1,6 +1,7 @@
 #ifndef SAKURA_VIDEO_DISPLAY_CONTROLLER_HPP
 #define SAKURA_VIDEO_DISPLAY_CONTROLLER_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -216,8 +217,30 @@ union BlockTransferSourceAddressVRAMSATB {
   BlockTransferSourceAddressVRAMSATB() : value() {}
 };
 
+union MemoryAddressWrite {
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  MemoryAddressWrite() : value() {}
+};
+
+union VRAMDataWrite {
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  VRAMDataWrite() : value() {}
+};
+
 class Controller {
 private:
+  std::array<uint8_t, 0x10000> m_VRAM;
+
   Address m_address;
   Status m_status;
   Control m_control;
@@ -232,7 +255,10 @@ private:
   VerticalDisplayEndPosition m_vertical_display_end_position;
   BlockTransferControl m_block_transfer_control;
   BlockTransferSourceAddressVRAMSATB m_block_transfer_source_address_vram_satb;
+  MemoryAddressWrite m_memory_address_write;
+  VRAMDataWrite m_vram_data_write;
 
+  void store_vram();
   void store_register(bool low, uint8_t value);
 
 public:
