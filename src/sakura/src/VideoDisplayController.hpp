@@ -1,6 +1,7 @@
 #ifndef SAKURA_VIDEO_DISPLAY_CONTROLLER_HPP
 #define SAKURA_VIDEO_DISPLAY_CONTROLLER_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -238,6 +239,8 @@ union VRAMDataWrite {
 
 class Controller {
 private:
+  std::array<uint8_t, 0x10000> m_VRAM;
+
   Address m_address;
   Status m_status;
   Control m_control;
@@ -255,6 +258,7 @@ private:
   MemoryAddressWrite m_memory_address_write;
   VRAMDataWrite m_vram_data_write;
 
+  void store_vram();
   void store_register(bool low, uint8_t value);
 
 public:

@@ -149,6 +149,7 @@ void Controller::store_register(bool low, uint8_t value) {
       m_vram_data_write.low = value;
     } else {
       m_vram_data_write.high = value;
+      store_vram();
     }
     break;
   default:
@@ -157,6 +158,13 @@ void Controller::store_register(bool low, uint8_t value) {
                                REGISTER_SYMBOL_FOR_ADDRESS(m_address.address)));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
+}
+
+void Controller::store_vram() {
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.low;
+  m_memory_address_write.value++;
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.high;
+  m_memory_address_write.value++;
 }
 
 auto Controller::load(uint16_t offset) const -> uint8_t {
