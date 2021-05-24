@@ -1,6 +1,7 @@
 #ifndef SAKURA_VIDEO_COLOR_ENCODER
 #define SAKURA_VIDEO_COLOR_ENCODER
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -38,10 +39,27 @@ union ColorTableDataWrite {
   ColorTableDataWrite() : value() {}
 };
 
+union ColorTableEntry {
+  struct {
+    uint16_t r : 3;
+    uint16_t g : 3;
+    uint16_t b : 3;
+    uint16_t unused : 7;
+  };
+  uint16_t value;
+
+  ColorTableEntry() : value() {}
+  ColorTableEntry(uint16_t value) : value(value) {}
+};
+
 class Controller {
+  std::array<ColorTableEntry, 0x200> m_color_table_RAM;
+
   ColorTableAddress m_color_table_address;
   ColorTableDataWrite m_color_table_data_write;
   uint8_t m_control;
+
+  void store_color_table_ram();
 
 public:
   Controller() = default;
