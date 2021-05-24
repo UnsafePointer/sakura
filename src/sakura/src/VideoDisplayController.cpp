@@ -130,6 +130,13 @@ void Controller::store_register(bool low, uint8_t value) {
       m_block_transfer_control.high = value;
     }
     break;
+  case 0b10011:
+    if (low) {
+      m_block_transfer_source_address_vram_satb.low = value;
+    } else {
+      m_block_transfer_source_address_vram_satb.high = value;
+    }
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6270 {} register store",

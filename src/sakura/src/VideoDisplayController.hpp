@@ -206,6 +206,16 @@ union BlockTransferControl {
   BlockTransferControl() : value() {}
 };
 
+union BlockTransferSourceAddressVRAMSATB {
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  BlockTransferSourceAddressVRAMSATB() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -221,6 +231,7 @@ private:
   VerticalDisplay m_vertical_display;
   VerticalDisplayEndPosition m_vertical_display_end_position;
   BlockTransferControl m_block_transfer_control;
+  BlockTransferSourceAddressVRAMSATB m_block_transfer_source_address_vram_satb;
 
   void store_register(bool low, uint8_t value);
 
