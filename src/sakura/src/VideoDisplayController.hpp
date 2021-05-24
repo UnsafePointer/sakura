@@ -188,6 +188,24 @@ union VerticalDisplayEndPosition {
   VerticalDisplayEndPosition() : value() {}
 };
 
+union BlockTransferControl {
+  struct {
+    uint16_t vram_satb_transfer_complete_interrupt_request_enable : 1;
+    uint16_t vram_vram_transfer_complete_interrupt_request_enable : 1;
+    uint16_t source_address_inc_dec : 1;
+    uint16_t destination_address_inc_dec : 1;
+    uint16_t vram_satb_transfer_auto_repeat : 1;
+    uint16_t unused : 11;
+  };
+  struct {
+    uint16_t low : 8;
+    uint16_t high : 8;
+  };
+  uint16_t value;
+
+  BlockTransferControl() : value() {}
+};
+
 class Controller {
 private:
   Address m_address;
@@ -202,6 +220,7 @@ private:
   VerticalSync m_vertical_sync;
   VerticalDisplay m_vertical_display;
   VerticalDisplayEndPosition m_vertical_display_end_position;
+  BlockTransferControl m_block_transfer_control;
 
   void store_register(bool low, uint8_t value);
 
