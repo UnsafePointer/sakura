@@ -13,7 +13,8 @@ const uint32_t G_CYCLES_PER_FRAME =
 
 Controller::Controller(
     std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller)
-    : m_VRAM(), m_cycles(), m_interrupt_controller(interrupt_controller) {}
+    : m_VRAM(), m_cycles(), m_interrupt_controller(interrupt_controller),
+      m_state(std::make_unique<ControllerState>()) {}
 
 auto REGISTER_SYMBOL_FOR_ADDRESS(uint8_t address) -> std::string {
   switch (address) {
@@ -181,6 +182,7 @@ void Controller::store_vram() {
 auto Controller::load(uint16_t offset) const -> uint8_t {
   switch (offset & 0b11) {
   case 0b00:
+    m_state->mark_dirty();
     spdlog::get(LOGGER_NAME)
         ->info(fmt::format("[L] [{:^7}] [xx]: {:#04x}", "SR", m_status.value));
     return m_status.value;
@@ -223,6 +225,14 @@ void Controller::store(uint16_t offset, uint8_t value) {
 }
 
 void Controller::step(uint8_t cycles) {
+  if (m_state->is_dirty()) {
+    uint8_t busy = m_status.busy;
+    m_status.value = 0x0;
+    m_status.busy = busy;
+    m_state->clear_dirty();
+    m_interrupt_controller->acknowledge_interrupt(
+        HuC6280::Interrupt::RequestField::IRQ1);
+  }
   m_cycles += cycles;
   if (m_cycles >= G_CYCLES_PER_FRAME) {
     m_cycles = 0;

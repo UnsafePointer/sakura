@@ -251,6 +251,19 @@ union VRAMDataWrite {
   VRAMDataWrite() : value() {}
 };
 
+class ControllerState {
+private:
+  bool m_dirty;
+
+public:
+  ControllerState() = default;
+  ~ControllerState() = default;
+
+  [[nodiscard]] auto is_dirty() const -> bool { return m_dirty; }
+  void mark_dirty() { m_dirty = true; };
+  void clear_dirty() { m_dirty = false; };
+};
+
 class Controller {
 private:
   std::array<uint8_t, 0x10000> m_VRAM;
@@ -275,6 +288,7 @@ private:
   VRAMDataWrite m_vram_data_write;
 
   std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
+  std::unique_ptr<ControllerState> m_state;
 
   void store_vram();
   void store_register(bool low, uint8_t value);

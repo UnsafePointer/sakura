@@ -24,7 +24,7 @@ void Controller::store(uint16_t offset, uint8_t value) {
     m_disable.value = (value & 0b111);
     return;
   case 0b11:
-    m_request.value &= ~(RequestField::TIMER);
+    acknowledge_interrupt(RequestField::TIMER);
     return;
   default:
     spdlog::get(LOGGER_NAME)
@@ -37,6 +37,10 @@ void Controller::store(uint16_t offset, uint8_t value) {
 
 void Controller::request_interrupt(RequestField field) {
   m_request.value |= field;
+}
+
+void Controller::acknowledge_interrupt(RequestField field) {
+  m_request.value &= ~(field);
 }
 
 auto Controller::priority_request() const -> RequestField {
