@@ -18,6 +18,11 @@ auto Controller::load(uint16_t offset) const -> uint8_t {
 void Controller::store(uint16_t offset, uint8_t value) {
   (void)m_control;
   switch (offset & 0b1) {
+  case 0b0:
+    spdlog::get(LOGGER_NAME)
+        ->info(fmt::format("[S] [{:^7}] [xx]: {:#04x}", "RELOAD", value));
+    m_reload.value = value;
+    break;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6280 timer store with offset: "

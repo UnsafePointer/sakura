@@ -18,9 +18,20 @@ union Control {
   Control() : value() {}
 };
 
+union Reload {
+  struct {
+    uint8_t contents : 7;
+    uint8_t unused : 1;
+  };
+  uint8_t value;
+
+  Reload() : value() {}
+};
+
 class Controller {
 private:
   Control m_control;
+  Reload m_reload;
 
 public:
   Controller() = default;
