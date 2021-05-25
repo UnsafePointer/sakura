@@ -2,6 +2,7 @@
 #include "IO.hpp"
 #include "Interrupt.hpp"
 #include "ProgrammableSoundGenerator.hpp"
+#include "Timer.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
 #include <fmt/core.h>
@@ -17,7 +18,8 @@ Controller::Controller()
           std::make_unique<ProgrammableSoundGenerator::Controller>()),
       m_video_color_encoder_controller(std::make_unique<HuC6260::Controller>()),
       m_interrupt_controller(
-          std::make_unique<HuC6280::Interrupt::Controller>()){};
+          std::make_unique<HuC6280::Interrupt::Controller>()),
+      m_timer_controller(std::make_unique<HuC6280::Timer::Controller>()){};
 
 Controller::~Controller() = default;
 
@@ -86,6 +88,10 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
   if (offset_hw) {
     return m_interrupt_controller->load(*offset_hw);
   }
+  offset_hw = TIMER_RANGE.contains(physical_address);
+  if (offset_hw) {
+    return m_timer_controller->load(*offset_hw);
+  }
 
   spdlog::get(LOGGER_NAME)
       ->critical(fmt::format(
@@ -139,6 +145,11 @@ void Controller::store(uint16_t logical_address, uint8_t value) {
     offset_hw = INTERRUPT_RANGE.contains(physical_address);
     if (offset_hw) {
       m_interrupt_controller->store(*offset_hw, value);
+      return;
+    }
+    offset_hw = TIMER_RANGE.contains(physical_address);
+    if (offset_hw) {
+      m_timer_controller->store(*offset_hw, value);
       return;
     }
 

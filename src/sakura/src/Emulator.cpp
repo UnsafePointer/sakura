@@ -7,6 +7,7 @@
 #include "Memory.hpp"
 #include "Processor.hpp"
 #include "ProgrammableSoundGenerator.hpp"
+#include "Timer.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
 #include <memory>
@@ -73,6 +74,11 @@ void Emulator::register_loggers(const LogConfig &log_config) {
   programmable_sound_generator_logger->set_level(
       spdlog::level::from_str(log_config.programmable_sound_generator));
   spdlog::register_logger(programmable_sound_generator_logger);
+
+  auto timer_logger = std::make_shared<spdlog::logger>(
+      Timer::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  timer_logger->set_level(spdlog::level::from_str(log_config.timer));
+  spdlog::register_logger(timer_logger);
 
   auto video_color_encoder_logger = std::make_shared<spdlog::logger>(
       HuC6260::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));

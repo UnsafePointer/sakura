@@ -20,6 +20,7 @@ struct LogConfig {
   std::string mapping_controller;
   std::string processor;
   std::string programmable_sound_generator;
+  std::string timer;
   std::string video_color_encoder;
   std::string video_display_controller;
 };

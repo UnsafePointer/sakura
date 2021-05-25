@@ -24,7 +24,9 @@ class Controller;
 namespace Interrupt {
 class Controller;
 } // namespace Interrupt
-
+namespace Timer {
+class Controller;
+} // namespace Timer
 class Disassembler;
 
 namespace Mapping {
@@ -45,6 +47,9 @@ const Common::Range<uint32_t> VIDEO_COLOR_ENCODER_RANGE =
 
 const Common::Range<uint32_t> PROGRAMMABLE_SOUND_GENERATOR_RANGE =
     Common::Range<uint32_t>(0x1FE800, 0x400);
+
+const Common::Range<uint32_t> TIMER_RANGE =
+    Common::Range<uint32_t>(0x1FEC00, 0x400);
 
 union Registers {
   struct {
@@ -76,6 +81,7 @@ private:
       m_programmable_sound_generator_controller;
   std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
+  std::unique_ptr<HuC6280::Timer::Controller> m_timer_controller;
 
 public:
   Controller();
