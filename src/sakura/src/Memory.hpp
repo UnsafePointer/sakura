@@ -44,7 +44,7 @@ const Common::Range<uint32_t> VIDEO_COLOR_ENCODER_RANGE =
     Common::Range<uint32_t>(0x1FE400, 0x400);
 
 const Common::Range<uint32_t> PROGRAMMABLE_SOUND_GENERATOR_RANGE =
-    Common::Range<uint32_t>(0x1FE800, 0xC00);
+    Common::Range<uint32_t>(0x1FE800, 0x400);
 
 union Registers {
   struct {
