@@ -1129,4 +1129,12 @@ auto Sakura::HuC6280::SAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "SAY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::RTI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "RTI", .length = 1};
+}
+
 #endif
