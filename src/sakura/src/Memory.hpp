@@ -76,11 +76,11 @@ private:
   std::array<uint8_t, 0x100000> m_ROM;
 
   std::unique_ptr<IO::Controller> m_IO_controller;
-  std::unique_ptr<HuC6270::Controller> m_video_display_controller;
   std::unique_ptr<ProgrammableSoundGenerator::Controller>
       m_programmable_sound_generator_controller;
   std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
   std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
+  std::unique_ptr<HuC6270::Controller> m_video_display_controller;
   std::unique_ptr<HuC6280::Timer::Controller> m_timer_controller;
 
 public:
