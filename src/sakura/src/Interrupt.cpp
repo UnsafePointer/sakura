@@ -31,3 +31,20 @@ void Controller::store(uint16_t offset, uint8_t value) {
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
+
+void Controller::request_interrupt(RequestField field) {
+  m_request.value |= field;
+}
+
+auto Controller::priority_request() const -> RequestField {
+  if (m_request.timer_interrupt_request) {
+    return RequestField::TIMER;
+  }
+  if (m_request.interrupt_request_1) {
+    return RequestField::IRQ1;
+  }
+  if (m_request.interrupt_request_2) {
+    return RequestField::IRQ2;
+  }
+  return RequestField::None;
+}

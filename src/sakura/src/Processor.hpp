@@ -6,6 +6,9 @@
 #include <memory>
 
 namespace Sakura::HuC6280 {
+namespace Interrupt {
+class Controller;
+} // namespace Interrupt
 class Disassembler;
 namespace Mapping {
 class Controller;
@@ -69,8 +72,10 @@ private:
   friend Disassembler;
 
   Registers m_registers;
-  std::unique_ptr<Mapping::Controller> m_mapping_controller;
   Speed m_speed{};
+
+  std::unique_ptr<Mapping::Controller> &m_mapping_controller;
+  std::unique_ptr<Interrupt::Controller> &m_interrupt_controller;
 
   void push_into_stack(uint8_t value);
   auto pop_from_stack() -> uint8_t;
@@ -273,11 +278,14 @@ private:
   // clang-format on
 
 public:
-  Processor();
+  Processor(std::unique_ptr<Mapping::Controller> &mapping_controller,
+            std::unique_ptr<Interrupt::Controller> &interrupt_controller);
   ~Processor() = default;
 
   void initialize(const std::filesystem::path &rom);
   auto fetch_instruction() -> uint8_t;
+
+  void check_interrupts();
 };
 }; // namespace Sakura::HuC6280
 

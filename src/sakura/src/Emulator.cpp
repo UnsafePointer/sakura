@@ -18,7 +18,12 @@
 using namespace Sakura;
 
 Emulator::Emulator()
-    : m_processor(std::make_unique<HuC6280::Processor>()),
+    : m_interrupt_controller(
+          std::make_unique<HuC6280::Interrupt::Controller>()),
+      m_mapping_controller(std::make_unique<HuC6280::Mapping::Controller>(
+          m_interrupt_controller)),
+      m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
+                                                       m_interrupt_controller)),
       m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};
 
 Emulator::~Emulator() = default;
@@ -29,7 +34,9 @@ void Emulator::emulate() {
     HuC6280::InstructionHandler<uint8_t> handler =
         HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
     m_disassembler->disassemble(opcode);
-    handler(m_processor, opcode);
+    uint8_t cycles = handler(m_processor, opcode);
+    m_mapping_controller->step(cycles);
+    m_processor->check_interrupts();
   }
 }
 

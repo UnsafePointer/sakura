@@ -80,11 +80,12 @@ private:
   std::unique_ptr<ProgrammableSoundGenerator::Controller>
       m_programmable_sound_generator_controller;
   std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
-  std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
+  std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
   std::unique_ptr<HuC6280::Timer::Controller> m_timer_controller;
 
 public:
-  Controller();
+  Controller(
+      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller);
   ~Controller();
 
   void initialize();
@@ -96,6 +97,8 @@ public:
 
   void set_mapping_register(uint8_t index, uint8_t value);
   auto mapping_register(uint8_t index) -> uint8_t;
+
+  void step(uint8_t cycles);
 };
 }; // namespace Mapping
 }; // namespace HuC6280
