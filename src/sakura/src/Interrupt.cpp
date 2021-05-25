@@ -23,6 +23,9 @@ void Controller::store(uint16_t offset, uint8_t value) {
   case 0b10:
     m_disable.value = (value & 0b111);
     return;
+  case 0b11:
+    m_request.value &= ~(RequestField::TIMER);
+    return;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6280 interrupt write "
