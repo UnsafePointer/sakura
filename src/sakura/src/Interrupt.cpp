@@ -23,6 +23,9 @@ void Controller::store(uint16_t offset, uint8_t value) {
   case 0b10:
     m_disable.value = (value & 0b111);
     return;
+  case 0b11:
+    m_request.value &= ~(RequestField::TIMER);
+    return;
   default:
     spdlog::get(LOGGER_NAME)
         ->critical(fmt::format("Unhandled HuC6280 interrupt write "
@@ -30,4 +33,21 @@ void Controller::store(uint16_t offset, uint8_t value) {
                                offset, value));
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
+}
+
+void Controller::request_interrupt(RequestField field) {
+  m_request.value |= field;
+}
+
+auto Controller::priority_request() const -> RequestField {
+  if (m_request.timer_interrupt_request) {
+    return RequestField::TIMER;
+  }
+  if (m_request.interrupt_request_1) {
+    return RequestField::IRQ1;
+  }
+  if (m_request.interrupt_request_2) {
+    return RequestField::IRQ2;
+  }
+  return RequestField::None;
 }

@@ -1,12 +1,15 @@
-#include <utility>
-
-#include "Memory.hpp"
 #include "Processor.hpp"
+#include "Interrupt.hpp"
+#include "Memory.hpp"
+#include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280;
 
-Processor::Processor()
-    : m_mapping_controller(std::make_unique<Mapping::Controller>()){};
+Processor::Processor(
+    std::unique_ptr<Mapping::Controller> &mapping_controller,
+    std::unique_ptr<Interrupt::Controller> &interrupt_controller)
+    : m_mapping_controller(mapping_controller),
+      m_interrupt_controller(interrupt_controller){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
   m_registers.status.interrupt_disable = 1;
@@ -109,4 +112,49 @@ auto Processor::execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl,
   m_registers.y = pop_from_stack();
 
   return total_length;
+}
+
+auto RESET_VECTOR_FOR_INTERRUPT(Interrupt::RequestField field) -> uint16_t {
+  switch (field) {
+  case Interrupt::RequestField::IRQ1:
+    return RESET_VECTOR_INTERRUPT_REQUEST_1;
+  case Interrupt::RequestField::IRQ2:
+    return RESET_VECTOR_INTERRUPT_REQUEST_2;
+  case Interrupt::RequestField::TIMER:
+    return RESET_VECTOR_TIMER;
+  default:
+    spdlog::get(LOGGER_NAME)
+        ->critical(fmt::format(
+            "Unhandled reset vector for interrupt field: {:#06x}", field));
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+}
+
+void Processor::check_interrupts() {
+  if (m_registers.status.interrupt_disable) {
+    return;
+  }
+  // In order of priotity:
+  // TODO: Check reset
+  // TODO: Check NMI
+  // TODO: Check BRK
+
+  Interrupt::RequestField field = m_interrupt_controller->priority_request();
+  if (field == Interrupt::RequestField::None) {
+    return;
+  }
+
+  push_into_stack(m_registers.program_counter.program_counter_high);
+  push_into_stack(m_registers.program_counter.program_counter_low);
+  m_registers.status.break_command = 0;
+  push_into_stack(m_registers.status.value);
+
+  m_registers.status.interrupt_disable = 1;
+  m_registers.status.decimal = 0;
+
+  uint16_t reset_vector = RESET_VECTOR_FOR_INTERRUPT(field);
+  m_registers.program_counter.program_counter_high =
+      m_mapping_controller->load(reset_vector + 1);
+  m_registers.program_counter.program_counter_low =
+      m_mapping_controller->load(reset_vector);
 }

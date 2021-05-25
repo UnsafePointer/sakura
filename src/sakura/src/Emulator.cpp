@@ -7,6 +7,7 @@
 #include "Memory.hpp"
 #include "Processor.hpp"
 #include "ProgrammableSoundGenerator.hpp"
+#include "Timer.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
 #include <memory>
@@ -17,7 +18,12 @@
 using namespace Sakura;
 
 Emulator::Emulator()
-    : m_processor(std::make_unique<HuC6280::Processor>()),
+    : m_interrupt_controller(
+          std::make_unique<HuC6280::Interrupt::Controller>()),
+      m_mapping_controller(std::make_unique<HuC6280::Mapping::Controller>(
+          m_interrupt_controller)),
+      m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
+                                                       m_interrupt_controller)),
       m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};
 
 Emulator::~Emulator() = default;
@@ -28,7 +34,9 @@ void Emulator::emulate() {
     HuC6280::InstructionHandler<uint8_t> handler =
         HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
     m_disassembler->disassemble(opcode);
-    handler(m_processor, opcode);
+    uint8_t cycles = handler(m_processor, opcode);
+    m_mapping_controller->step(cycles);
+    m_processor->check_interrupts();
   }
 }
 
@@ -73,6 +81,11 @@ void Emulator::register_loggers(const LogConfig &log_config) {
   programmable_sound_generator_logger->set_level(
       spdlog::level::from_str(log_config.programmable_sound_generator));
   spdlog::register_logger(programmable_sound_generator_logger);
+
+  auto timer_logger = std::make_shared<spdlog::logger>(
+      Timer::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
+  timer_logger->set_level(spdlog::level::from_str(log_config.timer));
+  spdlog::register_logger(timer_logger);
 
   auto video_color_encoder_logger = std::make_shared<spdlog::logger>(
       HuC6260::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));

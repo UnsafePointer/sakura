@@ -14,6 +14,7 @@ void App::Configuration::setup() {
     "mapping_controller": "debug",
     "processor": "debug",
     "programmable_sound_generator": "debug",
+    "timer": "debug",
     "video_color_encoder": "debug",
     "video_display_controller": "debug"
   }
@@ -32,6 +33,7 @@ auto App::Configuration::get_log_config() -> Sakura::LogConfig {
           .processor = Common::Configuration::get("log.processor"),
           .programmable_sound_generator =
               Common::Configuration::get("log.programmable_sound_generator"),
+          .timer = Common::Configuration::get("log.timer"),
           .video_color_encoder =
               Common::Configuration::get("log.video_color_encoder"),
           .video_display_controller =

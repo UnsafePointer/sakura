@@ -6,6 +6,12 @@
 
 namespace Sakura {
 namespace HuC6280 {
+namespace Mapping {
+class Controller;
+} // namespace Mapping
+namespace Interrupt {
+class Controller;
+} // namespace Interrupt
 class Processor;
 class Disassembler;
 } // namespace HuC6280
@@ -20,12 +26,15 @@ struct LogConfig {
   std::string mapping_controller;
   std::string processor;
   std::string programmable_sound_generator;
+  std::string timer;
   std::string video_color_encoder;
   std::string video_display_controller;
 };
 
 class Emulator {
 private:
+  std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
+  std::unique_ptr<HuC6280::Mapping::Controller> m_mapping_controller;
   std::unique_ptr<HuC6280::Processor> m_processor;
   std::unique_ptr<HuC6280::Disassembler> m_disassembler;
 

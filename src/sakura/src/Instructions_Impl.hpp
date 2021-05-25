@@ -1714,4 +1714,17 @@ auto Sakura::HuC6280::SAY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 3;
 }
 
+template <>
+auto Sakura::HuC6280::RTI(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.value = processor->pop_from_stack();
+  processor->m_registers.program_counter.program_counter_low =
+      processor->pop_from_stack();
+  processor->m_registers.program_counter.program_counter_high =
+      processor->pop_from_stack();
+
+  return 7;
+}
+
 #endif
