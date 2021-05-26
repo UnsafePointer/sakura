@@ -1267,4 +1267,12 @@ auto Sakura::HuC6280::TXA(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "TXA", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::LSR_ACC(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "LSR A", .length = 1};
+}
+
 #endif
