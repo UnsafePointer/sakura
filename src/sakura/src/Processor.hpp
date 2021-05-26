@@ -67,6 +67,21 @@ enum class Speed {
   High,
 };
 
+enum class BlockTransferType {
+  TAI,
+  TIA,
+};
+
+struct BlockTransferSpec {
+  uint8_t sl;
+  uint8_t sh;
+  uint8_t dl;
+  uint8_t dh;
+  uint8_t ll;
+  uint8_t lh;
+  BlockTransferType type;
+};
+
 class Processor {
 private:
   friend Disassembler;
@@ -79,8 +94,7 @@ private:
 
   void push_into_stack(uint8_t value);
   auto pop_from_stack() -> uint8_t;
-  auto execute_block_transfer(uint8_t sl, uint8_t sh, uint8_t dl, uint8_t dh,
-                              uint8_t ll, uint8_t lh) -> uint16_t;
+  auto execute_block_transfer(BlockTransferSpec spec) -> uint16_t;
 
   // clang-format off
   template <typename T>
@@ -283,6 +297,8 @@ private:
   friend auto BIT_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto CMP_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  template <typename T>
+  friend auto TIA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   // clang-format on
 
 public:

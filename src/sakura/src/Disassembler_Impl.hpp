@@ -1184,4 +1184,29 @@ auto Sakura::HuC6280::CMP_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::TIA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 2);
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 3);
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 4);
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 5);
+
+  return {.mnemonic =
+              fmt::format("TIA {:#04x}{:#04x}, {:#04x}{:#04x}, {:#04x}{:#04x}",
+                          sh, sl, dh, dl, lh, ll),
+          .length = 7};
+}
+
 #endif

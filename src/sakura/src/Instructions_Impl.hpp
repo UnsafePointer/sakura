@@ -263,7 +263,13 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   processor->m_registers.program_counter.value += 1;
 
   uint16_t total_length =
-      processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
+      processor->execute_block_transfer({.sl = sl,
+                                         .sh = sh,
+                                         .dl = dl,
+                                         .dh = dh,
+                                         .ll = ll,
+                                         .lh = lh,
+                                         .type = BlockTransferType::TAI});
   processor->m_registers.status.memory_operation = 0;
   return 17 + 6 * total_length;
 }
@@ -1793,6 +1799,43 @@ auto Sakura::HuC6280::CMP_ABS(std::unique_ptr<Processor> &processor,
   processor->m_registers.status.carry =
       processor->m_registers.accumulator >= value;
   return 5;
+}
+
+template <>
+auto Sakura::HuC6280::TIA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t total_length =
+      processor->execute_block_transfer({.sl = sl,
+                                         .sh = sh,
+                                         .dl = dl,
+                                         .dh = dh,
+                                         .ll = ll,
+                                         .lh = lh,
+                                         .type = BlockTransferType::TIA});
+  processor->m_registers.status.memory_operation = 0;
+  return 17 + 6 * total_length;
 }
 
 #endif
