@@ -1322,4 +1322,18 @@ auto Sakura::HuC6280::TSX(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "TSX", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::DEC_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("DEC {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
 #endif
