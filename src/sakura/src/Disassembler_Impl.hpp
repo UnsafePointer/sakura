@@ -1294,4 +1294,24 @@ auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::JMP_ABS_IND(std::unique_ptr<Processor> &processor,
+                                  uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t destination = processor->m_mapping_controller->load(address + 1);
+  destination <<= 8;
+  destination |= processor->m_mapping_controller->load(address);
+
+  return {.mnemonic =
+              fmt::format("JMP ({:#06x}, X)  {:#06x}", address, destination),
+          .length = 3};
+}
+
 #endif

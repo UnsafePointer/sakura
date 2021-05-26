@@ -1995,4 +1995,25 @@ auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::JMP_ABS_IND(std::unique_ptr<Processor> &processor,
+                                  uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  processor->m_registers.program_counter.program_counter_low =
+      processor->m_mapping_controller->load(address);
+  processor->m_registers.program_counter.program_counter_high =
+      processor->m_mapping_controller->load(address + 1);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 7;
+}
+
 #endif
