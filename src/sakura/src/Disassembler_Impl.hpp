@@ -1217,4 +1217,22 @@ auto Sakura::HuC6280::SXY(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "SXY", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = 0x2000 | zz;
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("ADC ({:#04x})  @{:#06x}={:#04x}", zz,
+                                  address, value),
+          .length = 2};
+}
+
 #endif
