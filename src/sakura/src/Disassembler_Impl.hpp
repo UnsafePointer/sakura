@@ -1314,4 +1314,12 @@ auto Sakura::HuC6280::JMP_ABS_IND(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::TSX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "TSX", .length = 1};
+}
+
 #endif
