@@ -3,9 +3,15 @@
 
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <string>
 
-namespace Sakura::HuC6270 {
+namespace Sakura {
+namespace HuC6280::Interrupt {
+class Controller;
+} // namespace HuC6280::Interrupt
+
+namespace HuC6270 {
 
 static const std::string LOGGER_NAME = "--huc6270--";
 
@@ -33,6 +39,14 @@ union Status {
   uint8_t value;
 
   Status() : value() {}
+};
+
+enum InterruptRequestField : uint8_t {
+  None = 0,
+  CollisionDetect = 1 << 0,
+  OverDetect = 1 << 1,
+  ScanningLineDetect = 1 << 2,
+  VerticalBlankingPeriodDetect = 1 << 3,
 };
 
 union Control {
@@ -237,9 +251,24 @@ union VRAMDataWrite {
   VRAMDataWrite() : value() {}
 };
 
+class ControllerState {
+private:
+  bool m_dirty;
+
+public:
+  ControllerState() = default;
+  ~ControllerState() = default;
+
+  [[nodiscard]] auto is_dirty() const -> bool { return m_dirty; }
+  void mark_dirty() { m_dirty = true; };
+  void clear_dirty() { m_dirty = false; };
+};
+
 class Controller {
 private:
   std::array<uint8_t, 0x10000> m_VRAM;
+
+  uint32_t m_cycles;
 
   Address m_address;
   Status m_status;
@@ -258,16 +287,22 @@ private:
   MemoryAddressWrite m_memory_address_write;
   VRAMDataWrite m_vram_data_write;
 
+  std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
+  std::unique_ptr<ControllerState> m_state;
+
   void store_vram();
   void store_register(bool low, uint8_t value);
 
 public:
-  Controller() = default;
+  Controller(
+      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller);
   ~Controller() = default;
 
   [[nodiscard]] auto load(uint16_t offset) const -> uint8_t;
   void store(uint16_t offset, uint8_t value);
+  void step(uint8_t cycles);
 };
-}; // namespace Sakura::HuC6270
+}; // namespace HuC6270
+}; // namespace Sakura
 
 #endif

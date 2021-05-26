@@ -52,6 +52,7 @@ public:
   void store(uint16_t offset, uint8_t value);
 
   void request_interrupt(RequestField field);
+  void acknowledge_interrupt(RequestField field);
   [[nodiscard]] auto priority_request() const -> RequestField;
 };
 }; // namespace Sakura::HuC6280::Interrupt
