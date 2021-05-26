@@ -1244,4 +1244,19 @@ auto Sakura::HuC6280::STY_ZP(std::unique_ptr<Processor> &processor,
   return {.mnemonic = fmt::format("STY {:#04x}", zp), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::LDA_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic =
+              fmt::format("LDA {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+          .length = 2};
+}
+
 #endif
