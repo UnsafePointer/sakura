@@ -263,7 +263,13 @@ auto Sakura::HuC6280::TAI(std::unique_ptr<Processor> &processor, uint8_t opcode)
   processor->m_registers.program_counter.value += 1;
 
   uint16_t total_length =
-      processor->execute_block_transfer(sl, sh, dl, dh, ll, lh);
+      processor->execute_block_transfer({.sl = sl,
+                                         .sh = sh,
+                                         .dl = dl,
+                                         .dh = dh,
+                                         .ll = ll,
+                                         .lh = lh,
+                                         .type = BlockTransferType::TAI});
   processor->m_registers.status.memory_operation = 0;
   return 17 + 6 * total_length;
 }
@@ -1753,6 +1759,201 @@ auto Sakura::HuC6280::BBR_I(std::unique_ptr<Processor> &processor,
 
   processor->m_registers.status.memory_operation = 0;
   return cycles;
+}
+
+template <>
+auto Sakura::HuC6280::BIT_IMM(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t result = processor->m_registers.accumulator & imm;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.negative = (result >> 6) & 0b01;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::CMP_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator - value;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry =
+      processor->m_registers.accumulator >= value;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::TIA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t sl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t sh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t dl = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t dh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint8_t lh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t total_length =
+      processor->execute_block_transfer({.sl = sl,
+                                         .sh = sh,
+                                         .dl = dl,
+                                         .dh = dh,
+                                         .ll = ll,
+                                         .lh = lh,
+                                         .type = BlockTransferType::TIA});
+  processor->m_registers.status.memory_operation = 0;
+  return 17 + 6 * total_length;
+}
+
+template <>
+auto Sakura::HuC6280::SXY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t x = processor->m_registers.x;
+  processor->m_registers.x = processor->m_registers.y;
+  processor->m_registers.y = x;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IND) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IND) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t zp_address = 0x2000 | zz;
+  uint16_t ll = processor->m_registers.accumulator =
+      processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_registers.accumulator =
+      processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  processor->m_registers.accumulator = value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::STY_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_mapping_controller->store(address, processor->m_registers.y);
+
+  processor->m_registers.status.memory_operation = 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::LDA_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_registers.accumulator =
+      processor->m_mapping_controller->load(address);
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::TXA(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.accumulator = processor->m_registers.x;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::LSR_ACC(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+
+  uint8_t carry = processor->m_registers.accumulator & 0b1;
+  processor->m_registers.accumulator >>= 1;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  processor->m_registers.status.carry = carry;
+  return 2;
 }
 
 #endif
