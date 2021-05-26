@@ -1209,4 +1209,12 @@ auto Sakura::HuC6280::TIA(std::unique_ptr<Processor> &processor, uint8_t opcode)
           .length = 7};
 }
 
+template <>
+auto Sakura::HuC6280::SXY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = "SXY", .length = 1};
+}
+
 #endif

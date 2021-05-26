@@ -1838,4 +1838,16 @@ auto Sakura::HuC6280::TIA(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 17 + 6 * total_length;
 }
 
+template <>
+auto Sakura::HuC6280::SXY(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t x = processor->m_registers.x;
+  processor->m_registers.x = processor->m_registers.y;
+  processor->m_registers.y = x;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif
