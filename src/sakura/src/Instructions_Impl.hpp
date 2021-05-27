@@ -2051,4 +2051,16 @@ auto Sakura::HuC6280::DEC_ZP_X(std::unique_ptr<Processor> &processor,
   return 6;
 }
 
+template <>
+auto Sakura::HuC6280::SAX(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  uint8_t accumulator = processor->m_registers.accumulator;
+  processor->m_registers.accumulator = processor->m_registers.x;
+  processor->m_registers.x = accumulator;
+
+  processor->m_registers.status.memory_operation = 0;
+  return 3;
+}
+
 #endif
