@@ -1361,4 +1361,22 @@ auto Sakura::HuC6280::DEC_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::CMP_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.x);
+
+  return {.mnemonic = fmt::format("CMP {:#06x}, X  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
 #endif
