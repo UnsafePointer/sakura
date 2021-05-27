@@ -2112,4 +2112,28 @@ auto Sakura::HuC6280::CMP_ABS_X(std::unique_ptr<Processor> &processor,
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::INC_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.x;
+
+  uint8_t value = processor->m_mapping_controller->load(address);
+  value++;
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  return 7;
+}
+
 #endif
