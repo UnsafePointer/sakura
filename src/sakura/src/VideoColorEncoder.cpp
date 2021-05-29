@@ -57,3 +57,16 @@ void Controller::store(uint16_t offset, uint8_t value) {
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
 }
+
+auto Controller::get_color_table_data()
+    -> std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> {
+  std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_data = {};
+  unsigned int i = 0;
+  for (auto const &entry : m_color_table_RAM) {
+    color_data[i] = entry.r / 9.0F;
+    color_data[i + 1] = entry.g / 9.0F;
+    color_data[i + 2] = entry.b / 9.0F;
+    i += 3;
+  }
+  return color_data;
+}

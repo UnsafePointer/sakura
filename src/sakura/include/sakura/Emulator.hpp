@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
+#include <sakura/Constants.hpp>
 
 namespace Sakura {
 namespace HuC6280 {
@@ -58,7 +59,9 @@ public:
   void emulate();
   void initialize(const std::filesystem::path &rom,
                   const LogConfig &log_config);
-  void set_vsync_callback(std::function<void(void)> vsync_callback);
+  void set_vsync_callback(
+      std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+          vsync_callback);
   void set_should_pause();
 };
 }; // namespace Sakura

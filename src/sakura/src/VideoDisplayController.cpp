@@ -247,12 +247,15 @@ void Controller::step(uint8_t cycles) {
       m_status.vertical_blanking_period = 1;
     }
     if (m_vsync_callback != nullptr) {
-      m_vsync_callback();
+      auto color_table_data =
+          m_video_color_encoder_controller->get_color_table_data();
+      m_vsync_callback(color_table_data);
     }
   }
 }
 
-void Controller::set_vsync_callback(std::function<void(void)> vsync_callback) {
-  (void)m_video_color_encoder_controller;
+void Controller::set_vsync_callback(
+    std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+        vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
 }

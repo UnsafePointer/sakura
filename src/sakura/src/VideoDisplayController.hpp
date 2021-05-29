@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <sakura/Constants.hpp>
 #include <string>
 
 namespace Sakura {
@@ -295,7 +296,8 @@ private:
   std::unique_ptr<HuC6260::Controller> &m_video_color_encoder_controller;
   std::unique_ptr<ControllerState> m_state;
 
-  std::function<void(void)> m_vsync_callback;
+  std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+      m_vsync_callback;
 
   void store_vram();
   void store_register(bool low, uint8_t value);
@@ -310,7 +312,9 @@ public:
   void store(uint16_t offset, uint8_t value);
   void step(uint8_t cycles);
 
-  void set_vsync_callback(std::function<void(void)> vsync_callback);
+  void set_vsync_callback(
+      std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+          vsync_callback);
 };
 }; // namespace HuC6270
 }; // namespace Sakura

@@ -115,7 +115,9 @@ void Emulator::initialize(const std::filesystem::path &rom,
   m_processor->initialize(rom);
 }
 
-void Emulator::set_vsync_callback(std::function<void(void)> vsync_callback) {
+void Emulator::set_vsync_callback(
+    std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+        vsync_callback) {
   m_video_display_controller->set_vsync_callback(std::move(vsync_callback));
 }
 
