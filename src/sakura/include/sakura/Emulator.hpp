@@ -2,6 +2,7 @@
 #define SAKURA_EMULATOR_HPP
 
 #include <filesystem>
+#include <functional>
 #include <memory>
 
 namespace Sakura {
@@ -15,6 +16,9 @@ class Controller;
 class Processor;
 class Disassembler;
 } // namespace HuC6280
+namespace HuC6270 {
+class Controller;
+} // namespace HuC6270
 
 /*
 Possible values: "trace", "debug", "info", "warning", "error", "critical", "off"
@@ -34,9 +38,12 @@ struct LogConfig {
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
+  std::unique_ptr<HuC6270::Controller> m_video_display_controller;
   std::unique_ptr<HuC6280::Mapping::Controller> m_mapping_controller;
   std::unique_ptr<HuC6280::Processor> m_processor;
   std::unique_ptr<HuC6280::Disassembler> m_disassembler;
+
+  bool m_should_pause;
 
   static void register_loggers(const LogConfig &log_config);
 
@@ -47,6 +54,8 @@ public:
   void emulate();
   void initialize(const std::filesystem::path &rom,
                   const LogConfig &log_config);
+  void set_vsync_callback(std::function<void(void)> vsync_callback);
+  void set_should_pause();
 };
 }; // namespace Sakura
 

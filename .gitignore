@@ -89,3 +89,4 @@ build
 
 *.log
 *.json
+imgui.ini
