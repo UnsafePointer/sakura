@@ -1,6 +1,7 @@
 #include "ArgumentParser.hpp"
 #include "Configuration.hpp"
 #include <SDL2/SDL.h>
+#include <fmt/core.h>
 #include <glad/glad.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
@@ -60,6 +61,8 @@ auto main(int argc, char *argv[]) -> int {
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
   Sakura::Emulator emulator = Sakura::Emulator();
   emulator.set_vsync_callback([&]() {
+    const ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
     emulator.set_should_pause();
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -67,8 +70,30 @@ auto main(int argc, char *argv[]) -> int {
 
     ImGui::NewFrame();
     {
-      if (ImGui::Begin("Color Table RAM", nullptr, ImGuiWindowFlags_NoResize)) {
-        ImGui::Button("Click me!");
+      if (ImGui::Begin("Color Table RAM", nullptr,
+                       ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (ImGui::BeginTabBar("color-table-ram", ImGuiTabBarFlags_None)) {
+          const int color_table_ram_length = 0x10;
+          const int color_table_ram_number_of_colors = 0x10;
+          const int color_button_side = 20;
+          for (int i = 0; i < color_table_ram_length; i++) {
+            std::string tab_title = fmt::format("{:#04x}", i);
+            if (ImGui::BeginTabItem(tab_title.c_str())) {
+              for (int j = 0; j < color_table_ram_number_of_colors; j++) {
+                ImGui::PushID(j);
+                std::string color_button_title = fmt::format("{:#04x}", j);
+                ImGui::ColorButton(
+                    color_button_title.c_str(), clear_color,
+                    ImGuiColorEditFlags_None,
+                    ImVec2(color_button_side, color_button_side));
+                ImGui::SameLine(0, color_button_side);
+                ImGui::PopID();
+              }
+              ImGui::EndTabItem();
+            }
+          }
+          ImGui::EndTabBar();
+        }
       }
       ImGui::End();
     }

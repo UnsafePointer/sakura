@@ -12,6 +12,7 @@ This project can be build in Linux with CMake, Clang, Ninja and [`vcpkg`](https:
 
 `vcpkg` packages needed:
 
+* `fmt`
 * `catch2`
 * `spdlog`
 * `nlohmann-json`
