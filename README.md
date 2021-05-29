@@ -15,6 +15,9 @@ This project can be build in Linux with CMake, Clang, Ninja and [`vcpkg`](https:
 * `catch2`
 * `spdlog`
 * `nlohmann-json`
+* `sdl2`
+* `glad[gl-api-46]`
+* `imgui[opengl3-glad-binding,sdl2-binding]`
 
 ```Shell Session
 $ cmake -Bbuild -GNinja -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake src/
