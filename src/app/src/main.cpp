@@ -2,6 +2,8 @@
 #include "Configuration.hpp"
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_sdl.h>
 #include <iostream>
 #include <sakura/Emulator.hpp>
 
@@ -39,7 +41,6 @@ auto main(int argc, char *argv[]) -> int {
       SDL_CreateWindow("桜", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                        width, heigth, SDL_WINDOW_OPENGL);
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-  (void)gl_context;
   if (gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0) {
     std::cout << "Failed to initialize the OpenGL context." << std::endl;
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -47,17 +48,40 @@ auto main(int argc, char *argv[]) -> int {
   std::cout << "OpenGL " << GLVersion.major << "." << GLVersion.minor
             << std::endl;
 
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO *io = &ImGui::GetIO();
+  io->ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+  ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+  ImGui_ImplOpenGL3_Init();
+
   App::Configuration::setup();
   auto log_config = App::Configuration::get_log_config();
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
   Sakura::Emulator emulator = Sakura::Emulator();
   emulator.set_vsync_callback([&]() {
     emulator.set_should_pause();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+
+    ImGui::NewFrame();
+    {
+      if (ImGui::Begin("Color Table RAM", nullptr, ImGuiWindowFlags_NoResize)) {
+        ImGui::Button("Click me!");
+      }
+      ImGui::End();
+    }
+    ImGui::Render();
+
+    glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
     glClearColor(252 / 255.0f, // NOLINT(readability-magic-numbers)
                  221 / 255.0f, // NOLINT(readability-magic-numbers)
                  237 / 255.0f, // NOLINT(readability-magic-numbers)
                  1.0f);        // NOLINT(readability-magic-numbers)
     glClear(GL_COLOR_BUFFER_BIT);
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
   });
   emulator.initialize(configuration.rom, log_config);
@@ -66,6 +90,7 @@ auto main(int argc, char *argv[]) -> int {
   while (!quit) {
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
+      ImGui_ImplSDL2_ProcessEvent(&event);
       if (event.type == SDL_QUIT) {
         quit = true;
       }
@@ -76,6 +101,9 @@ auto main(int argc, char *argv[]) -> int {
     std::cout << "Frame time: " << std::dec << frame_time << std::endl;
   }
 
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
   SDL_Quit();
   return 0;
 }
