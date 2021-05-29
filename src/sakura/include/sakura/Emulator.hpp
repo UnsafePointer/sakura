@@ -19,6 +19,9 @@ class Disassembler;
 namespace HuC6270 {
 class Controller;
 } // namespace HuC6270
+namespace HuC6260 {
+class Controller;
+} // namespace HuC6260
 
 /*
 Possible values: "trace", "debug", "info", "warning", "error", "critical", "off"
@@ -38,6 +41,7 @@ struct LogConfig {
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
+  std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
   std::unique_ptr<HuC6270::Controller> m_video_display_controller;
   std::unique_ptr<HuC6280::Mapping::Controller> m_mapping_controller;
   std::unique_ptr<HuC6280::Processor> m_processor;

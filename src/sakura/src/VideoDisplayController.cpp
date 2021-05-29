@@ -1,5 +1,6 @@
 #include "VideoDisplayController.hpp"
 #include "Interrupt.hpp"
+#include "VideoColorEncoder.hpp"
 #include <cmath>
 #include <fmt/core.h>
 #include <functional>
@@ -13,8 +14,10 @@ const uint32_t G_CYCLES_PER_FRAME =
     ceil((float)G_HIGH_SPEED_CYCLES_PER_SECOND / G_FRAME_RATE);
 
 Controller::Controller(
-    std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller)
+    std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
+    std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller)
     : m_VRAM(), m_cycles(), m_interrupt_controller(interrupt_controller),
+      m_video_color_encoder_controller(video_color_encoder_controller),
       m_state(std::make_unique<ControllerState>()), m_vsync_callback(nullptr) {}
 
 auto REGISTER_SYMBOL_FOR_ADDRESS(uint8_t address) -> std::string {
@@ -250,5 +253,6 @@ void Controller::step(uint8_t cycles) {
 }
 
 void Controller::set_vsync_callback(std::function<void(void)> vsync_callback) {
+  (void)m_video_color_encoder_controller;
   m_vsync_callback = std::move(vsync_callback);
 }

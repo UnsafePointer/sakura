@@ -21,10 +21,12 @@ using namespace Sakura;
 Emulator::Emulator()
     : m_interrupt_controller(
           std::make_unique<HuC6280::Interrupt::Controller>()),
-      m_video_display_controller(
-          std::make_unique<HuC6270::Controller>(m_interrupt_controller)),
+      m_video_color_encoder_controller(std::make_unique<HuC6260::Controller>()),
+      m_video_display_controller(std::make_unique<HuC6270::Controller>(
+          m_interrupt_controller, m_video_color_encoder_controller)),
       m_mapping_controller(std::make_unique<HuC6280::Mapping::Controller>(
-          m_interrupt_controller, m_video_display_controller)),
+          m_interrupt_controller, m_video_color_encoder_controller,
+          m_video_display_controller)),
       m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
                                                        m_interrupt_controller)),
       m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};

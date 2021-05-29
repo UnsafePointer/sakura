@@ -12,8 +12,11 @@ namespace HuC6280::Interrupt {
 class Controller;
 } // namespace HuC6280::Interrupt
 
-namespace HuC6270 {
+namespace HuC6260 {
+class Controller;
+} // namespace HuC6260
 
+namespace HuC6270 {
 static const std::string LOGGER_NAME = "--huc6270--";
 
 union Address {
@@ -289,6 +292,7 @@ private:
   VRAMDataWrite m_vram_data_write;
 
   std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
+  std::unique_ptr<HuC6260::Controller> &m_video_color_encoder_controller;
   std::unique_ptr<ControllerState> m_state;
 
   std::function<void(void)> m_vsync_callback;
@@ -298,7 +302,8 @@ private:
 
 public:
   Controller(
-      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller);
+      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
+      std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller);
   ~Controller() = default;
 
   [[nodiscard]] auto load(uint16_t offset) const -> uint8_t;
