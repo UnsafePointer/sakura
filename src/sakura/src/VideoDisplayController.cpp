@@ -2,6 +2,7 @@
 #include "Interrupt.hpp"
 #include <cmath>
 #include <fmt/core.h>
+#include <functional>
 #include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6270;
@@ -14,7 +15,7 @@ const uint32_t G_CYCLES_PER_FRAME =
 Controller::Controller(
     std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller)
     : m_VRAM(), m_cycles(), m_interrupt_controller(interrupt_controller),
-      m_state(std::make_unique<ControllerState>()) {}
+      m_state(std::make_unique<ControllerState>()), m_vsync_callback(nullptr) {}
 
 auto REGISTER_SYMBOL_FOR_ADDRESS(uint8_t address) -> std::string {
   switch (address) {
@@ -242,5 +243,12 @@ void Controller::step(uint8_t cycles) {
           HuC6280::Interrupt::RequestField::IRQ1);
       m_status.vertical_blanking_period = 1;
     }
+    if (m_vsync_callback != nullptr) {
+      m_vsync_callback();
+    }
   }
+}
+
+void Controller::set_vsync_callback(std::function<void(void)> vsync_callback) {
+  m_vsync_callback = std::move(vsync_callback);
 }

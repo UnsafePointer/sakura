@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -290,6 +291,8 @@ private:
   std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
   std::unique_ptr<ControllerState> m_state;
 
+  std::function<void(void)> m_vsync_callback;
+
   void store_vram();
   void store_register(bool low, uint8_t value);
 
@@ -301,6 +304,8 @@ public:
   [[nodiscard]] auto load(uint16_t offset) const -> uint8_t;
   void store(uint16_t offset, uint8_t value);
   void step(uint8_t cycles);
+
+  void set_vsync_callback(std::function<void(void)> vsync_callback);
 };
 }; // namespace HuC6270
 }; // namespace Sakura

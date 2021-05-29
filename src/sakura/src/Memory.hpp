@@ -80,12 +80,13 @@ private:
       m_programmable_sound_generator_controller;
   std::unique_ptr<HuC6260::Controller> m_video_color_encoder_controller;
   std::unique_ptr<HuC6280::Interrupt::Controller> &m_interrupt_controller;
-  std::unique_ptr<HuC6270::Controller> m_video_display_controller;
+  std::unique_ptr<HuC6270::Controller> &m_video_display_controller;
   std::unique_ptr<HuC6280::Timer::Controller> m_timer_controller;
 
 public:
   Controller(
-      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller);
+      std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
+      std::unique_ptr<HuC6270::Controller> &video_display_controller);
   ~Controller();
 
   void initialize();

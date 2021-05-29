@@ -14,14 +14,17 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+#include <utility>
 
 using namespace Sakura;
 
 Emulator::Emulator()
     : m_interrupt_controller(
           std::make_unique<HuC6280::Interrupt::Controller>()),
+      m_video_display_controller(
+          std::make_unique<HuC6270::Controller>(m_interrupt_controller)),
       m_mapping_controller(std::make_unique<HuC6280::Mapping::Controller>(
-          m_interrupt_controller)),
+          m_interrupt_controller, m_video_display_controller)),
       m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
                                                        m_interrupt_controller)),
       m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};
@@ -30,6 +33,10 @@ Emulator::~Emulator() = default;
 
 void Emulator::emulate() {
   for (;;) {
+    if (m_should_pause) {
+      m_should_pause = false;
+      break;
+    }
     uint8_t opcode = m_processor->fetch_instruction();
     HuC6280::InstructionHandler<uint8_t> handler =
         HuC6280::INSTRUCTION_TABLE<uint8_t>[opcode];
@@ -105,3 +112,9 @@ void Emulator::initialize(const std::filesystem::path &rom,
   Emulator::register_loggers(log_config);
   m_processor->initialize(rom);
 }
+
+void Emulator::set_vsync_callback(std::function<void(void)> vsync_callback) {
+  m_video_display_controller->set_vsync_callback(std::move(vsync_callback));
+}
+
+void Emulator::set_should_pause() { m_should_pause = true; }
