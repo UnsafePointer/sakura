@@ -30,9 +30,9 @@ union ColorTableDataWrite {
     uint8_t high : 8;
   };
   struct {
+    uint16_t b : 3;
     uint16_t r : 3;
     uint16_t g : 3;
-    uint16_t b : 3;
     uint16_t unused : 7;
   };
   uint16_t value;
@@ -42,9 +42,9 @@ union ColorTableDataWrite {
 
 union ColorTableEntry {
   struct {
+    uint16_t b : 3;
     uint16_t r : 3;
     uint16_t g : 3;
-    uint16_t b : 3;
     uint16_t unused : 7;
   };
   uint16_t value;
