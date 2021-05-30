@@ -13,12 +13,13 @@ using namespace Sakura::HuC6280::Mapping;
 
 Controller::Controller(
     std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
+    std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller,
     std::unique_ptr<HuC6270::Controller> &video_display_controller)
     : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()),
       m_programmable_sound_generator_controller(
           std::make_unique<ProgrammableSoundGenerator::Controller>()),
-      m_video_color_encoder_controller(std::make_unique<HuC6260::Controller>()),
       m_interrupt_controller(interrupt_controller),
+      m_video_color_encoder_controller(video_color_encoder_controller),
       m_video_display_controller(video_display_controller),
       m_timer_controller(
           std::make_unique<HuC6280::Timer::Controller>(m_interrupt_controller)){

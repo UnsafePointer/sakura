@@ -1,6 +1,7 @@
 find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 
 add_executable(sakura
     src/ArgumentParser.cpp
@@ -14,3 +15,4 @@ target_link_libraries(sakura PRIVATE libcommon)
 target_link_libraries(sakura PRIVATE SDL2::SDL2main SDL2::SDL2-static)
 target_link_libraries(sakura PRIVATE glad::glad)
 target_link_libraries(sakura PRIVATE imgui::imgui)
+target_link_libraries(sakura PRIVATE fmt::fmt-header-only)

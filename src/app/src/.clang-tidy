@@ -1,5 +1,5 @@
 InheritParentConfig: true
-Checks: "-llvm-header-guard"
+Checks: "-llvm-header-guard,-readability-function-cognitive-complexity"
 CheckOptions:
   - key: readability-identifier-naming.GlobalFunctionCase
     value: lower_case

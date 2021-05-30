@@ -1,6 +1,7 @@
 #include "ArgumentParser.hpp"
 #include "Configuration.hpp"
 #include <SDL2/SDL.h>
+#include <fmt/core.h>
 #include <glad/glad.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
@@ -59,31 +60,77 @@ auto main(int argc, char *argv[]) -> int {
   auto log_config = App::Configuration::get_log_config();
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
   Sakura::Emulator emulator = Sakura::Emulator();
-  emulator.set_vsync_callback([&]() {
-    emulator.set_should_pause();
+  emulator.set_vsync_callback(
+      [&](std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_table_data) {
+        emulator.set_should_pause();
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame(window);
 
-    ImGui::NewFrame();
-    {
-      if (ImGui::Begin("Color Table RAM", nullptr, ImGuiWindowFlags_NoResize)) {
-        ImGui::Button("Click me!");
-      }
-      ImGui::End();
-    }
-    ImGui::Render();
+        ImGui::NewFrame();
+        {
+          if (ImGui::Begin("Color Table RAM", nullptr,
+                           ImGuiWindowFlags_AlwaysAutoResize)) {
+            if (ImGui::BeginTabBar("color-table-ram", ImGuiTabBarFlags_None)) {
+              const int color_button_side = 20;
+              for (unsigned int color_table_ram_area = 0;
+                   color_table_ram_area < COLOR_TABLE_RAM_NUMBER_OF_AREAS;
+                   color_table_ram_area++) {
+                std::string tab_title =
+                    fmt::format("{:#04x}", color_table_ram_area);
+                if (ImGui::BeginTabItem(tab_title.c_str())) {
+                  std::array<std::string, COLOR_TABLE_RAM_NUMBER_OF_SECTIONS>
+                      titles = {"Background", "Sprite"};
+                  for (unsigned int section = 0;
+                       section < COLOR_TABLE_RAM_NUMBER_OF_SECTIONS;
+                       section++) {
+                    ImGui::Text("%s", titles[section].c_str());
+                    for (unsigned int area_color = 0;
+                         area_color < COLOR_TABLE_RAM_NUMBER_OF_COLORS_PER_AREA;
+                         area_color++) {
+                      ImGui::PushID(area_color);
+                      std::string color_button_title =
+                          fmt::format("{:#04x}", area_color);
+                      unsigned int color_index =
+                          COLOR_TABLE_RAM_NUMBER_OF_COLORS_PER_AREA *
+                              color_table_ram_area +
+                          area_color +
+                          section *
+                              COLOR_TABLE_RAM_NUMBER_OF_COLORS_PER_SECTION;
+                      ImGui::ColorButton(
+                          color_button_title.c_str(),
+                          ImVec4(color_table_data[color_index * 3],
+                                 color_table_data[color_index * 3 + 1],
+                                 color_table_data[color_index * 3 + 2], 1.00f),
+                          ImGuiColorEditFlags_None,
+                          ImVec2(color_button_side, color_button_side));
+                      if (area_color + 1 !=
+                          COLOR_TABLE_RAM_NUMBER_OF_COLORS_PER_AREA) {
+                        ImGui::SameLine(0, color_button_side);
+                      }
+                      ImGui::PopID();
+                    }
+                  }
+                  ImGui::EndTabItem();
+                }
+              }
+              ImGui::EndTabBar();
+            }
+          }
+          ImGui::End();
+        }
+        ImGui::Render();
 
-    glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
-    glClearColor(252 / 255.0f, // NOLINT(readability-magic-numbers)
-                 221 / 255.0f, // NOLINT(readability-magic-numbers)
-                 237 / 255.0f, // NOLINT(readability-magic-numbers)
-                 1.0f);        // NOLINT(readability-magic-numbers)
-    glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
+        glClearColor(252 / 255.0f, // NOLINT(readability-magic-numbers)
+                     221 / 255.0f, // NOLINT(readability-magic-numbers)
+                     237 / 255.0f, // NOLINT(readability-magic-numbers)
+                     1.0f);        // NOLINT(readability-magic-numbers)
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    SDL_GL_SwapWindow(window);
-  });
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        SDL_GL_SwapWindow(window);
+      });
   emulator.initialize(configuration.rom, log_config);
 
   bool quit = false;

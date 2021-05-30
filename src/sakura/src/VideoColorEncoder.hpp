@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <sakura/Constants.hpp>
 #include <string>
 
 namespace Sakura::HuC6260 {
@@ -53,7 +54,8 @@ union ColorTableEntry {
 };
 
 class Controller {
-  std::array<ColorTableEntry, 0x200> m_color_table_RAM;
+  std::array<ColorTableEntry, COLOR_TABLE_RAM_NUMBER_OF_COLORS>
+      m_color_table_RAM;
 
   ColorTableAddress m_color_table_address;
   ColorTableDataWrite m_color_table_data_write;
@@ -67,6 +69,8 @@ public:
 
   [[nodiscard]] auto load(uint16_t offset) const -> uint8_t;
   void store(uint16_t offset, uint8_t value);
+
+  auto get_color_table_data() -> std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>;
 };
 }; // namespace Sakura::HuC6260
 
