@@ -1452,4 +1452,13 @@ auto Sakura::HuC6280::ORA_ABS_X(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::ST1(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  uint8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  return {.mnemonic = fmt::format("ST1 #{:#04x}", imm), .length = 2};
+}
+
 #endif
