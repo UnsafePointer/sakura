@@ -271,7 +271,7 @@ public:
 
 class Controller {
 private:
-  std::array<uint8_t, 0x10000> m_VRAM;
+  std::array<uint16_t, 0x8000> m_VRAM;
 
   uint32_t m_cycles;
 

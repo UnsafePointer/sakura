@@ -177,9 +177,7 @@ void Controller::store_register(bool low, uint8_t value) {
 }
 
 void Controller::store_vram() {
-  m_VRAM[m_memory_address_write.value] = m_vram_data_write.low;
-  m_memory_address_write.value++;
-  m_VRAM[m_memory_address_write.value] = m_vram_data_write.high;
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.value;
   m_memory_address_write.value++;
 }
 
