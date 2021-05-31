@@ -299,6 +299,7 @@ private:
   std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
       m_vsync_callback;
 
+  auto load_vram(uint16_t address) -> uint16_t;
   void store_vram();
   void store_register(bool low, uint8_t value);
 

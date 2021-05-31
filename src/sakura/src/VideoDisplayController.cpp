@@ -176,6 +176,10 @@ void Controller::store_register(bool low, uint8_t value) {
   }
 }
 
+auto Controller::load_vram(uint16_t address) -> uint16_t {
+  return m_VRAM[address];
+}
+
 void Controller::store_vram() {
   m_VRAM[m_memory_address_write.value] = m_vram_data_write.value;
   m_memory_address_write.value++;
