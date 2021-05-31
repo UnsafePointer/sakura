@@ -261,3 +261,16 @@ void Controller::set_vsync_callback(
         vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
 }
+
+auto Controller::get_background_attribute_table_data()
+    -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> {
+  std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> background_data =
+      {};
+  for (unsigned int i = 0; i < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS;
+       i++) {
+    uint16_t data = load_vram(i);
+    auto character = Character(data);
+    (void)character;
+  }
+  return background_data;
+}

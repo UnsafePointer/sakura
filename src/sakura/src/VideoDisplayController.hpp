@@ -269,6 +269,16 @@ public:
   void clear_dirty() { m_dirty = false; };
 };
 
+union Character {
+  struct {
+    uint16_t code : 12;
+    uint16_t cg_color : 4;
+  };
+  uint16_t value;
+
+  Character(uint16_t data) : value(data) {}
+};
+
 class Controller {
 private:
   std::array<uint16_t, 0x8000> m_VRAM;
@@ -302,6 +312,8 @@ private:
   auto load_vram(uint16_t address) -> uint16_t;
   void store_vram();
   void store_register(bool low, uint8_t value);
+  auto get_background_attribute_table_data()
+      -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>;
 
 public:
   Controller(
