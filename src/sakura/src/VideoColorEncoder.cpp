@@ -63,10 +63,20 @@ auto Controller::get_color_table_data()
   std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_data = {};
   unsigned int i = 0;
   for (auto const &entry : m_color_table_RAM) {
-    color_data[i] = entry.r / 9.0F;
-    color_data[i + 1] = entry.g / 9.0F;
-    color_data[i + 2] = entry.b / 9.0F;
+    color_data[i] = entry.r / 7.0F;
+    color_data[i + 1] = entry.g / 7.0F;
+    color_data[i + 2] = entry.b / 7.0F;
     i += 3;
   }
   return color_data;
+}
+
+auto Controller::get_color_data(uint16_t background, uint16_t color_area,
+                                uint16_t pattern_color)
+    -> std::array<float, 3> {
+  uint16_t address = ((background & 0b1) << 8);
+  address |= ((color_area & 0b1111) << 3);
+  address |= (pattern_color & 0b1111);
+  auto entry = m_color_table_RAM[address];
+  return {entry.r / 7.0F, entry.g / 7.0F, entry.b / 7.0F};
 }

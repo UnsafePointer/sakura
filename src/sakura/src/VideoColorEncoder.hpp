@@ -71,6 +71,8 @@ public:
   void store(uint16_t offset, uint8_t value);
 
   auto get_color_table_data() -> std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>;
+  auto get_color_data(uint16_t background, uint16_t color_area,
+                      uint16_t pattern_color) -> std::array<float, 3>;
 };
 }; // namespace Sakura::HuC6260
 
