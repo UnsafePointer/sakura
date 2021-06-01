@@ -306,7 +306,8 @@ private:
   std::unique_ptr<HuC6260::Controller> &m_video_color_encoder_controller;
   std::unique_ptr<ControllerState> m_state;
 
-  std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+  std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
+                     std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
       m_vsync_callback;
 
   auto load_vram(uint16_t address) -> uint16_t;
@@ -328,7 +329,9 @@ public:
   void step(uint8_t cycles);
 
   void set_vsync_callback(
-      std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+      std::function<
+          void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
+               std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
           vsync_callback);
 };
 }; // namespace HuC6270
