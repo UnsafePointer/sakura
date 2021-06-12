@@ -12,6 +12,7 @@ target_compile_options(sakura PRIVATE -Werror -Wall -Wextra)
 
 target_link_libraries(sakura PRIVATE libsakura)
 target_link_libraries(sakura PRIVATE libcommon)
+target_link_libraries(sakura PRIVATE libgrafx)
 target_link_libraries(sakura PRIVATE SDL2::SDL2main SDL2::SDL2-static)
 target_link_libraries(sakura PRIVATE glad::glad)
 target_link_libraries(sakura PRIVATE imgui::imgui)

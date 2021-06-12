@@ -1,6 +1,7 @@
 #include "VideoDisplayController.hpp"
 #include "Interrupt.hpp"
 #include "VideoColorEncoder.hpp"
+#include <bitset>
 #include <cmath>
 #include <fmt/core.h>
 #include <functional>
@@ -176,10 +177,12 @@ void Controller::store_register(bool low, uint8_t value) {
   }
 }
 
+auto Controller::load_vram(uint16_t address) -> uint16_t {
+  return m_VRAM[address];
+}
+
 void Controller::store_vram() {
-  m_VRAM[m_memory_address_write.value] = m_vram_data_write.low;
-  m_memory_address_write.value++;
-  m_VRAM[m_memory_address_write.value] = m_vram_data_write.high;
+  m_VRAM[m_memory_address_write.value] = m_vram_data_write.value;
   m_memory_address_write.value++;
 }
 
@@ -247,15 +250,101 @@ void Controller::step(uint8_t cycles) {
       m_status.vertical_blanking_period = 1;
     }
     if (m_vsync_callback != nullptr) {
+      auto background_attribute_table_data =
+          get_background_attribute_table_data();
       auto color_table_data =
           m_video_color_encoder_controller->get_color_table_data();
-      m_vsync_callback(color_table_data);
+      m_vsync_callback(color_table_data, background_attribute_table_data);
     }
   }
 }
 
 void Controller::set_vsync_callback(
-    std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>)>
+    std::function<
+        void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
+             std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
         vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
+}
+
+auto Controller::get_background_character_data(Character character)
+    -> std::array<float, BACKGROUND_CHARACTER_DATA_LENGTH> {
+  std::array<float, BACKGROUND_CHARACTER_DATA_LENGTH> character_data = {};
+  uint16_t address = character.code;
+  address <<= 4;
+  std::array<uint16_t, BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH>
+      character_generator_data = {};
+  for (unsigned int i = 0; i < BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH;
+       i++) {
+    character_generator_data[i] = load_vram(address + i);
+  }
+
+  for (unsigned int i = 0; i < BACKGROUND_CHARACTER_DOTS_HEIGHT; i++) {
+    uint16_t ch1_ch0 = character_generator_data[i];
+    uint8_t ch0_data = ch1_ch0 & 0x00FF;
+    auto ch0 = std::bitset<8>(ch0_data);
+    uint8_t ch1_data = (ch1_ch0 & 0xFF00) >> 8;
+    auto ch1 = std::bitset<8>(ch1_data);
+    uint16_t ch3_ch2 = character_generator_data[i + 8];
+    uint8_t ch2_data = ch3_ch2 & 0x00FF;
+    auto ch2 = std::bitset<8>(ch2_data);
+    uint8_t ch3_data = (ch3_ch2 & 0xFF00) >> 8;
+    auto ch3 = std::bitset<8>(ch3_data);
+    std::array<std::bitset<8>, 4> chs = {ch0, ch1, ch2, ch3};
+    for (unsigned int j = 0; j < BACKGROUND_CHARACTER_DOTS_WIDTH; j++) {
+      auto color_data = std::bitset<4>(0);
+      for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
+           k++) {
+        if (chs[k].test(k)) {
+          color_data.set(k);
+        }
+      }
+      uint8_t pattern_color = color_data.to_ulong();
+      unsigned int character_data_index =
+          (j + i * BACKGROUND_CHARACTER_DOTS_HEIGHT) * 3;
+      auto color = m_video_color_encoder_controller->get_color_data(
+          0, character.cg_color, pattern_color);
+      character_data[character_data_index] = color[0];
+      character_data[character_data_index + 1] = color[1];
+      character_data[character_data_index + 2] = color[2];
+    }
+  }
+
+  return character_data;
+}
+
+auto Controller::get_background_attribute_table_data()
+    -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> {
+  std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> background_data =
+      {};
+  for (unsigned int y = 0;
+       y < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW; y++) {
+    for (unsigned int x = 0;
+         x < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN; x++) {
+      unsigned int address =
+          x + y * BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN;
+      uint16_t data = load_vram(address);
+      auto character = Character(data);
+      auto character_data = get_background_character_data(character);
+      for (unsigned int y_char = 0; y_char < BACKGROUND_CHARACTER_DOTS_HEIGHT;
+           y_char++) {
+        for (unsigned int x_char = 0; x_char < BACKGROUND_CHARACTER_DOTS_WIDTH;
+             x_char++) {
+          unsigned int source_index =
+              (x_char + y_char * BACKGROUND_CHARACTER_DOTS_HEIGHT) * 3;
+          unsigned int destination_index =
+              (x_char + (x * BACKGROUND_CHARACTER_DOTS_WIDTH)) * 3 +
+              (y_char + (y * BACKGROUND_CHARACTER_DOTS_HEIGHT)) *
+                  BACKGROUND_CHARACTER_DOTS_HEIGHT *
+                  BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW * 3;
+          background_data[destination_index] = character_data[source_index];
+          background_data[destination_index + 1] =
+              character_data[source_index + 1];
+          background_data[destination_index + 2] =
+              character_data[source_index + 2];
+        }
+      }
+    }
+  }
+  return background_data;
 }

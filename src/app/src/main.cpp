@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <fmt/core.h>
 #include <glad/glad.h>
+#include <grafx/Texture.hpp>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
 #include <iostream>
@@ -56,12 +57,21 @@ auto main(int argc, char *argv[]) -> int {
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL3_Init();
 
+  const unsigned int background_texture_scale = 3;
+  Grafx::Texture background_texture = Grafx::Texture(
+      BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
+          BACKGROUND_CHARACTER_DOTS_WIDTH,
+      BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
+          BACKGROUND_CHARACTER_DOTS_HEIGHT);
+
   App::Configuration::setup();
   auto log_config = App::Configuration::get_log_config();
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
   Sakura::Emulator emulator = Sakura::Emulator();
   emulator.set_vsync_callback(
-      [&](std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_table_data) {
+      [&](std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_table_data,
+          std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>
+              background_attribute_table_data) {
         emulator.set_should_pause();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -116,6 +126,30 @@ auto main(int argc, char *argv[]) -> int {
               }
               ImGui::EndTabBar();
             }
+          }
+          ImGui::End();
+          if (ImGui::Begin("Background", nullptr,
+                           ImGuiWindowFlags_AlwaysAutoResize)) {
+            background_texture.bind(GL_TEXTURE0);
+            glTexSubImage2D(
+                GL_TEXTURE_2D, 0, 0, 0,
+                BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
+                    BACKGROUND_CHARACTER_DOTS_WIDTH,
+                BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
+                    BACKGROUND_CHARACTER_DOTS_HEIGHT,
+                GL_RGB, GL_FLOAT, background_attribute_table_data.data());
+            ImVec2 size = ImVec2(
+                static_cast<float>(
+                    BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
+                    BACKGROUND_CHARACTER_DOTS_WIDTH * background_texture_scale),
+                static_cast<float>(
+                    BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
+                    BACKGROUND_CHARACTER_DOTS_HEIGHT *
+                    background_texture_scale));
+            ImGui::Image(
+                // NOLINTNEXTLINE(performance-no-int-to-ptr)
+                reinterpret_cast<ImTextureID>(background_texture.get_object()),
+                size);
           }
           ImGui::End();
         }
