@@ -16,6 +16,7 @@ class Controller;
 } // namespace Mapping
 
 static const std::string LOGGER_NAME = "--huc6280--";
+static const std::string BLOCK_TRANSFER_LOGGER_NAME = "--blocktx--";
 
 static const uint16_t RESET_VECTOR_INTERRUPT_REQUEST_2 = 0xFFF6;
 static const uint16_t RESET_VECTOR_INTERRUPT_REQUEST_1 = 0xFFF8;

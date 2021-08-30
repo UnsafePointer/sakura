@@ -108,6 +108,13 @@ void Emulator::register_loggers(const LogConfig &log_config) {
   video_display_controller_logger->set_level(
       spdlog::level::from_str(log_config.video_display_controller));
   spdlog::register_logger(video_display_controller_logger);
+
+  auto block_transfer_instruction_logger = std::make_shared<spdlog::logger>(
+      HuC6280::BLOCK_TRANSFER_LOGGER_NAME,
+      spdlog::sinks_init_list({console_sink, file_sink}));
+  block_transfer_instruction_logger->set_level(
+      spdlog::level::from_str(log_config.block_transfer_instruction));
+  spdlog::register_logger(block_transfer_instruction_logger);
 }
 
 void Emulator::initialize(const std::filesystem::path &rom,

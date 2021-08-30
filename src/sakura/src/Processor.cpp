@@ -66,6 +66,17 @@ auto Processor::pop_from_stack() -> uint8_t {
   return value;
 }
 
+auto BLOCK_TRANSFER_SYMBOL_FOR_TYPE(BlockTransferType type) -> std::string {
+  switch (type) {
+  case BlockTransferType::TAI:
+    return "TAI";
+  case BlockTransferType::TIA:
+    return "TIA";
+  default:
+    return "";
+  }
+}
+
 auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
   if (spec.ll == 0x0 && spec.lh == 0x0) {
     spec.ll = 0xFF;
@@ -86,6 +97,22 @@ auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
   m_registers.x = spec.sl;
   m_registers.source_high = spec.sh;
 
+  spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+      ->debug(fmt::format("Starting {:s} block transfer:",
+                          BLOCK_TRANSFER_SYMBOL_FOR_TYPE(spec.type)));
+  spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+      ->debug(fmt::format(
+          "Source: {:#06x}",
+          (((uint16_t)m_registers.source_high << 8) | m_registers.x)));
+  spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+      ->debug(fmt::format(
+          "Destination: {:#06x}",
+          (((uint16_t)m_registers.destination_high << 8) | m_registers.y)));
+  spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+      ->debug(fmt::format("Length: {:#06x}",
+                          (((uint16_t)m_registers.length_high << 8) |
+                           m_registers.accumulator)));
+
   bool flip = true;
 
   for (;;) {
@@ -100,6 +127,9 @@ auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
     destination = (destination << 8) | m_registers.y;
 
     uint8_t value = m_mapping_controller->load(source);
+    spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+        ->debug(fmt::format("S: {:#06x} (V: {:#04x}) -> D: {:#06x}", source,
+                            value, destination));
     m_mapping_controller->store(destination, value);
 
     if (spec.type == BlockTransferType::TAI) {
@@ -145,6 +175,10 @@ auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
       m_registers.length_high--;
     }
   }
+
+  spdlog::get(BLOCK_TRANSFER_LOGGER_NAME)
+      ->debug(fmt::format("Block transfer {:s} done",
+                          BLOCK_TRANSFER_SYMBOL_FOR_TYPE(spec.type)));
 
   m_registers.x = pop_from_stack();
   m_registers.accumulator = pop_from_stack();

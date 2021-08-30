@@ -37,6 +37,7 @@ struct LogConfig {
   std::string timer;
   std::string video_color_encoder;
   std::string video_display_controller;
+  std::string block_transfer_instruction;
 };
 
 struct VDCConfig {

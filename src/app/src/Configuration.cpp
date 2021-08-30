@@ -9,6 +9,7 @@ void App::Configuration::setup() {
   std::string contents = R"json(
 {
   "log": {
+    "block_transfer_instruction": "debug",
     "disassembler": "debug",
     "interrupt_controller": "debug",
     "io": "debug",
@@ -41,7 +42,9 @@ auto App::Configuration::get_log_config() -> Sakura::LogConfig {
           .video_color_encoder =
               Common::Configuration::get("log.video_color_encoder"),
           .video_display_controller =
-              Common::Configuration::get("log.video_display_controller")};
+              Common::Configuration::get("log.video_display_controller"),
+          .block_transfer_instruction =
+              Common::Configuration::get("log.block_transfer_instruction")};
 }
 
 // TODO: solve templating problem with Common::Configuration::get, this is
