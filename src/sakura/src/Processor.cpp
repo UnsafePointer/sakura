@@ -9,7 +9,8 @@ Processor::Processor(
     std::unique_ptr<Mapping::Controller> &mapping_controller,
     std::unique_ptr<Interrupt::Controller> &interrupt_controller)
     : m_mapping_controller(mapping_controller),
-      m_interrupt_controller(interrupt_controller){};
+      m_interrupt_controller(interrupt_controller),
+      m_stack_pointer_initialized(false), m_fallback_stack(){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
   m_registers.status.interrupt_disable = 1;
@@ -34,12 +35,31 @@ auto Processor::fetch_instruction() -> uint8_t {
 }
 
 void Processor::push_into_stack(uint8_t value) {
+  if (!m_stack_pointer_initialized) {
+    spdlog::get(LOGGER_NAME)
+        ->warn("Using stack operations with an uninitialized stack pointer");
+    m_fallback_stack.push(value);
+    return;
+  }
   uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
   m_registers.stack_pointer--;
   m_mapping_controller->store(stack_address, value);
 }
 
 auto Processor::pop_from_stack() -> uint8_t {
+  if (!m_stack_pointer_initialized) {
+    spdlog::get(LOGGER_NAME)
+        ->warn("Using stack operations with an uninitialized stack pointer");
+    if (m_fallback_stack.empty()) {
+      spdlog::get(LOGGER_NAME)
+          ->critical(
+              "Attempted to retrieve top element from an empty fallback stack");
+      exit(1); // NOLINT(concurrency-mt-unsafe)
+    }
+    uint8_t top = m_fallback_stack.top();
+    m_fallback_stack.pop();
+    return top;
+  }
   m_registers.stack_pointer++;
   uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
   uint8_t value = m_mapping_controller->load(stack_address);
