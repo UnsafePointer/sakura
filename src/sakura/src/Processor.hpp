@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <stack>
 
 namespace Sakura::HuC6280 {
 namespace Interrupt {
@@ -91,6 +92,9 @@ private:
 
   std::unique_ptr<Mapping::Controller> &m_mapping_controller;
   std::unique_ptr<Interrupt::Controller> &m_interrupt_controller;
+
+  bool m_stack_pointer_initialized;
+  std::stack<uint8_t> m_fallback_stack;
 
   void push_into_stack(uint8_t value);
   auto pop_from_stack() -> uint8_t;
