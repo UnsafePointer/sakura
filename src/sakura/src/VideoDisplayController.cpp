@@ -1,6 +1,7 @@
 #include "VideoDisplayController.hpp"
 #include "Interrupt.hpp"
 #include "VideoColorEncoder.hpp"
+#include "sakura/Emulator.hpp"
 #include <bitset>
 #include <cmath>
 #include <fmt/core.h>
@@ -15,11 +16,16 @@ const uint32_t G_CYCLES_PER_FRAME =
     ceil((float)G_HIGH_SPEED_CYCLES_PER_SECOND / G_FRAME_RATE);
 
 Controller::Controller(
+    Sakura::VDCConfig config,
     std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
     std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller)
     : m_VRAM(), m_cycles(), m_interrupt_controller(interrupt_controller),
       m_video_color_encoder_controller(video_color_encoder_controller),
-      m_state(std::make_unique<ControllerState>()), m_vsync_callback(nullptr) {}
+      m_state(std::make_unique<ControllerState>()), m_vsync_callback(nullptr) {
+  if (config.deadbeef_vram) {
+    m_VRAM.fill(0xDEAD);
+  }
+}
 
 auto REGISTER_SYMBOL_FOR_ADDRESS(uint8_t address) -> std::string {
   switch (address) {

@@ -57,7 +57,7 @@ private:
   static void register_loggers(const LogConfig &log_config);
 
 public:
-  Emulator();
+  Emulator(const VDCConfig &vdc_config);
   ~Emulator();
 
   void emulate();

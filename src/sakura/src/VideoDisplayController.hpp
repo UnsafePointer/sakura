@@ -9,6 +9,8 @@
 #include <string>
 
 namespace Sakura {
+struct VDCConfig;
+
 namespace HuC6280::Interrupt {
 class Controller;
 } // namespace HuC6280::Interrupt
@@ -320,6 +322,7 @@ private:
 
 public:
   Controller(
+      Sakura::VDCConfig config,
       std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
       std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller);
   ~Controller() = default;

@@ -67,7 +67,8 @@ auto main(int argc, char *argv[]) -> int {
   App::Configuration::setup();
   auto log_config = App::Configuration::get_log_config();
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
-  Sakura::Emulator emulator = Sakura::Emulator();
+  auto vdc_config = App::Configuration::get_vdc_config();
+  Sakura::Emulator emulator = Sakura::Emulator(vdc_config);
   emulator.set_vsync_callback(
       [&](std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_table_data,
           std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>
