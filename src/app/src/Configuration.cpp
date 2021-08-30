@@ -1,5 +1,6 @@
 #include "Configuration.hpp"
 #include <common/Configuration.hpp>
+#include <cstring>
 #include <filesystem>
 
 void App::Configuration::setup() {
@@ -17,6 +18,9 @@ void App::Configuration::setup() {
     "timer": "debug",
     "video_color_encoder": "debug",
     "video_display_controller": "debug"
+  },
+  "vdc": {
+    "deadbeef_vram": "false"
   }
 }
     )json";
@@ -38,4 +42,15 @@ auto App::Configuration::get_log_config() -> Sakura::LogConfig {
               Common::Configuration::get("log.video_color_encoder"),
           .video_display_controller =
               Common::Configuration::get("log.video_display_controller")};
+}
+
+// TODO: solve templating problem with Common::Configuration::get, this is
+// unacceptable
+auto is_true(const std::string &value) -> bool {
+  return strcasecmp("true", value.c_str()) == 0;
+}
+
+auto App::Configuration::get_vdc_config() -> Sakura::VDCConfig {
+  return {.deadbeef_vram =
+              is_true(Common::Configuration::get("vdc.deadbeef_vram"))};
 }

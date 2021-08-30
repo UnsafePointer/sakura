@@ -39,6 +39,10 @@ struct LogConfig {
   std::string video_display_controller;
 };
 
+struct VDCConfig {
+  bool deadbeef_vram;
+};
+
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
@@ -53,7 +57,7 @@ private:
   static void register_loggers(const LogConfig &log_config);
 
 public:
-  Emulator();
+  Emulator(const VDCConfig &vdc_config);
   ~Emulator();
 
   void emulate();
