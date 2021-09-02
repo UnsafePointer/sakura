@@ -301,7 +301,7 @@ auto Controller::get_background_character_data(Character character)
       auto color_data = std::bitset<4>(0);
       for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
            k++) {
-        if (chs[k].test(k)) {
+        if (chs[k].test(j)) {
           color_data.set(k);
         }
       }
