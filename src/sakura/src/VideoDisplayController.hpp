@@ -319,6 +319,10 @@ private:
       -> std::array<float, CHARACTER_DATA_LENGTH>;
   auto get_background_attribute_table_data()
       -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>;
+  auto get_character_data(unsigned int index)
+      -> std::array<float, CHARACTER_DATA_LENGTH>;
+  auto get_character_generator_data()
+      -> std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>;
 
 public:
   Controller(

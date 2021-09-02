@@ -260,6 +260,8 @@ void Controller::step(uint8_t cycles) {
           get_background_attribute_table_data();
       auto color_table_data =
           m_video_color_encoder_controller->get_color_table_data();
+      auto character_generator_data = get_character_generator_data();
+      (void)character_generator_data;
       m_vsync_callback(color_table_data, background_attribute_table_data);
     }
   }
@@ -348,4 +350,79 @@ auto Controller::get_background_attribute_table_data()
     }
   }
   return background_data;
+}
+
+auto Controller::get_character_data(unsigned int index)
+    -> std::array<float, CHARACTER_DATA_LENGTH> {
+  std::array<float, CHARACTER_DATA_LENGTH> character_data = {};
+  uint16_t address = (index * 16) + 0x400;
+  std::array<uint16_t, BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH>
+      character_generator_data = {};
+  for (unsigned int i = 0; i < BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH;
+       i++) {
+    character_generator_data[i] = load_vram(address + i);
+  }
+
+  for (unsigned int i = 0; i < CHARACTER_DOTS_HEIGHT; i++) {
+    uint16_t ch1_ch0 = character_generator_data[i];
+    uint8_t ch0_data = ch1_ch0 & 0x00FF;
+    auto ch0 = std::bitset<8>(ch0_data);
+    uint8_t ch1_data = (ch1_ch0 & 0xFF00) >> 8;
+    auto ch1 = std::bitset<8>(ch1_data);
+    uint16_t ch3_ch2 = character_generator_data[i + 8];
+    uint8_t ch2_data = ch3_ch2 & 0x00FF;
+    auto ch2 = std::bitset<8>(ch2_data);
+    uint8_t ch3_data = (ch3_ch2 & 0xFF00) >> 8;
+    auto ch3 = std::bitset<8>(ch3_data);
+    std::array<std::bitset<8>, 4> chs = {ch0, ch1, ch2, ch3};
+    for (unsigned int j = 0; j < CHARACTER_DOTS_WIDTH; j++) {
+      auto color_data = std::bitset<4>(0);
+      for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
+           k++) {
+        if (chs[k].test(j)) {
+          color_data.set(k);
+        }
+      }
+      uint8_t pattern_color = color_data.to_ulong();
+      unsigned int character_data_index = (j + i * CHARACTER_DOTS_HEIGHT) * 3;
+      auto color =
+          m_video_color_encoder_controller->get_color_data(0, 0, pattern_color);
+      character_data[character_data_index] = color[0];
+      character_data[character_data_index + 1] = color[1];
+      character_data[character_data_index + 2] = color[2];
+    }
+  }
+
+  return character_data;
+}
+
+auto Controller::get_character_generator_data()
+    -> std::array<float, CHARACTER_GENERATOR_DATA_LENGTH> {
+  std::array<float, CHARACTER_GENERATOR_DATA_LENGTH> character_generator_data =
+      {};
+  for (unsigned int y = 0; y < CHARACTER_GENERATOR_NUMBER_OF_ROWS; y++) {
+    for (unsigned int x = 0;
+         x < CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW; x++) {
+      unsigned int index =
+          x + y * CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW;
+      auto character_data = get_character_data(index);
+      for (unsigned int y_char = 0; y_char < CHARACTER_DOTS_HEIGHT; y_char++) {
+        for (unsigned int x_char = 0; x_char < CHARACTER_DOTS_WIDTH; x_char++) {
+          unsigned int source_index =
+              (x_char + y_char * CHARACTER_DOTS_HEIGHT) * 3;
+          unsigned int destination_index =
+              (x_char + (x * CHARACTER_DOTS_WIDTH)) * 3 +
+              (y_char + (y * CHARACTER_DOTS_HEIGHT)) * CHARACTER_DOTS_HEIGHT *
+                  CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW * 3;
+          character_generator_data[destination_index] =
+              character_data[source_index];
+          character_generator_data[destination_index + 1] =
+              character_data[source_index + 1];
+          character_generator_data[destination_index + 2] =
+              character_data[source_index + 2];
+        }
+      }
+    }
+  }
+  return character_generator_data;
 }
