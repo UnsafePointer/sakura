@@ -57,11 +57,16 @@ auto main(int argc, char *argv[]) -> int {
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL3_Init();
 
-  const unsigned int background_texture_scale = 3;
+  const unsigned int texture_scale = 3;
+
   Grafx::Texture background_texture = Grafx::Texture(
       BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
           CHARACTER_DOTS_WIDTH,
       BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS * CHARACTER_DOTS_HEIGHT);
+
+  Grafx::Texture character_generator_texture = Grafx::Texture(
+      CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW * CHARACTER_DOTS_WIDTH,
+      CHARACTER_GENERATOR_NUMBER_OF_ROWS * CHARACTER_DOTS_HEIGHT);
 
   App::Configuration::setup();
   auto log_config = App::Configuration::get_log_config();
@@ -71,8 +76,12 @@ auto main(int argc, char *argv[]) -> int {
   emulator.set_vsync_callback(
       [&](std::array<float, COLOR_TABLE_RAM_DATA_LENGTH> color_table_data,
           std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>
-              background_attribute_table_data) {
+              background_attribute_table_data,
+          std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>
+              character_generator_data) {
         emulator.set_should_pause();
+
+        (void)character_generator_data;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
@@ -141,13 +150,35 @@ auto main(int argc, char *argv[]) -> int {
             ImVec2 size = ImVec2(
                 static_cast<float>(
                     BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
-                    CHARACTER_DOTS_WIDTH * background_texture_scale),
+                    CHARACTER_DOTS_WIDTH * texture_scale),
                 static_cast<float>(BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS *
-                                   CHARACTER_DOTS_HEIGHT *
-                                   background_texture_scale));
+                                   CHARACTER_DOTS_HEIGHT * texture_scale));
             ImGui::Image(
                 // NOLINTNEXTLINE(performance-no-int-to-ptr)
                 reinterpret_cast<ImTextureID>(background_texture.get_object()),
+                size);
+          }
+          ImGui::End();
+
+          if (ImGui::Begin("Character Generator", nullptr,
+                           ImGuiWindowFlags_AlwaysAutoResize)) {
+            character_generator_texture.bind(GL_TEXTURE0);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW *
+                                CHARACTER_DOTS_WIDTH,
+                            CHARACTER_GENERATOR_NUMBER_OF_ROWS *
+                                CHARACTER_DOTS_HEIGHT,
+                            GL_RGB, GL_FLOAT, character_generator_data.data());
+            ImVec2 size = ImVec2(
+                static_cast<float>(
+                    CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW *
+                    CHARACTER_DOTS_WIDTH * texture_scale),
+                static_cast<float>(CHARACTER_GENERATOR_NUMBER_OF_ROWS *
+                                   CHARACTER_DOTS_HEIGHT * texture_scale));
+            ImGui::Image(
+                // NOLINTNEXTLINE(performance-no-int-to-ptr)
+                reinterpret_cast<ImTextureID>(
+                    character_generator_texture.get_object()),
                 size);
           }
           ImGui::End();

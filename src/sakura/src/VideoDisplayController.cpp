@@ -261,8 +261,8 @@ void Controller::step(uint8_t cycles) {
       auto color_table_data =
           m_video_color_encoder_controller->get_color_table_data();
       auto character_generator_data = get_character_generator_data();
-      (void)character_generator_data;
-      m_vsync_callback(color_table_data, background_attribute_table_data);
+      m_vsync_callback(color_table_data, background_attribute_table_data,
+                       character_generator_data);
     }
   }
 }
@@ -270,7 +270,8 @@ void Controller::step(uint8_t cycles) {
 void Controller::set_vsync_callback(
     std::function<
         void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-             std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
+             std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>,
+             std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>)>
         vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
 }
