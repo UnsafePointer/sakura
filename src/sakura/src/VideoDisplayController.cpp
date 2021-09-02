@@ -256,23 +256,12 @@ void Controller::step(uint8_t cycles) {
       m_status.vertical_blanking_period = 1;
     }
     if (m_vsync_callback != nullptr) {
-      auto background_attribute_table_data =
-          get_background_attribute_table_data();
-      auto color_table_data =
-          m_video_color_encoder_controller->get_color_table_data();
-      auto character_generator_data = get_character_generator_data();
-      m_vsync_callback(color_table_data, background_attribute_table_data,
-                       character_generator_data);
+      m_vsync_callback();
     }
   }
 }
 
-void Controller::set_vsync_callback(
-    std::function<
-        void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-             std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>,
-             std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>)>
-        vsync_callback) {
+void Controller::set_vsync_callback(std::function<void()> vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
 }
 

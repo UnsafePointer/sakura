@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <sakura/Constants.hpp>
+#include <sakura/RendererInfo.hpp>
 
 namespace Sakura {
 namespace HuC6280 {
@@ -52,6 +53,7 @@ private:
   std::unique_ptr<HuC6280::Mapping::Controller> m_mapping_controller;
   std::unique_ptr<HuC6280::Processor> m_processor;
   std::unique_ptr<HuC6280::Disassembler> m_disassembler;
+  std::unique_ptr<RendererInfo> m_renderer_info;
 
   bool m_should_pause;
 
@@ -64,12 +66,9 @@ public:
   void emulate();
   void initialize(const std::filesystem::path &rom,
                   const LogConfig &log_config);
-  void set_vsync_callback(
-      std::function<
-          void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-               std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>,
-               std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>)>
-          vsync_callback);
+  void
+  set_vsync_callback(const std::function<void(std::unique_ptr<RendererInfo> &)>
+                         &vsync_callback);
   void set_should_pause();
 };
 }; // namespace Sakura
