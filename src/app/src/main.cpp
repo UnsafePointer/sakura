@@ -60,9 +60,8 @@ auto main(int argc, char *argv[]) -> int {
   const unsigned int background_texture_scale = 3;
   Grafx::Texture background_texture = Grafx::Texture(
       BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
-          BACKGROUND_CHARACTER_DOTS_WIDTH,
-      BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
-          BACKGROUND_CHARACTER_DOTS_HEIGHT);
+          CHARACTER_DOTS_WIDTH,
+      BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS * CHARACTER_DOTS_HEIGHT);
 
   App::Configuration::setup();
   auto log_config = App::Configuration::get_log_config();
@@ -135,18 +134,17 @@ auto main(int argc, char *argv[]) -> int {
             glTexSubImage2D(
                 GL_TEXTURE_2D, 0, 0, 0,
                 BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
-                    BACKGROUND_CHARACTER_DOTS_WIDTH,
-                BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
-                    BACKGROUND_CHARACTER_DOTS_HEIGHT,
+                    CHARACTER_DOTS_WIDTH,
+                BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS *
+                    CHARACTER_DOTS_HEIGHT,
                 GL_RGB, GL_FLOAT, background_attribute_table_data.data());
             ImVec2 size = ImVec2(
                 static_cast<float>(
                     BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW *
-                    BACKGROUND_CHARACTER_DOTS_WIDTH * background_texture_scale),
-                static_cast<float>(
-                    BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_COLUMN *
-                    BACKGROUND_CHARACTER_DOTS_HEIGHT *
-                    background_texture_scale));
+                    CHARACTER_DOTS_WIDTH * background_texture_scale),
+                static_cast<float>(BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS *
+                                   CHARACTER_DOTS_HEIGHT *
+                                   background_texture_scale));
             ImGui::Image(
                 // NOLINTNEXTLINE(performance-no-int-to-ptr)
                 reinterpret_cast<ImTextureID>(background_texture.get_object()),

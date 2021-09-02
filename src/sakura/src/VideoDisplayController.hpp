@@ -316,7 +316,7 @@ private:
   void store_vram();
   void store_register(bool low, uint8_t value);
   auto get_background_character_data(Character character)
-      -> std::array<float, BACKGROUND_CHARACTER_DATA_LENGTH>;
+      -> std::array<float, CHARACTER_DATA_LENGTH>;
   auto get_background_attribute_table_data()
       -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>;
 
