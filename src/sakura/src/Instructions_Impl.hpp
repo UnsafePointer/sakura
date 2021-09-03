@@ -2258,4 +2258,32 @@ auto Sakura::HuC6280::ST2(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::BBS_I(std::unique_ptr<Processor> &processor,
+                            uint8_t opcode) -> uint8_t {
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t destination = processor->m_registers.program_counter.value + imm;
+
+  uint8_t index = opcode & 0x70;
+  index >>= 4;
+
+  uint8_t cycles = 6;
+  if (((value >> index) & 1U) == 1) {
+    processor->m_registers.program_counter.value = destination;
+    cycles += 2;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
 #endif

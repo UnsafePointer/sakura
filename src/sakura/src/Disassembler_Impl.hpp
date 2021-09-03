@@ -1470,4 +1470,25 @@ auto Sakura::HuC6280::ST2(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = fmt::format("ST2 #{:#04x}", imm), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::BBS_I(std::unique_ptr<Processor> &processor,
+                            uint8_t opcode) -> Disassembled {
+  uint8_t zz = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t address = 0x2000 | zz;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t index = opcode & 0x70;
+  index >>= 4;
+
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+  uint16_t destination = processor->m_registers.program_counter.value + 2 + imm;
+
+  return {.mnemonic = fmt::format("BBS{:d} {:#04x} {:#06x}  @{:#06x}={:#04x}",
+                                  index, zz, destination, address, value),
+          .length = 3};
+}
+
 #endif
