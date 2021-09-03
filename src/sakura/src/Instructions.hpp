@@ -139,6 +139,7 @@ template <typename T> auto ORA_ABS_X(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto ST1(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto ST2(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto BBS_I(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto STY_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -151,7 +152,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*5+*/ NULL,    NULL,      NULL,    TAM_I, CSL,    NULL,     NULL,     RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,        NULL,      NULL,      BBR_I,
   /*6+*/ RST,     NULL,      CLA,     NULL,  STZ_ZP, ADC_ZP,   NULL,     RMB_I, PLA,  ADC_IMM,   NULL,    NULL, JMP_ABS_IND, ADC_ABS,   NULL,      BBR_I,
   /*7+*/ NULL,    NULL,      ADC_IND, NULL,  NULL,   NULL,     NULL,     RMB_I, SEI,  ADC_ABS_Y, PLY,     NULL, JMP_ABS_X,   ADC_ABS_X, NULL,      BBR_I,
-  /*8+*/ BRA,     NULL,      CLX,     NULL,  STY_ZP, STA_ZP,   STX_ZP,   SMB_I, DEY,  BIT_IMM,   TXA,     NULL, NULL,        STA_ABS,   STX_ABS,   BBS_I,
+  /*8+*/ BRA,     NULL,      CLX,     NULL,  STY_ZP, STA_ZP,   STX_ZP,   SMB_I, DEY,  BIT_IMM,   TXA,     NULL, STY_ABS,     STA_ABS,   STX_ABS,   BBS_I,
   /*9+*/ BCC,     STA_IND_Y, STA_IND, NULL,  NULL,   STA_ZP_X, NULL,     SMB_I, TYA,  STA_ABS_Y, TXS,     NULL, STZ_ABS,     STA_ABS_X, STZ_ABS_X, BBS_I,
   /*A+*/ LDY_IMM, NULL,      LDX_IMM, NULL,  LDY_ZP, LDA_ZP,   LDX_ZP,   SMB_I, TAY,  LDA_IMM,   TAX,     NULL, LDY_ABS,     LDA_ABS,   LDX_ABS,   BBS_I,
   /*B+*/ BCS,     LDA_IND_Y, LDA_IND, NULL,  NULL,   LDA_ZP_X, NULL,     SMB_I, NULL, LDA_ABS_Y, TSX,     NULL, NULL,        LDA_ABS_X, NULL,      BBS_I,
