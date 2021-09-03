@@ -289,7 +289,7 @@ auto Controller::get_background_character_data(Character character)
     uint8_t ch3_data = (ch3_ch2 & 0xFF00) >> 8;
     auto ch3 = std::bitset<8>(ch3_data);
     std::array<std::bitset<8>, 4> chs = {ch0, ch1, ch2, ch3};
-    for (unsigned int j = 0; j < CHARACTER_DOTS_WIDTH; j++) {
+    for (int j = (CHARACTER_DOTS_WIDTH - 1); j >= 0; j--) {
       auto color_data = std::bitset<4>(0);
       for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
            k++) {
@@ -298,7 +298,11 @@ auto Controller::get_background_character_data(Character character)
         }
       }
       uint8_t pattern_color = color_data.to_ulong();
-      unsigned int character_data_index = (j + i * CHARACTER_DOTS_HEIGHT) * 3;
+      // We reverse the iteration index because the data is displayed
+      // left-to-right
+      unsigned int reversed_iteration_index = CHARACTER_DOTS_WIDTH - 1 - j;
+      unsigned int character_data_index =
+          (reversed_iteration_index + i * CHARACTER_DOTS_HEIGHT) * 3;
       auto color = m_video_color_encoder_controller->get_color_data(
           0, character.cg_color, pattern_color);
       character_data[character_data_index] = color[0];
@@ -365,7 +369,7 @@ auto Controller::get_character_data(unsigned int index)
     uint8_t ch3_data = (ch3_ch2 & 0xFF00) >> 8;
     auto ch3 = std::bitset<8>(ch3_data);
     std::array<std::bitset<8>, 4> chs = {ch0, ch1, ch2, ch3};
-    for (unsigned int j = 0; j < CHARACTER_DOTS_WIDTH; j++) {
+    for (int j = (CHARACTER_DOTS_WIDTH - 1); j >= 0; j--) {
       auto color_data = std::bitset<4>(0);
       for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
            k++) {
@@ -374,7 +378,11 @@ auto Controller::get_character_data(unsigned int index)
         }
       }
       uint8_t pattern_color = color_data.to_ulong();
-      unsigned int character_data_index = (j + i * CHARACTER_DOTS_HEIGHT) * 3;
+      // We reverse the iteration index because the data is displayed
+      // left-to-right
+      unsigned int reversed_iteration_index = CHARACTER_DOTS_WIDTH - 1 - j;
+      unsigned int character_data_index =
+          (reversed_iteration_index + i * CHARACTER_DOTS_HEIGHT) * 3;
       auto color =
           m_video_color_encoder_controller->get_color_data(0, 0, pattern_color);
       character_data[character_data_index] = color[0];
