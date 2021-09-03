@@ -7,6 +7,7 @@ add_library(libsakura
     src/Memory.cpp
     src/Processor.cpp
     src/ProgrammableSoundGenerator.cpp
+    src/RendererInfo.cpp
     src/Timer.cpp
     src/VideoColorEncoder.cpp
     src/VideoDisplayController.cpp

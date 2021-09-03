@@ -308,17 +308,13 @@ private:
   std::unique_ptr<HuC6260::Controller> &m_video_color_encoder_controller;
   std::unique_ptr<ControllerState> m_state;
 
-  std::function<void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-                     std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
-      m_vsync_callback;
+  std::function<void()> m_vsync_callback;
 
   auto load_vram(uint16_t address) -> uint16_t;
   void store_vram();
   void store_register(bool low, uint8_t value);
-  auto get_background_character_data(Character character)
-      -> std::array<float, BACKGROUND_CHARACTER_DATA_LENGTH>;
-  auto get_background_attribute_table_data()
-      -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>;
+  auto get_character_data(uint16_t address, uint16_t color_area)
+      -> std::array<float, CHARACTER_DATA_LENGTH>;
 
 public:
   Controller(
@@ -331,11 +327,11 @@ public:
   void store(uint16_t offset, uint8_t value);
   void step(uint8_t cycles);
 
-  void set_vsync_callback(
-      std::function<
-          void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-               std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
-          vsync_callback);
+  void set_vsync_callback(std::function<void()> vsync_callback);
+  auto get_background_attribute_table_data()
+      -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>;
+  auto get_character_generator_data()
+      -> std::array<float, CHARACTER_GENERATOR_DATA_LENGTH>;
 };
 }; // namespace HuC6270
 }; // namespace Sakura

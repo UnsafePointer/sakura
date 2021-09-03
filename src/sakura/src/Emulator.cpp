@@ -30,7 +30,9 @@ Emulator::Emulator(const VDCConfig &vdc_config)
           m_video_display_controller)),
       m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
                                                        m_interrupt_controller)),
-      m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)){};
+      m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)),
+      m_renderer_info(std::make_unique<Sakura::RendererInfo>(
+          m_video_display_controller, m_video_color_encoder_controller)){};
 
 Emulator::~Emulator() = default;
 
@@ -124,11 +126,10 @@ void Emulator::initialize(const std::filesystem::path &rom,
 }
 
 void Emulator::set_vsync_callback(
-    std::function<
-        void(std::array<float, COLOR_TABLE_RAM_DATA_LENGTH>,
-             std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH>)>
-        vsync_callback) {
-  m_video_display_controller->set_vsync_callback(std::move(vsync_callback));
+    const std::function<void(std::unique_ptr<RendererInfo> &)>
+        &vsync_callback) {
+  m_video_display_controller->set_vsync_callback(
+      [=] { vsync_callback(this->m_renderer_info); });
 }
 
 void Emulator::set_should_pause() { m_should_pause = true; }
