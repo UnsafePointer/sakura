@@ -313,9 +313,7 @@ private:
   auto load_vram(uint16_t address) -> uint16_t;
   void store_vram();
   void store_register(bool low, uint8_t value);
-  auto get_background_character_data(Character character)
-      -> std::array<float, CHARACTER_DATA_LENGTH>;
-  auto get_character_data(unsigned int index)
+  auto get_character_data(uint16_t address, uint16_t color_area)
       -> std::array<float, CHARACTER_DATA_LENGTH>;
 
 public:

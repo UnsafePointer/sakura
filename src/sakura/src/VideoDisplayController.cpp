@@ -265,11 +265,44 @@ void Controller::set_vsync_callback(std::function<void()> vsync_callback) {
   m_vsync_callback = std::move(vsync_callback);
 }
 
-auto Controller::get_background_character_data(Character character)
+auto Controller::get_background_attribute_table_data()
+    -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> {
+  std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> background_data =
+      {};
+  for (unsigned int y = 0; y < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS; y++) {
+    for (unsigned int x = 0;
+         x < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW; x++) {
+      unsigned int address =
+          x + y * BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW;
+      uint16_t data = load_vram(address);
+      auto character = Character(data);
+      uint16_t character_data_address = character.code;
+      character_data_address <<= 4;
+      auto character_data =
+          get_character_data(character_data_address, character.cg_color);
+      for (unsigned int y_char = 0; y_char < CHARACTER_DOTS_HEIGHT; y_char++) {
+        for (unsigned int x_char = 0; x_char < CHARACTER_DOTS_WIDTH; x_char++) {
+          unsigned int source_index =
+              (x_char + y_char * CHARACTER_DOTS_HEIGHT) * 3;
+          unsigned int destination_index =
+              (x_char + (x * CHARACTER_DOTS_WIDTH)) * 3 +
+              (y_char + (y * CHARACTER_DOTS_HEIGHT)) * CHARACTER_DOTS_HEIGHT *
+                  BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW * 3;
+          background_data[destination_index] = character_data[source_index];
+          background_data[destination_index + 1] =
+              character_data[source_index + 1];
+          background_data[destination_index + 2] =
+              character_data[source_index + 2];
+        }
+      }
+    }
+  }
+  return background_data;
+}
+
+auto Controller::get_character_data(uint16_t address, uint16_t color_area)
     -> std::array<float, CHARACTER_DATA_LENGTH> {
   std::array<float, CHARACTER_DATA_LENGTH> character_data = {};
-  uint16_t address = character.code;
-  address <<= 4;
   std::array<uint16_t, BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH>
       character_generator_data = {};
   for (unsigned int i = 0; i < BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH;
@@ -304,87 +337,7 @@ auto Controller::get_background_character_data(Character character)
       unsigned int character_data_index =
           (reversed_iteration_index + i * CHARACTER_DOTS_HEIGHT) * 3;
       auto color = m_video_color_encoder_controller->get_color_data(
-          0, character.cg_color, pattern_color);
-      character_data[character_data_index] = color[0];
-      character_data[character_data_index + 1] = color[1];
-      character_data[character_data_index + 2] = color[2];
-    }
-  }
-
-  return character_data;
-}
-
-auto Controller::get_background_attribute_table_data()
-    -> std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> {
-  std::array<float, BACKGROUND_ATTRIBUTE_TABLE_DATA_LENGTH> background_data =
-      {};
-  for (unsigned int y = 0; y < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_ROWS; y++) {
-    for (unsigned int x = 0;
-         x < BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW; x++) {
-      unsigned int address =
-          x + y * BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW;
-      uint16_t data = load_vram(address);
-      auto character = Character(data);
-      auto character_data = get_background_character_data(character);
-      for (unsigned int y_char = 0; y_char < CHARACTER_DOTS_HEIGHT; y_char++) {
-        for (unsigned int x_char = 0; x_char < CHARACTER_DOTS_WIDTH; x_char++) {
-          unsigned int source_index =
-              (x_char + y_char * CHARACTER_DOTS_HEIGHT) * 3;
-          unsigned int destination_index =
-              (x_char + (x * CHARACTER_DOTS_WIDTH)) * 3 +
-              (y_char + (y * CHARACTER_DOTS_HEIGHT)) * CHARACTER_DOTS_HEIGHT *
-                  BACKGROUND_ATTRIBUTE_TABLE_NUMBER_OF_CHARACTERS_PER_ROW * 3;
-          background_data[destination_index] = character_data[source_index];
-          background_data[destination_index + 1] =
-              character_data[source_index + 1];
-          background_data[destination_index + 2] =
-              character_data[source_index + 2];
-        }
-      }
-    }
-  }
-  return background_data;
-}
-
-auto Controller::get_character_data(unsigned int index)
-    -> std::array<float, CHARACTER_DATA_LENGTH> {
-  std::array<float, CHARACTER_DATA_LENGTH> character_data = {};
-  uint16_t address = (index * 16) + 0x400;
-  std::array<uint16_t, BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH>
-      character_generator_data = {};
-  for (unsigned int i = 0; i < BACKGROUND_CHARACTER_GENERATOR_WORDS_LENGTH;
-       i++) {
-    character_generator_data[i] = load_vram(address + i);
-  }
-
-  for (unsigned int i = 0; i < CHARACTER_DOTS_HEIGHT; i++) {
-    uint16_t ch1_ch0 = character_generator_data[i];
-    uint8_t ch0_data = ch1_ch0 & 0x00FF;
-    auto ch0 = std::bitset<8>(ch0_data);
-    uint8_t ch1_data = (ch1_ch0 & 0xFF00) >> 8;
-    auto ch1 = std::bitset<8>(ch1_data);
-    uint16_t ch3_ch2 = character_generator_data[i + 8];
-    uint8_t ch2_data = ch3_ch2 & 0x00FF;
-    auto ch2 = std::bitset<8>(ch2_data);
-    uint8_t ch3_data = (ch3_ch2 & 0xFF00) >> 8;
-    auto ch3 = std::bitset<8>(ch3_data);
-    std::array<std::bitset<8>, 4> chs = {ch0, ch1, ch2, ch3};
-    for (int j = (CHARACTER_DOTS_WIDTH - 1); j >= 0; j--) {
-      auto color_data = std::bitset<4>(0);
-      for (std::array<std::bitset<8>, 4>::size_type k = 0; k < chs.size();
-           k++) {
-        if (chs[k].test(j)) {
-          color_data.set(k);
-        }
-      }
-      uint8_t pattern_color = color_data.to_ulong();
-      // We reverse the iteration index because the data is displayed
-      // left-to-right
-      unsigned int reversed_iteration_index = CHARACTER_DOTS_WIDTH - 1 - j;
-      unsigned int character_data_index =
-          (reversed_iteration_index + i * CHARACTER_DOTS_HEIGHT) * 3;
-      auto color =
-          m_video_color_encoder_controller->get_color_data(0, 0, pattern_color);
+          0, color_area, pattern_color);
       character_data[character_data_index] = color[0];
       character_data[character_data_index + 1] = color[1];
       character_data[character_data_index + 2] = color[2];
@@ -403,7 +356,8 @@ auto Controller::get_character_generator_data()
          x < CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW; x++) {
       unsigned int index =
           x + y * CHARACTER_GENERATOR_NUMBER_OF_CHARACTERS_PER_ROW;
-      auto character_data = get_character_data(index);
+      uint16_t address = (index * 16) + 0x400;
+      auto character_data = get_character_data(address, 0);
       for (unsigned int y_char = 0; y_char < CHARACTER_DOTS_HEIGHT; y_char++) {
         for (unsigned int x_char = 0; x_char < CHARACTER_DOTS_WIDTH; x_char++) {
           unsigned int source_index =
