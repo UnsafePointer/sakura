@@ -1505,4 +1505,18 @@ auto Sakura::HuC6280::STY_ABS(std::unique_ptr<Processor> &processor,
   return {.mnemonic = fmt::format("STY {:#06x}", address), .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::TSB_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address) |
+                  processor->m_registers.accumulator;
+  return {.mnemonic =
+              fmt::format("TSB {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+          .length = 2};
+}
+
 #endif
