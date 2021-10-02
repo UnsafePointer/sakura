@@ -27,9 +27,19 @@ void Processor::initialize(const std::filesystem::path &rom) {
       m_mapping_controller->load(RESET_VECTOR_RESET);
 }
 
+void Processor::trace(uint8_t opcode) {
+  spdlog::get(LOGGER_NAME)
+      ->trace(fmt::format("PC: {:#06x} OP: {:#04x} A: {:#04x} X: {:#04x} Y: "
+                          "{:#04x} SP: {:#04x} P: {:#04x}",
+                          m_registers.program_counter.value, opcode,
+                          m_registers.accumulator, m_registers.x, m_registers.y,
+                          m_registers.stack_pointer, m_registers.status.value));
+}
+
 auto Processor::fetch_instruction() -> uint8_t {
   uint8_t opcode =
       m_mapping_controller->load(m_registers.program_counter.value);
+  trace(opcode);
   m_registers.program_counter.value += 1;
   return opcode;
 }

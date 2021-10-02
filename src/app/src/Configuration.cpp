@@ -8,17 +8,20 @@ void App::Configuration::setup() {
       std::filesystem::current_path() / std::string("sakura.json");
   std::string contents = R"json(
 {
-  "log": {
-    "block_transfer_instruction": "debug",
-    "disassembler": "debug",
-    "interrupt_controller": "debug",
-    "io": "debug",
-    "mapping_controller": "debug",
-    "processor": "debug",
-    "programmable_sound_generator": "debug",
-    "timer": "debug",
-    "video_color_encoder": "debug",
-    "video_display_controller": "debug"
+  "log_level": {
+    "block_transfer_instruction": "critical",
+    "disassembler": "critical",
+    "interrupt_controller": "critical",
+    "io": "critical",
+    "mapping_controller": "critical",
+    "processor": "critical",
+    "programmable_sound_generator": "critical",
+    "timer": "critical",
+    "video_color_encoder": "critical",
+    "video_display_controller": "critical"
+  },
+  "log_formatter": {
+    "enabled": "true"
   },
   "vdc": {
     "deadbeef_vram": "false"
@@ -28,23 +31,23 @@ void App::Configuration::setup() {
   Common::Configuration::setup(config_file_path, contents);
 }
 
-auto App::Configuration::get_log_config() -> Sakura::LogConfig {
-  return {.disassembler = Common::Configuration::get("log.disassembler"),
+auto App::Configuration::get_log_level_config() -> Sakura::LogLevelConfig {
+  return {.disassembler = Common::Configuration::get("log_level.disassembler"),
           .interrupt_controller =
-              Common::Configuration::get("log.interrupt_controller"),
-          .io = Common::Configuration::get("log.io"),
+              Common::Configuration::get("log_level.interrupt_controller"),
+          .io = Common::Configuration::get("log_level.io"),
           .mapping_controller =
-              Common::Configuration::get("log.mapping_controller"),
-          .processor = Common::Configuration::get("log.processor"),
-          .programmable_sound_generator =
-              Common::Configuration::get("log.programmable_sound_generator"),
-          .timer = Common::Configuration::get("log.timer"),
+              Common::Configuration::get("log_level.mapping_controller"),
+          .processor = Common::Configuration::get("log_level.processor"),
+          .programmable_sound_generator = Common::Configuration::get(
+              "log_level.programmable_sound_generator"),
+          .timer = Common::Configuration::get("log_level.timer"),
           .video_color_encoder =
-              Common::Configuration::get("log.video_color_encoder"),
+              Common::Configuration::get("log_level.video_color_encoder"),
           .video_display_controller =
-              Common::Configuration::get("log.video_display_controller"),
-          .block_transfer_instruction =
-              Common::Configuration::get("log.block_transfer_instruction")};
+              Common::Configuration::get("log_level.video_display_controller"),
+          .block_transfer_instruction = Common::Configuration::get(
+              "log_level.block_transfer_instruction")};
 }
 
 // TODO: solve templating problem with Common::Configuration::get, this is
@@ -56,4 +59,10 @@ auto is_true(const std::string &value) -> bool {
 auto App::Configuration::get_vdc_config() -> Sakura::VDCConfig {
   return {.deadbeef_vram =
               is_true(Common::Configuration::get("vdc.deadbeef_vram"))};
+}
+
+auto App::Configuration::get_log_formatter_config()
+    -> Sakura::LogFormatterConfig {
+  return {.enabled =
+              is_true(Common::Configuration::get("log_formatter.enabled"))};
 }

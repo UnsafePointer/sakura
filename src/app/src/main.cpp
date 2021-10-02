@@ -69,9 +69,13 @@ auto main(int argc, char *argv[]) -> int {
       CHARACTER_GENERATOR_NUMBER_OF_ROWS * CHARACTER_DOTS_HEIGHT);
 
   App::Configuration::setup();
-  auto log_config = App::Configuration::get_log_config();
-  App::Args configuration = App::ArgumentParser::parse(argc, argv);
+
+  auto log_level_config = App::Configuration::get_log_level_config();
   auto vdc_config = App::Configuration::get_vdc_config();
+  auto log_formatter_config = App::Configuration::get_log_formatter_config();
+
+  App::Args configuration = App::ArgumentParser::parse(argc, argv);
+
   Sakura::Emulator emulator = Sakura::Emulator(vdc_config);
   emulator.set_vsync_callback([&](std::unique_ptr<Sakura::RendererInfo>
                                       &renderer_info) {
@@ -188,7 +192,8 @@ auto main(int argc, char *argv[]) -> int {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
   });
-  emulator.initialize(configuration.rom, log_config);
+  emulator.initialize(configuration.rom, log_level_config,
+                      log_formatter_config);
 
   bool quit = false;
   while (!quit) {
