@@ -9,16 +9,16 @@ void App::Configuration::setup() {
   std::string contents = R"json(
 {
   "log_level": {
-    "block_transfer_instruction": "debug",
-    "disassembler": "debug",
-    "interrupt_controller": "debug",
-    "io": "debug",
-    "mapping_controller": "debug",
-    "processor": "debug",
-    "programmable_sound_generator": "debug",
-    "timer": "debug",
-    "video_color_encoder": "debug",
-    "video_display_controller": "debug"
+    "block_transfer_instruction": "critical",
+    "disassembler": "critical",
+    "interrupt_controller": "critical",
+    "io": "critical",
+    "mapping_controller": "critical",
+    "processor": "critical",
+    "programmable_sound_generator": "critical",
+    "timer": "critical",
+    "video_color_encoder": "critical",
+    "video_display_controller": "critical"
   },
   "log_formatter": {
     "enabled": "true"
