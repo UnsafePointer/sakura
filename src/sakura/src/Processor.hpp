@@ -101,6 +101,8 @@ private:
   auto pop_from_stack() -> uint8_t;
   auto execute_block_transfer(BlockTransferSpec spec) -> uint16_t;
 
+  void trace(uint8_t opcode);
+
   // clang-format off
   template <typename T>
   friend auto SEI(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
