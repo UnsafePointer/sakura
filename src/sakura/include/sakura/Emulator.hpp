@@ -28,7 +28,7 @@ class Controller;
 /*
 Possible values: "trace", "debug", "info", "warning", "error", "critical", "off"
 */
-struct LogConfig {
+struct LogLevelConfig {
   std::string disassembler;
   std::string interrupt_controller;
   std::string io;
@@ -45,6 +45,10 @@ struct VDCConfig {
   bool deadbeef_vram;
 };
 
+struct LogFormatterConfig {
+  bool enabled;
+};
+
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
@@ -57,7 +61,8 @@ private:
 
   bool m_should_pause;
 
-  static void register_loggers(const LogConfig &log_config);
+  static void register_loggers(const LogLevelConfig &log_level_config,
+                               const LogFormatterConfig &log_formatter_config);
 
 public:
   Emulator(const VDCConfig &vdc_config);
@@ -65,7 +70,8 @@ public:
 
   void emulate();
   void initialize(const std::filesystem::path &rom,
-                  const LogConfig &log_config);
+                  const LogLevelConfig &log_level_config,
+                  const LogFormatterConfig &log_formatter_config);
   void
   set_vsync_callback(const std::function<void(std::unique_ptr<RendererInfo> &)>
                          &vsync_callback);

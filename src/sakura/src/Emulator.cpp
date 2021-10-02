@@ -52,7 +52,9 @@ void Emulator::emulate() {
   }
 }
 
-void Emulator::register_loggers(const LogConfig &log_config) {
+void Emulator::register_loggers(
+    const LogLevelConfig &log_level_config,
+    const LogFormatterConfig &log_formatter_config) {
   auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
       "sakura.log", 1024 * 1024 * 250, 10, true);
   auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -61,67 +63,99 @@ void Emulator::register_loggers(const LogConfig &log_config) {
       DISASSEMBLER_LOGGER_NAME,
       spdlog::sinks_init_list({console_sink, file_sink}));
   disassembler_logger->set_level(
-      spdlog::level::from_str(log_config.disassembler));
+      spdlog::level::from_str(log_level_config.disassembler));
+  if (!log_formatter_config.enabled) {
+    disassembler_logger->set_pattern("%v");
+  }
   spdlog::register_logger(disassembler_logger);
 
   auto interrupt_controller_logger = std::make_shared<spdlog::logger>(
       Interrupt::LOGGER_NAME,
       spdlog::sinks_init_list({console_sink, file_sink}));
   interrupt_controller_logger->set_level(
-      spdlog::level::from_str(log_config.interrupt_controller));
+      spdlog::level::from_str(log_level_config.interrupt_controller));
+  if (!log_formatter_config.enabled) {
+    interrupt_controller_logger->set_pattern("%v");
+  }
   spdlog::register_logger(interrupt_controller_logger);
 
   auto io_logger = std::make_shared<spdlog::logger>(
       IO::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
-  io_logger->set_level(spdlog::level::from_str(log_config.io));
+  io_logger->set_level(spdlog::level::from_str(log_level_config.io));
+  if (!log_formatter_config.enabled) {
+    io_logger->set_pattern("%v");
+  }
   spdlog::register_logger(io_logger);
 
   auto mapping_controller_logger = std::make_shared<spdlog::logger>(
       Mapping::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
   mapping_controller_logger->set_level(
-      spdlog::level::from_str(log_config.mapping_controller));
+      spdlog::level::from_str(log_level_config.mapping_controller));
+  if (!log_formatter_config.enabled) {
+    mapping_controller_logger->set_pattern("%v");
+  }
   spdlog::register_logger(mapping_controller_logger);
 
   auto processor_logger = std::make_shared<spdlog::logger>(
       LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
-  processor_logger->set_level(spdlog::level::from_str(log_config.processor));
+  processor_logger->set_level(
+      spdlog::level::from_str(log_level_config.processor));
+  if (!log_formatter_config.enabled) {
+    processor_logger->set_pattern("%v");
+  }
   spdlog::register_logger(processor_logger);
 
   auto programmable_sound_generator_logger = std::make_shared<spdlog::logger>(
       ProgrammableSoundGenerator::LOGGER_NAME,
       spdlog::sinks_init_list({console_sink, file_sink}));
   programmable_sound_generator_logger->set_level(
-      spdlog::level::from_str(log_config.programmable_sound_generator));
+      spdlog::level::from_str(log_level_config.programmable_sound_generator));
+  if (!log_formatter_config.enabled) {
+    programmable_sound_generator_logger->set_pattern("%v");
+  }
   spdlog::register_logger(programmable_sound_generator_logger);
 
   auto timer_logger = std::make_shared<spdlog::logger>(
       Timer::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
-  timer_logger->set_level(spdlog::level::from_str(log_config.timer));
+  timer_logger->set_level(spdlog::level::from_str(log_level_config.timer));
+  if (!log_formatter_config.enabled) {
+    timer_logger->set_pattern("%v");
+  }
   spdlog::register_logger(timer_logger);
 
   auto video_color_encoder_logger = std::make_shared<spdlog::logger>(
       HuC6260::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
   video_color_encoder_logger->set_level(
-      spdlog::level::from_str(log_config.video_color_encoder));
+      spdlog::level::from_str(log_level_config.video_color_encoder));
+  if (!log_formatter_config.enabled) {
+    video_color_encoder_logger->set_pattern("%v");
+  }
   spdlog::register_logger(video_color_encoder_logger);
 
   auto video_display_controller_logger = std::make_shared<spdlog::logger>(
       HuC6270::LOGGER_NAME, spdlog::sinks_init_list({console_sink, file_sink}));
   video_display_controller_logger->set_level(
-      spdlog::level::from_str(log_config.video_display_controller));
+      spdlog::level::from_str(log_level_config.video_display_controller));
+  if (!log_formatter_config.enabled) {
+    video_display_controller_logger->set_pattern("%v");
+  }
   spdlog::register_logger(video_display_controller_logger);
 
   auto block_transfer_instruction_logger = std::make_shared<spdlog::logger>(
       HuC6280::BLOCK_TRANSFER_LOGGER_NAME,
       spdlog::sinks_init_list({console_sink, file_sink}));
   block_transfer_instruction_logger->set_level(
-      spdlog::level::from_str(log_config.block_transfer_instruction));
+      spdlog::level::from_str(log_level_config.block_transfer_instruction));
+  if (!log_formatter_config.enabled) {
+    block_transfer_instruction_logger->set_pattern("%v");
+  }
   spdlog::register_logger(block_transfer_instruction_logger);
 }
 
 void Emulator::initialize(const std::filesystem::path &rom,
-                          const LogConfig &log_config) {
-  Emulator::register_loggers(log_config);
+                          const LogLevelConfig &log_level_config,
+                          const LogFormatterConfig &log_formatter_config) {
+  Emulator::register_loggers(log_level_config, log_formatter_config);
   m_processor->initialize(rom);
 }
 

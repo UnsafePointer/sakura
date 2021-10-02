@@ -4,8 +4,9 @@
 
 namespace App::Configuration {
 void setup();
-auto get_log_config() -> Sakura::LogConfig;
+auto get_log_level_config() -> Sakura::LogLevelConfig;
 auto get_vdc_config() -> Sakura::VDCConfig;
+auto get_log_formatter_config() -> Sakura::LogFormatterConfig;
 }; // namespace App::Configuration
 
 #endif
