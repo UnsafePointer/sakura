@@ -1608,7 +1608,9 @@ template <>
 auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
     -> uint8_t {
   (void)opcode;
-  processor->push_into_stack(processor->m_registers.status.value);
+  Status status = processor->m_registers.status;
+  status.break_command = 1;
+  processor->push_into_stack(status.value);
   processor->m_registers.status.memory_operation = 0;
   return 3;
 }
