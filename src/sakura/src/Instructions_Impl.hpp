@@ -981,10 +981,8 @@ auto Sakura::HuC6280::LDA_IND(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
 
   uint16_t zp_address = 0x2000 | zz;
-  uint16_t ll = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address);
-  uint16_t hh = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address + 1);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
@@ -1266,10 +1264,8 @@ auto Sakura::HuC6280::STA_IND(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
 
   uint16_t zp_address = 0x2000 | zz;
-  uint16_t ll = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address);
-  uint16_t hh = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address + 1);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
   processor->m_mapping_controller->store(address,
@@ -1863,14 +1859,11 @@ auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
 
   uint16_t zp_address = 0x2000 | zz;
-  uint16_t ll = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address);
-  uint16_t hh = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address + 1);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
   uint8_t value = processor->m_mapping_controller->load(address);
-  processor->m_registers.accumulator = value;
 
   uint8_t result = processor->m_registers.accumulator + value +
                    processor->m_registers.status.carry;
