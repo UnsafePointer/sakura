@@ -39,6 +39,7 @@ struct LogLevelConfig {
   std::string video_color_encoder;
   std::string video_display_controller;
   std::string block_transfer_instruction;
+  std::string stack;
 };
 
 struct VDCConfig {
