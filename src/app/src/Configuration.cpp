@@ -8,6 +8,9 @@ void App::Configuration::setup() {
       std::filesystem::current_path() / std::string("sakura.json");
   std::string contents = R"json(
 {
+  "log_formatter": {
+    "enabled": "true"
+  },
   "log_level": {
     "block_transfer_instruction": "critical",
     "disassembler": "critical",
@@ -19,9 +22,6 @@ void App::Configuration::setup() {
     "timer": "critical",
     "video_color_encoder": "critical",
     "video_display_controller": "critical"
-  },
-  "log_formatter": {
-    "enabled": "true"
   },
   "vdc": {
     "deadbeef_vram": "false"
