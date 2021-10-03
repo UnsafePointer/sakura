@@ -553,6 +553,8 @@ auto Sakura::HuC6280::RTS(std::unique_ptr<Processor> &processor, uint8_t opcode)
   processor->m_registers.program_counter.program_counter_high =
       processor->pop_from_stack();
 
+  processor->m_registers.program_counter.value += 1;
+
   processor->m_registers.status.memory_operation = 0;
   return 7;
 }
