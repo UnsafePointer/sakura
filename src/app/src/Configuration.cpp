@@ -8,6 +8,9 @@ void App::Configuration::setup() {
       std::filesystem::current_path() / std::string("sakura.json");
   std::string contents = R"json(
 {
+  "log_formatter": {
+    "enabled": "true"
+  },
   "log_level": {
     "block_transfer_instruction": "critical",
     "disassembler": "critical",
@@ -16,12 +19,10 @@ void App::Configuration::setup() {
     "mapping_controller": "critical",
     "processor": "critical",
     "programmable_sound_generator": "critical",
+    "stack": "critical",
     "timer": "critical",
     "video_color_encoder": "critical",
     "video_display_controller": "critical"
-  },
-  "log_formatter": {
-    "enabled": "true"
   },
   "vdc": {
     "deadbeef_vram": "false"
@@ -47,7 +48,8 @@ auto App::Configuration::get_log_level_config() -> Sakura::LogLevelConfig {
           .video_display_controller =
               Common::Configuration::get("log_level.video_display_controller"),
           .block_transfer_instruction = Common::Configuration::get(
-              "log_level.block_transfer_instruction")};
+              "log_level.block_transfer_instruction"),
+          .stack = Common::Configuration::get("log_level.stack")};
 }
 
 // TODO: solve templating problem with Common::Configuration::get, this is

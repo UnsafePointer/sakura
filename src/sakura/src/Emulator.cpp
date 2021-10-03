@@ -150,6 +150,15 @@ void Emulator::register_loggers(
     block_transfer_instruction_logger->set_pattern("%v");
   }
   spdlog::register_logger(block_transfer_instruction_logger);
+
+  auto stack_logger = std::make_shared<spdlog::logger>(
+      HuC6280::STACK_LOGGER_NAME,
+      spdlog::sinks_init_list({console_sink, file_sink}));
+  stack_logger->set_level(spdlog::level::from_str(log_level_config.stack));
+  if (!log_formatter_config.enabled) {
+    stack_logger->set_pattern("%v");
+  }
+  spdlog::register_logger(stack_logger);
 }
 
 void Emulator::initialize(const std::filesystem::path &rom,
