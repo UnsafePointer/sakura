@@ -46,33 +46,43 @@ auto Processor::fetch_instruction() -> uint8_t {
 
 void Processor::push_into_stack(uint8_t value) {
   if (!m_stack_pointer_initialized) {
-    spdlog::get(LOGGER_NAME)
+    spdlog::get(STACK_LOGGER_NAME)
         ->warn("Using stack operations with an uninitialized stack pointer");
+    spdlog::get(STACK_LOGGER_NAME)
+        ->debug(fmt::format("Push {:#04x} into stack", value));
     m_fallback_stack.push(value);
     return;
   }
   uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
   m_registers.stack_pointer--;
+  spdlog::get(STACK_LOGGER_NAME)
+      ->debug(fmt::format("Push {:#04x} into stack at address {:#06x}", value,
+                          stack_address));
   m_mapping_controller->store(stack_address, value);
 }
 
 auto Processor::pop_from_stack() -> uint8_t {
   if (!m_stack_pointer_initialized) {
-    spdlog::get(LOGGER_NAME)
+    spdlog::get(STACK_LOGGER_NAME)
         ->warn("Using stack operations with an uninitialized stack pointer");
     if (m_fallback_stack.empty()) {
-      spdlog::get(LOGGER_NAME)
+      spdlog::get(STACK_LOGGER_NAME)
           ->critical(
               "Attempted to retrieve top element from an empty fallback stack");
       exit(1); // NOLINT(concurrency-mt-unsafe)
     }
     uint8_t top = m_fallback_stack.top();
     m_fallback_stack.pop();
+    spdlog::get(STACK_LOGGER_NAME)
+        ->debug(fmt::format("Pop {:#04x} from stack", top));
     return top;
   }
   m_registers.stack_pointer++;
   uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
   uint8_t value = m_mapping_controller->load(stack_address);
+  spdlog::get(STACK_LOGGER_NAME)
+      ->debug(fmt::format("Pop {:#04x} from stack at address {:#06x}", value,
+                          stack_address));
   return value;
 }
 
