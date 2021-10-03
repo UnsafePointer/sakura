@@ -1025,10 +1025,8 @@ auto Sakura::HuC6280::LDA_IND_Y(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
 
   uint16_t zp_address = 0x2000 | zz;
-  uint16_t ll = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address);
-  uint16_t hh = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address + 1);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.y;
@@ -1290,10 +1288,8 @@ auto Sakura::HuC6280::STA_IND_Y(std::unique_ptr<Processor> &processor,
   processor->m_registers.program_counter.value += 1;
 
   uint16_t zp_address = 0x2000 | zz;
-  uint16_t ll = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address);
-  uint16_t hh = processor->m_registers.accumulator +
-                processor->m_mapping_controller->load(zp_address + 1);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
 
   uint16_t address = hh << 8 | ll;
   address += processor->m_registers.y;
