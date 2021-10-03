@@ -51,7 +51,7 @@ template <typename T> auto BPL(std::unique_ptr<Processor> &processor, uint8_t op
 template <typename T> auto LDY_IMM(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto TYA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto PLA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
-template <typename T> auto RST(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto RTS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto PLY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto PLX(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto LDA_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
@@ -152,7 +152,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*3+*/ BMI,     NULL,      NULL,    NULL,  NULL,   NULL,     NULL,     RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,        NULL,      NULL,      BBR_I,
   /*4+*/ RTI,     NULL,      SAY,     TMA_I, BSR,    NULL,     LSR_ZP,   RMB_I, PHA,  EOR_IMM,   LSR_ACC, NULL, JMP_ABS,     NULL,      NULL,      BBR_I,
   /*5+*/ NULL,    NULL,      NULL,    TAM_I, CSL,    NULL,     NULL,     RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,        NULL,      NULL,      BBR_I,
-  /*6+*/ RST,     NULL,      CLA,     NULL,  STZ_ZP, ADC_ZP,   NULL,     RMB_I, PLA,  ADC_IMM,   NULL,    NULL, JMP_ABS_IND, ADC_ABS,   NULL,      BBR_I,
+  /*6+*/ RTS,     NULL,      CLA,     NULL,  STZ_ZP, ADC_ZP,   NULL,     RMB_I, PLA,  ADC_IMM,   NULL,    NULL, JMP_ABS_IND, ADC_ABS,   NULL,      BBR_I,
   /*7+*/ NULL,    NULL,      ADC_IND, NULL,  NULL,   NULL,     NULL,     RMB_I, SEI,  ADC_ABS_Y, PLY,     NULL, JMP_ABS_X,   ADC_ABS_X, NULL,      BBR_I,
   /*8+*/ BRA,     NULL,      CLX,     NULL,  STY_ZP, STA_ZP,   STX_ZP,   SMB_I, DEY,  BIT_IMM,   TXA,     NULL, STY_ABS,     STA_ABS,   STX_ABS,   BBS_I,
   /*9+*/ BCC,     STA_IND_Y, STA_IND, NULL,  NULL,   STA_ZP_X, NULL,     SMB_I, TYA,  STA_ABS_Y, TXS,     NULL, STZ_ABS,     STA_ABS_X, STZ_ABS_X, BBS_I,

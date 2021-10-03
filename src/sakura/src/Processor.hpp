@@ -172,7 +172,7 @@ private:
   template <typename T>
   friend auto PLA(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
-  friend auto RST(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  friend auto RTS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto PLY(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
