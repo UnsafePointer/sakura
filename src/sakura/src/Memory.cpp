@@ -5,6 +5,7 @@
 #include "Timer.hpp"
 #include "VideoColorEncoder.hpp"
 #include "VideoDisplayController.hpp"
+#include "sakura/Emulator.hpp"
 #include <fmt/core.h>
 #include <fstream>
 #include <spdlog/spdlog.h>
@@ -12,10 +13,12 @@
 using namespace Sakura::HuC6280::Mapping;
 
 Controller::Controller(
+    const Sakura::MOS6502ModeConfig &mos_6502_mode_config,
     std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
     std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller,
     std::unique_ptr<HuC6270::Controller> &video_display_controller)
-    : m_RAM(), m_ROM(), m_IO_controller(std::make_unique<IO::Controller>()),
+    : m_RAM(), m_ROM(), m_mos_6502_mode_enabled(mos_6502_mode_config.enabled),
+      m_IO_controller(std::make_unique<IO::Controller>()),
       m_programmable_sound_generator_controller(
           std::make_unique<ProgrammableSoundGenerator::Controller>()),
       m_interrupt_controller(interrupt_controller),
@@ -49,6 +52,10 @@ void Controller::load_rom(const std::filesystem::path &path) {
 }
 
 auto Controller::load(uint16_t logical_address) -> uint8_t {
+  if (m_mos_6502_mode_enabled) {
+    return m_ROM[logical_address];
+  }
+
   uint8_t register_index = logical_address >> 13;
   uint8_t bank = m_registers.values[register_index];
   uint32_t mask = bank << 13;
@@ -106,6 +113,10 @@ auto Controller::load(uint16_t logical_address) -> uint8_t {
 }
 
 void Controller::store(uint16_t logical_address, uint8_t value) {
+  if (m_mos_6502_mode_enabled) {
+    m_ROM[logical_address] = value;
+    return;
+  }
   uint8_t register_index = logical_address >> 13;
   uint8_t bank = m_registers.values[register_index];
   uint32_t mask = bank << 13;

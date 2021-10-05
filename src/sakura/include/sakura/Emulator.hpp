@@ -50,6 +50,10 @@ struct LogFormatterConfig {
   bool enabled;
 };
 
+struct MOS6502ModeConfig {
+  bool enabled;
+};
+
 class Emulator {
 private:
   std::unique_ptr<HuC6280::Interrupt::Controller> m_interrupt_controller;
@@ -66,7 +70,8 @@ private:
                                const LogFormatterConfig &log_formatter_config);
 
 public:
-  Emulator(const VDCConfig &vdc_config);
+  Emulator(const VDCConfig &vdc_config,
+           const MOS6502ModeConfig &mos_6502_mode_config);
   ~Emulator();
 
   void emulate();

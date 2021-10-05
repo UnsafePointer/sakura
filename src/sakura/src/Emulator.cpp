@@ -18,7 +18,8 @@
 
 using namespace Sakura;
 
-Emulator::Emulator(const VDCConfig &vdc_config)
+Emulator::Emulator(const VDCConfig &vdc_config,
+                   const MOS6502ModeConfig &mos_6502_mode_config)
     : m_interrupt_controller(
           std::make_unique<HuC6280::Interrupt::Controller>()),
       m_video_color_encoder_controller(std::make_unique<HuC6260::Controller>()),
@@ -26,10 +27,10 @@ Emulator::Emulator(const VDCConfig &vdc_config)
           vdc_config, m_interrupt_controller,
           m_video_color_encoder_controller)),
       m_mapping_controller(std::make_unique<HuC6280::Mapping::Controller>(
-          m_interrupt_controller, m_video_color_encoder_controller,
-          m_video_display_controller)),
-      m_processor(std::make_unique<HuC6280::Processor>(m_mapping_controller,
-                                                       m_interrupt_controller)),
+          mos_6502_mode_config, m_interrupt_controller,
+          m_video_color_encoder_controller, m_video_display_controller)),
+      m_processor(std::make_unique<HuC6280::Processor>(
+          mos_6502_mode_config, m_mapping_controller, m_interrupt_controller)),
       m_disassembler(std::make_unique<HuC6280::Disassembler>(m_processor)),
       m_renderer_info(std::make_unique<Sakura::RendererInfo>(
           m_video_display_controller, m_video_color_encoder_controller)){};

@@ -6,7 +6,9 @@
 #include <memory>
 #include <stack>
 
-namespace Sakura::HuC6280 {
+namespace Sakura {
+struct MOS6502ModeConfig;
+namespace HuC6280 {
 namespace Interrupt {
 class Controller;
 } // namespace Interrupt
@@ -92,9 +94,12 @@ private:
   Registers m_registers;
   Speed m_speed{};
 
+  const bool m_mos_6502_mode_enabled;
+
   std::unique_ptr<Mapping::Controller> &m_mapping_controller;
   std::unique_ptr<Interrupt::Controller> &m_interrupt_controller;
 
+  const uint16_t m_stack_pointer_address_base;
   bool m_stack_pointer_initialized;
   std::stack<uint8_t> m_fallback_stack;
 
@@ -356,7 +361,8 @@ private:
   // clang-format on
 
 public:
-  Processor(std::unique_ptr<Mapping::Controller> &mapping_controller,
+  Processor(const Sakura::MOS6502ModeConfig &mos_6502_mode_config,
+            std::unique_ptr<Mapping::Controller> &mapping_controller,
             std::unique_ptr<Interrupt::Controller> &interrupt_controller);
   ~Processor() = default;
 
@@ -365,6 +371,7 @@ public:
 
   void check_interrupts();
 };
-}; // namespace Sakura::HuC6280
+}; // namespace HuC6280
+}; // namespace Sakura
 
 #endif

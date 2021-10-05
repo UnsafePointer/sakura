@@ -24,6 +24,9 @@ void App::Configuration::setup() {
     "video_color_encoder": "critical",
     "video_display_controller": "critical"
   },
+  "mos_6502_mode": {
+    "enabled": "false"
+  },
   "vdc": {
     "deadbeef_vram": "false"
   }
@@ -67,4 +70,10 @@ auto App::Configuration::get_log_formatter_config()
     -> Sakura::LogFormatterConfig {
   return {.enabled =
               is_true(Common::Configuration::get("log_formatter.enabled"))};
+}
+
+auto App::Configuration::get_mos_6502_mode_config()
+    -> Sakura::MOS6502ModeConfig {
+  return {.enabled =
+              is_true(Common::Configuration::get("mos_6502_mode.enabled"))};
 }
