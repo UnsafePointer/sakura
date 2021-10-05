@@ -1456,13 +1456,16 @@ auto Sakura::HuC6280::BSR(std::unique_ptr<Processor> &processor, uint8_t opcode)
   (void)opcode;
   int8_t rr = processor->m_mapping_controller->load(
       processor->m_registers.program_counter.value);
-  processor->m_registers.program_counter.value += 1;
+
+  // Note: the value of the program counter which is pushed into the stack is
+  //       the address of the last byte of the BSR instruction.
 
   processor->push_into_stack(
       processor->m_registers.program_counter.program_counter_high);
   processor->push_into_stack(
       processor->m_registers.program_counter.program_counter_low);
 
+  processor->m_registers.program_counter.value += 1;
   processor->m_registers.program_counter.value += rr;
 
   processor->m_registers.status.memory_operation = 0;
