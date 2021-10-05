@@ -73,10 +73,12 @@ auto main(int argc, char *argv[]) -> int {
   auto log_level_config = App::Configuration::get_log_level_config();
   auto vdc_config = App::Configuration::get_vdc_config();
   auto log_formatter_config = App::Configuration::get_log_formatter_config();
+  auto mos_6502_mode_config = App::Configuration::get_mos_6502_mode_config();
 
   App::Args configuration = App::ArgumentParser::parse(argc, argv);
 
-  Sakura::Emulator emulator = Sakura::Emulator(vdc_config);
+  Sakura::Emulator emulator =
+      Sakura::Emulator(vdc_config, mos_6502_mode_config);
   emulator.set_vsync_callback([&](std::unique_ptr<Sakura::RendererInfo>
                                       &renderer_info) {
     emulator.set_should_pause();

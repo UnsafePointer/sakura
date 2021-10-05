@@ -1,15 +1,20 @@
 #include "Processor.hpp"
 #include "Interrupt.hpp"
 #include "Memory.hpp"
+#include "sakura/Emulator.hpp"
 #include <spdlog/spdlog.h>
 
 using namespace Sakura::HuC6280;
 
 Processor::Processor(
+    const Sakura::MOS6502ModeConfig &mos_6502_mode_config,
     std::unique_ptr<Mapping::Controller> &mapping_controller,
     std::unique_ptr<Interrupt::Controller> &interrupt_controller)
-    : m_mapping_controller(mapping_controller),
+    : m_mos_6502_mode_enabled(mos_6502_mode_config.enabled),
+      m_mapping_controller(mapping_controller),
       m_interrupt_controller(interrupt_controller),
+      m_stack_pointer_address_base(mos_6502_mode_config.enabled ? 0x0100
+                                                                : 0x2100),
       m_stack_pointer_initialized(false), m_fallback_stack(){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
@@ -21,10 +26,14 @@ void Processor::initialize(const std::filesystem::path &rom) {
   // TODO: Set low speed mode
   m_registers.status.memory_operation = 0;
   m_mapping_controller->load_rom(rom);
-  m_registers.program_counter.program_counter_high =
-      m_mapping_controller->load(RESET_VECTOR_RESET + 1);
-  m_registers.program_counter.program_counter_low =
-      m_mapping_controller->load(RESET_VECTOR_RESET);
+  if (m_mos_6502_mode_enabled) {
+    m_registers.program_counter.value = 0x0400;
+  } else {
+    m_registers.program_counter.program_counter_high =
+        m_mapping_controller->load(RESET_VECTOR_RESET + 1);
+    m_registers.program_counter.program_counter_low =
+        m_mapping_controller->load(RESET_VECTOR_RESET);
+  }
 }
 
 void Processor::trace(uint8_t opcode) {
@@ -53,7 +62,8 @@ void Processor::push_into_stack(uint8_t value) {
     m_fallback_stack.push(value);
     return;
   }
-  uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
+  uint16_t stack_address =
+      m_stack_pointer_address_base | m_registers.stack_pointer;
   m_registers.stack_pointer--;
   spdlog::get(STACK_LOGGER_NAME)
       ->debug(fmt::format("Push {:#04x} into stack at address {:#06x}", value,
@@ -78,7 +88,8 @@ auto Processor::pop_from_stack() -> uint8_t {
     return top;
   }
   m_registers.stack_pointer++;
-  uint16_t stack_address = 0x2100 | m_registers.stack_pointer;
+  uint16_t stack_address =
+      m_stack_pointer_address_base | m_registers.stack_pointer;
   uint8_t value = m_mapping_controller->load(stack_address);
   spdlog::get(STACK_LOGGER_NAME)
       ->debug(fmt::format("Pop {:#04x} from stack at address {:#06x}", value,

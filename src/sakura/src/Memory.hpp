@@ -8,6 +8,7 @@
 #include <memory>
 
 namespace Sakura {
+struct MOS6502ModeConfig;
 namespace HuC6260 {
 class Controller;
 } // namespace HuC6260
@@ -75,6 +76,8 @@ private:
   std::array<uint8_t, 0x2000> m_RAM;
   std::array<uint8_t, 0x100000> m_ROM;
 
+  const bool m_mos_6502_mode_enabled;
+
   std::unique_ptr<IO::Controller> m_IO_controller;
   std::unique_ptr<ProgrammableSoundGenerator::Controller>
       m_programmable_sound_generator_controller;
@@ -85,6 +88,7 @@ private:
 
 public:
   Controller(
+      const Sakura::MOS6502ModeConfig &mos_6502_mode_config,
       std::unique_ptr<HuC6280::Interrupt::Controller> &interrupt_controller,
       std::unique_ptr<HuC6260::Controller> &video_color_encoder_controller,
       std::unique_ptr<HuC6270::Controller> &video_display_controller);
