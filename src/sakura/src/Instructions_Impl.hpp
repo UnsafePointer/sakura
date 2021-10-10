@@ -1618,6 +1618,10 @@ auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
   (void)opcode;
   Status status = processor->m_registers.status;
   status.break_command = 1;
+  // TODO: Verify if this behaviour is also present in HuC6280
+  if (processor->m_mos_6502_mode_enabled) {
+    status.memory_operation = 1;
+  }
   processor->push_into_stack(status.value);
   processor->m_registers.status.memory_operation = 0;
   return 3;
