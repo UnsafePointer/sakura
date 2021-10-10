@@ -1546,4 +1546,14 @@ auto Sakura::HuC6280::BVC(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = fmt::format("BVC {:#06x}", destination), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::BVS(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = fmt::format("BVS {:#06x}", destination), .length = 2};
+}
+
 #endif

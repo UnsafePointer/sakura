@@ -360,6 +360,8 @@ private:
   friend auto TRB_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   template <typename T>
   friend auto BVC(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+  template <typename T>
+  friend auto BVS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
   // clang-format on
 
 public:
