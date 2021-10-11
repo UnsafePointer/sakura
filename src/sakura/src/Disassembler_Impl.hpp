@@ -1556,4 +1556,12 @@ auto Sakura::HuC6280::BVS(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = fmt::format("BVS {:#06x}", destination), .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::BRK(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "BRK", .length = 1};
+}
+
 #endif

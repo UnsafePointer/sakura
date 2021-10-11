@@ -2386,4 +2386,43 @@ auto Sakura::HuC6280::BVS(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return cycles;
 }
 
+template <>
+auto Sakura::HuC6280::BRK(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+
+  // Note: the value of the program counter which is pushed into the stack is
+  //       the address of (BRK + 2).
+  processor->m_registers.program_counter.value += 1;
+
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_high);
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_low);
+
+  // Note: the B flag in the status register which is pushed into the stack is
+  //       set to `1`.
+
+  Status status = processor->m_registers.status;
+  status.break_command = 1;
+
+  uint16_t reset_vector = RESET_VECTOR_INTERRUPT_REQUEST_2;
+  if (processor->m_mos_6502_mode_enabled) {
+    reset_vector = RESET_VECTOR_RESET;
+    status.memory_operation = 1;
+  }
+  processor->push_into_stack(status.value);
+
+  processor->m_registers.program_counter.program_counter_high =
+      processor->m_mapping_controller->load(reset_vector + 1);
+  processor->m_registers.program_counter.program_counter_low =
+      processor->m_mapping_controller->load(reset_vector);
+
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.break_command = 1;
+  processor->m_registers.status.decimal = 0;
+  processor->m_registers.status.interrupt_disable = 1;
+  return 8;
+}
+
 #endif
