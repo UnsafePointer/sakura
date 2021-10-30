@@ -1564,4 +1564,12 @@ auto Sakura::HuC6280::BRK(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "BRK", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::SED(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "SED", .length = 1};
+}
+
 #endif
