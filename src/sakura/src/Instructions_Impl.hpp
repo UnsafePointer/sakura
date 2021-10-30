@@ -2443,4 +2443,23 @@ auto Sakura::HuC6280::CLV(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::LDX_ZP_Y(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.y;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_registers.x = processor->m_mapping_controller->load(address);
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.x >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.x == 0;
+  return 4;
+}
+
 #endif
