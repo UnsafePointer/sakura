@@ -2434,4 +2434,13 @@ auto Sakura::HuC6280::SED(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return 2;
 }
 
+template <>
+auto Sakura::HuC6280::CLV(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.overflow = 0;
+  return 2;
+}
+
 #endif

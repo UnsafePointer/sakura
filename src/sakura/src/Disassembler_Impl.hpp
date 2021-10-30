@@ -1572,4 +1572,12 @@ auto Sakura::HuC6280::SED(std::unique_ptr<Processor> &processor, uint8_t opcode)
   return {.mnemonic = "SED", .length = 1};
 }
 
+template <>
+auto Sakura::HuC6280::CLV(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "CLV", .length = 1};
+}
+
 #endif
