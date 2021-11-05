@@ -1618,6 +1618,10 @@ auto Sakura::HuC6280::PHP(std::unique_ptr<Processor> &processor, uint8_t opcode)
   (void)opcode;
   Status status = processor->m_registers.status;
   status.break_command = 1;
+  // TODO: Verify if this behaviour is also present in HuC6280
+  if (processor->m_mos_6502_mode_enabled) {
+    status.memory_operation = 1;
+  }
   processor->push_into_stack(status.value);
   processor->m_registers.status.memory_operation = 0;
   return 3;
@@ -2344,6 +2348,143 @@ auto Sakura::HuC6280::TRB_ABS(std::unique_ptr<Processor> &processor,
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   return 7;
+}
+
+template <>
+auto Sakura::HuC6280::BVC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.overflow == 0) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
+template <>
+auto Sakura::HuC6280::BVS(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint8_t cycles = 2;
+  if (processor->m_registers.status.overflow) {
+    cycles += 2;
+    processor->m_registers.program_counter.value += imm;
+  }
+
+  processor->m_registers.status.memory_operation = 0;
+  return cycles;
+}
+
+template <>
+auto Sakura::HuC6280::BRK(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+
+  // Note: the value of the program counter which is pushed into the stack is
+  //       the address of (BRK + 2).
+  processor->m_registers.program_counter.value += 1;
+
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_high);
+  processor->push_into_stack(
+      processor->m_registers.program_counter.program_counter_low);
+
+  // Note: the B flag in the status register which is pushed into the stack is
+  //       set to `1`.
+
+  Status status = processor->m_registers.status;
+  status.break_command = 1;
+
+  uint16_t reset_vector = RESET_VECTOR_INTERRUPT_REQUEST_2;
+  if (processor->m_mos_6502_mode_enabled) {
+    reset_vector = RESET_VECTOR_RESET;
+    status.memory_operation = 1;
+  }
+  processor->push_into_stack(status.value);
+
+  processor->m_registers.program_counter.program_counter_high =
+      processor->m_mapping_controller->load(reset_vector + 1);
+  processor->m_registers.program_counter.program_counter_low =
+      processor->m_mapping_controller->load(reset_vector);
+
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.break_command = 1;
+  processor->m_registers.status.decimal = 0;
+  processor->m_registers.status.interrupt_disable = 1;
+  return 8;
+}
+
+template <>
+auto Sakura::HuC6280::SED(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.decimal = 1;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::CLV(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> uint8_t {
+  (void)opcode;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.overflow = 0;
+  return 2;
+}
+
+template <>
+auto Sakura::HuC6280::LDX_ZP_Y(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.y;
+
+  uint16_t address = 0x2000 | zp;
+  processor->m_registers.x = processor->m_mapping_controller->load(address);
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.x >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.x == 0;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::CMP_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  uint8_t result = processor->m_registers.accumulator - value;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry =
+      processor->m_registers.accumulator >= value;
+  return 5;
 }
 
 #endif

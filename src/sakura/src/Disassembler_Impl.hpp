@@ -1536,4 +1536,81 @@ auto Sakura::HuC6280::TRB_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::BVC(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = fmt::format("BVC {:#06x}", destination), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::BVS(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  int8_t imm = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t destination = processor->m_registers.program_counter.value + 1 + imm;
+  return {.mnemonic = fmt::format("BVS {:#06x}", destination), .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::BRK(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "BRK", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::SED(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "SED", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::CLV(std::unique_ptr<Processor> &processor, uint8_t opcode)
+    -> Disassembled {
+  (void)opcode;
+  (void)processor;
+  return {.mnemonic = "CLV", .length = 1};
+}
+
+template <>
+auto Sakura::HuC6280::LDX_ZP_Y(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.y;
+  uint16_t address = 0x2000 | zp;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("LDX {:#04x},Y  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::CMP_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = fmt::format("CMP {:#06x}, Y  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
 #endif
