@@ -15,7 +15,7 @@ Processor::Processor(
       m_interrupt_controller(interrupt_controller),
       m_stack_pointer_address_base(mos_6502_mode_config.enabled ? 0x0100
                                                                 : 0x2100),
-      m_stack_pointer_initialized(false), m_fallback_stack(){};
+      m_stack_pointer_initialized(false){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
   m_registers.status.interrupt_disable = 1;
