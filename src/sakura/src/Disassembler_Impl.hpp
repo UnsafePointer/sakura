@@ -1680,4 +1680,18 @@ auto Sakura::HuC6280::LDY_ABS_X(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::STY_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = processor->get_zero_page_address(zp);
+
+  return {.mnemonic = fmt::format("STY {:#04x},Y  @{:#06x}={:#04x}", zp,
+                                  address, processor->m_registers.y),
+          .length = 2};
+}
+
 #endif
