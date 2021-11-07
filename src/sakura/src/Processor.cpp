@@ -15,7 +15,7 @@ Processor::Processor(
       m_interrupt_controller(interrupt_controller),
       m_stack_pointer_address_base(mos_6502_mode_config.enabled ? 0x0100
                                                                 : 0x2100),
-      m_stack_pointer_initialized(false), m_fallback_stack(){};
+      m_stack_pointer_initialized(false){};
 
 void Processor::initialize(const std::filesystem::path &rom) {
   m_registers.status.interrupt_disable = 1;
@@ -216,6 +216,13 @@ auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
   m_registers.y = pop_from_stack();
 
   return total_length;
+}
+
+auto Processor::get_zero_page_address(uint8_t address) const -> uint16_t {
+  if (m_mos_6502_mode_enabled) {
+    return address;
+  }
+  return 0x2000 | address;
 }
 
 auto RESET_VECTOR_FOR_INTERRUPT(Interrupt::RequestField field) -> uint16_t {
