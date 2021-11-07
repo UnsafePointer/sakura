@@ -107,6 +107,8 @@ private:
   auto pop_from_stack() -> uint8_t;
   auto execute_block_transfer(BlockTransferSpec spec) -> uint16_t;
 
+  [[nodiscard]] auto get_zero_page_address(uint8_t address) const -> uint16_t;
+
   void trace(uint8_t opcode);
 
   // clang-format off

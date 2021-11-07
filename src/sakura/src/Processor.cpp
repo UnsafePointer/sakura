@@ -218,6 +218,13 @@ auto Processor::execute_block_transfer(BlockTransferSpec spec) -> uint16_t {
   return total_length;
 }
 
+auto Processor::get_zero_page_address(uint8_t address) const -> uint16_t {
+  if (m_mos_6502_mode_enabled) {
+    return address;
+  }
+  return 0x2000 | address;
+}
+
 auto RESET_VECTOR_FOR_INTERRUPT(Interrupt::RequestField field) -> uint16_t {
   switch (field) {
   case Interrupt::RequestField::IRQ1:
