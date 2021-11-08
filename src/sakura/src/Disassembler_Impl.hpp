@@ -1310,7 +1310,7 @@ auto Sakura::HuC6280::JMP_ABS_IND(std::unique_ptr<Processor> &processor,
   destination |= processor->m_mapping_controller->load(address);
 
   return {.mnemonic =
-              fmt::format("JMP ({:#06x}, X)  {:#06x}", address, destination),
+              fmt::format("JMP ({:#06x})  {:#06x}", address, destination),
           .length = 3};
 }
 
@@ -1590,7 +1590,7 @@ auto Sakura::HuC6280::LDX_ZP_Y(std::unique_ptr<Processor> &processor,
   uint16_t address = processor->get_zero_page_address(zp);
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = fmt::format("LDX {:#04x},Y  @{:#06x}={:#04x}", zp,
+  return {.mnemonic = fmt::format("LDX {:#04x}, Y  @{:#06x}={:#04x}", zp,
                                   address, value),
           .length = 2};
 }
@@ -1641,7 +1641,7 @@ auto Sakura::HuC6280::STX_ZP_Y(std::unique_ptr<Processor> &processor,
   zp += processor->m_registers.y;
   uint16_t address = processor->get_zero_page_address(zp);
 
-  return {.mnemonic = fmt::format("STX {:#04x},Y  @{:#06x}={:#04x}", zp,
+  return {.mnemonic = fmt::format("STX {:#04x}, Y  @{:#06x}={:#04x}", zp,
                                   address, processor->m_registers.x),
           .length = 2};
 }
@@ -1656,8 +1656,8 @@ auto Sakura::HuC6280::LDY_ZP_X(std::unique_ptr<Processor> &processor,
   uint16_t address = processor->get_zero_page_address(zp);
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic =
-              fmt::format("LDY {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+  return {.mnemonic = fmt::format("LDY {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
           .length = 2};
 }
 
@@ -1689,7 +1689,7 @@ auto Sakura::HuC6280::STY_ZP_X(std::unique_ptr<Processor> &processor,
   zp += processor->m_registers.x;
   uint16_t address = processor->get_zero_page_address(zp);
 
-  return {.mnemonic = fmt::format("STY {:#04x},Y  @{:#06x}={:#04x}", zp,
+  return {.mnemonic = fmt::format("STY {:#04x}, X  @{:#06x}={:#04x}", zp,
                                   address, processor->m_registers.y),
           .length = 2};
 }
@@ -1718,8 +1718,8 @@ auto Sakura::HuC6280::CMP_ZP(std::unique_ptr<Processor> &processor,
   uint16_t address = processor->get_zero_page_address(zp);
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = fmt::format("CMP {:#06x}, X  @{:#06x}={:#04x}", address,
-                                  address, value),
+  return {.mnemonic =
+              fmt::format("CMP {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
@@ -1750,7 +1750,7 @@ auto Sakura::HuC6280::CPY_ZP(std::unique_ptr<Processor> &processor,
   uint8_t value = processor->m_mapping_controller->load(address);
 
   return {.mnemonic =
-              fmt::format("CMP {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+              fmt::format("CPY {:#04x}  @{:#06x}={:#04x}", zp, address, value),
           .length = 2};
 }
 
