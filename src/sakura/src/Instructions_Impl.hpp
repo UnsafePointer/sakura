@@ -2760,4 +2760,23 @@ auto Sakura::HuC6280::STA_IND_X(std::unique_ptr<Processor> &processor,
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::BIT_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+  uint8_t result = processor->m_registers.accumulator & value;
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.overflow = (value >> 6) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  return 4;
+}
+
 #endif
