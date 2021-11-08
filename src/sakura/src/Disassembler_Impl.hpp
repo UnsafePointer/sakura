@@ -1254,8 +1254,8 @@ auto Sakura::HuC6280::LDA_ZP_X(std::unique_ptr<Processor> &processor,
   uint16_t address = processor->get_zero_page_address(zp);
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic =
-              fmt::format("LDA {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+  return {.mnemonic = fmt::format("LDA {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
           .length = 2};
 }
 
@@ -1704,7 +1704,7 @@ auto Sakura::HuC6280::CMP_ZP_X(std::unique_ptr<Processor> &processor,
   uint16_t address = processor->get_zero_page_address(zp);
   uint8_t value = processor->m_mapping_controller->load(address);
 
-  return {.mnemonic = fmt::format("CMP {:#06x}, X  @{:#06x}={:#04x}", address,
+  return {.mnemonic = fmt::format("CMP {:#04x}, X  @{:#06x}={:#04x}", zp,
                                   address, value),
           .length = 2};
 }
