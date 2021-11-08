@@ -156,6 +156,7 @@ template <typename T> auto LDY_ABS_X(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto STY_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto CMP_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto CMP_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto CPX_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -174,7 +175,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*B+*/ BCS,     LDA_IND_Y, LDA_IND, NULL,  LDY_ZP_X, LDA_ZP_X, LDX_ZP_Y, SMB_I, CLV,  LDA_ABS_Y, TSX,     NULL, LDY_ABS_X,   LDA_ABS_X, LDX_ABS_Y, BBS_I,
   /*C+*/ CPY_IMM, NULL,      CLY,     NULL,  NULL,     CMP_ZP,   DEC_ZP,   SMB_I, INY,  CMP_IMM,   DEX,     NULL, NULL,        CMP_ABS,   DEC_ABS,   BBS_I,
   /*D+*/ BNE,     NULL,      NULL,    NULL,  CSH,      CMP_ZP_X, DEC_ZP_X, SMB_I, CLD,  CMP_ABS_Y, PHX,     NULL, NULL,        CMP_ABS_X, DEC_ABS_X, BBS_I,
-  /*E+*/ CPX_IMM, NULL,      NULL,    TIA,   CPX_ZP,   NULL,     INC_ZP,   SMB_I, INX,  SBC_IMM,   NOP,     NULL, NULL,        NULL,      INC_ABS,   BBS_I,
+  /*E+*/ CPX_IMM, NULL,      NULL,    TIA,   CPX_ZP,   NULL,     INC_ZP,   SMB_I, INX,  SBC_IMM,   NOP,     NULL, CPX_ABS,     NULL,      INC_ABS,   BBS_I,
   /*F+*/ BEQ,     NULL,      NULL,    TAI,   NULL,     NULL,     NULL,     SMB_I, SED,  NULL,      PLX,     NULL, NULL,        NULL,      INC_ABS_X, BBS_I,
 };
 // clang-format on
