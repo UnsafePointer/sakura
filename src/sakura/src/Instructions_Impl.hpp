@@ -2941,4 +2941,31 @@ auto Sakura::HuC6280::LSR_ABS(std::unique_ptr<Processor> &processor,
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::ROL_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t carry = value >> 7 & 0b1;
+  value <<= 1;
+  value |= processor->m_registers.status.carry;
+
+  processor->m_mapping_controller->store(address, value);
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  processor->m_registers.status.carry = carry;
+  return 7;
+}
+
 #endif
