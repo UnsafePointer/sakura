@@ -2827,4 +2827,23 @@ auto Sakura::HuC6280::CMP_IND_X(std::unique_ptr<Processor> &processor,
   return 7;
 }
 
+template <>
+auto Sakura::HuC6280::ROL_ACC(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  uint8_t value = processor->m_registers.accumulator;
+
+  uint8_t carry = value >> 7 & 0b1;
+  value <<= 1;
+  value |= processor->m_registers.status.carry;
+
+  processor->m_registers.accumulator = value;
+
+  processor->m_registers.status.negative = (value >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = value == 0;
+  processor->m_registers.status.carry = carry;
+  return 2;
+}
+
 #endif

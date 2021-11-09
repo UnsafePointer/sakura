@@ -1877,4 +1877,12 @@ auto Sakura::HuC6280::CMP_IND_X(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::ROL_ACC(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)processor;
+  (void)opcode;
+  return {.mnemonic = fmt::format("ROL A"), .length = 1};
+}
+
 #endif
