@@ -1382,11 +1382,11 @@ auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (ZP) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (ZP) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint8_t zp = processor->m_mapping_controller->load(
@@ -1965,11 +1965,13 @@ auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (ABS, Y) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
@@ -2169,11 +2171,13 @@ auto Sakura::HuC6280::ADC_ABS_X(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (ABS, X) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   if (processor->m_registers.status.decimal) {
-    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with D flag set");
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (ABS, X) with D flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
@@ -2209,7 +2213,7 @@ auto Sakura::HuC6280::ORA_ABS_X(std::unique_ptr<Processor> &processor,
   (void)opcode;
   if (processor->m_registers.status.memory_operation) {
     spdlog::get(LOGGER_NAME)
-        ->critical("Unhandled ORA (ABS, Y) with T flag set");
+        ->critical("Unhandled ORA (ABS, X) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
   uint16_t ll = processor->m_mapping_controller->load(
