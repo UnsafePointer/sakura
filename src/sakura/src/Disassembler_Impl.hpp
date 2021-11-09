@@ -2006,4 +2006,20 @@ auto Sakura::HuC6280::ROL_ZP_X(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::ROR_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("ROR {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
 #endif
