@@ -3201,4 +3201,28 @@ auto Sakura::HuC6280::INC_ZP_X(std::unique_ptr<Processor> &processor,
   return 6;
 }
 
+template <>
+auto Sakura::HuC6280::AND_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled AND (ZP) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator & value;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  return 4;
+}
+
 #endif

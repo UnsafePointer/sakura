@@ -180,13 +180,14 @@ template <typename T> auto LSR_ABS_X(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto ROL_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto ROR_ABS_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto INC_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto AND_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   //     +0       +1         +2       +3     +4        +5        +6        +7     +8    +9         +A       +B    +C           +D         +E         +F
   /*0+*/ BRK,     NULL,      SXY,     ST0,   TSB_ZP,   ORA_ZP,   ASL_ZP,   RMB_I, PHP,  ORA_IMM,   ASL_ACC, NULL, NULL,        NULL,      ASL_ABS,   BBR_I,
   /*1+*/ BPL,     NULL,      NULL,    ST1,   NULL,     NULL,     ASL_ZP_X, RMB_I, CLC,  ORA_ABS_Y, INC_ACC, NULL, TRB_ABS,     ORA_ABS_X, ASL_ABS_X, BBR_I,
-  /*2+*/ JSR,     NULL,      SAX,     ST2,   BIT_ZP,   NULL,     ROL_ZP,   RMB_I, PLP,  AND_IMM,   ROL_ACC, NULL, BIT_ABS,     NULL,      ROL_ABS,   BBR_I,
+  /*2+*/ JSR,     NULL,      SAX,     ST2,   BIT_ZP,   AND_ZP,   ROL_ZP,   RMB_I, PLP,  AND_IMM,   ROL_ACC, NULL, BIT_ABS,     NULL,      ROL_ABS,   BBR_I,
   /*3+*/ BMI,     NULL,      NULL,    NULL,  NULL,     NULL,     ROL_ZP_X, RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,        NULL,      ROL_ABS_X, BBR_I,
   /*4+*/ RTI,     NULL,      SAY,     TMA_I, BSR,      NULL,     LSR_ZP,   RMB_I, PHA,  EOR_IMM,   LSR_ACC, NULL, JMP_ABS,     NULL,      LSR_ABS,   BBR_I,
   /*5+*/ BVC,     NULL,      NULL,    TAM_I, CSL,      NULL,     LSR_ZP_X, RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,        NULL,      LSR_ABS_X, BBR_I,
