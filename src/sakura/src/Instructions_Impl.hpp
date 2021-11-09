@@ -91,7 +91,8 @@ template <>
 auto Sakura::HuC6280::AND_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled AND (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -669,7 +670,8 @@ template <>
 auto Sakura::HuC6280::ORA_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled ORA (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -697,7 +699,8 @@ template <>
 auto Sakura::HuC6280::EOR_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled EOR (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -718,7 +721,8 @@ template <>
 auto Sakura::HuC6280::EOR_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled EOR (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -746,7 +750,8 @@ template <>
 auto Sakura::HuC6280::AND_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled AND (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -1057,7 +1062,8 @@ template <>
 auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1137,7 +1143,8 @@ template <>
 auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1180,7 +1187,8 @@ template <>
 auto Sakura::HuC6280::ORA_IMM(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ORA (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1241,7 +1249,8 @@ template <>
 auto Sakura::HuC6280::ORA_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ORA (ZP) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1381,7 +1390,8 @@ template <>
 auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (ZP) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1416,7 +1426,8 @@ template <>
 auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IMM) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1861,7 +1872,8 @@ template <>
 auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
                               uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (IND) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
@@ -1964,7 +1976,8 @@ template <>
 auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled ADC (ABS, Y) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -2170,7 +2183,8 @@ template <>
 auto Sakura::HuC6280::ADC_ABS_X(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled ADC (ABS, X) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -2211,7 +2225,8 @@ template <>
 auto Sakura::HuC6280::ORA_ABS_X(std::unique_ptr<Processor> &processor,
                                 uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)
         ->critical("Unhandled ORA (ABS, X) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
@@ -3209,7 +3224,8 @@ template <>
 auto Sakura::HuC6280::AND_ZP(std::unique_ptr<Processor> &processor,
                              uint8_t opcode) -> uint8_t {
   (void)opcode;
-  if (processor->m_registers.status.memory_operation) {
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
     spdlog::get(LOGGER_NAME)->critical("Unhandled AND (ZP) with T flag set");
     exit(1); // NOLINT(concurrency-mt-unsafe)
   }
