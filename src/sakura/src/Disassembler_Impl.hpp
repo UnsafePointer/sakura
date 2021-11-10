@@ -2334,4 +2334,19 @@ auto Sakura::HuC6280::ORA_ABS(std::unique_ptr<Processor> &processor,
           .length = 3};
 }
 
+template <>
+auto Sakura::HuC6280::ORA_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("ORA {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
 #endif
