@@ -3417,4 +3417,31 @@ auto Sakura::HuC6280::EOR_ZP(std::unique_ptr<Processor> &processor,
   return 4;
 }
 
+template <>
+auto Sakura::HuC6280::EOR_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled EOR (ABS) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  processor->m_registers.accumulator ^= value;
+
+  processor->m_registers.status.negative =
+      (processor->m_registers.accumulator >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 5;
+}
+
 #endif
