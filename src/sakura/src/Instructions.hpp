@@ -194,11 +194,12 @@ template <typename T> auto EOR_IND_X(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto EOR_IND_Y(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto ORA_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto ORA_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto ORA_IND_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   //     +0       +1         +2       +3     +4        +5        +6        +7     +8    +9         +A       +B    +C           +D         +E         +F
-  /*0+*/ BRK,     NULL,      SXY,     ST0,   TSB_ZP,   ORA_ZP,   ASL_ZP,   RMB_I, PHP,  ORA_IMM,   ASL_ACC, NULL, NULL,        ORA_ABS,   ASL_ABS,   BBR_I,
+  /*0+*/ BRK,     ORA_IND_X, SXY,     ST0,   TSB_ZP,   ORA_ZP,   ASL_ZP,   RMB_I, PHP,  ORA_IMM,   ASL_ACC, NULL, NULL,        ORA_ABS,   ASL_ABS,   BBR_I,
   /*1+*/ BPL,     NULL,      NULL,    ST1,   NULL,     ORA_ZP_X, ASL_ZP_X, RMB_I, CLC,  ORA_ABS_Y, INC_ACC, NULL, TRB_ABS,     ORA_ABS_X, ASL_ABS_X, BBR_I,
   /*2+*/ JSR,     AND_IND_X, SAX,     ST2,   BIT_ZP,   AND_ZP,   ROL_ZP,   RMB_I, PLP,  AND_IMM,   ROL_ACC, NULL, BIT_ABS,     AND_ABS,   ROL_ABS,   BBR_I,
   /*3+*/ BMI,     AND_IND_Y, NULL,    NULL,  NULL,     AND_ZP_X, ROL_ZP_X, RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,        AND_ABS_X, ROL_ABS_X, BBR_I,
