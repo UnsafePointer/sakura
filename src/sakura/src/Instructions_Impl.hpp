@@ -3330,4 +3330,35 @@ auto Sakura::HuC6280::AND_ABS_X(std::unique_ptr<Processor> &processor,
   return 5;
 }
 
+template <>
+auto Sakura::HuC6280::AND_IND_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled AND (IND, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator & value;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  return 7;
+}
+
 #endif
