@@ -188,6 +188,7 @@ template <typename T> auto AND_IND_X(std::unique_ptr<Processor> &processor, uint
 template <typename T> auto AND_IND_Y(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto EOR_ZP(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 template <typename T> auto EOR_ABS(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
+template <typename T> auto EOR_ZP_X(std::unique_ptr<Processor> &processor, uint8_t opcode) -> T;
 
 template <typename T>
 const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
@@ -197,7 +198,7 @@ const std::array<InstructionHandler<T>, 0x100> INSTRUCTION_TABLE = {
   /*2+*/ JSR,     AND_IND_X, SAX,     ST2,   BIT_ZP,   AND_ZP,   ROL_ZP,   RMB_I, PLP,  AND_IMM,   ROL_ACC, NULL, BIT_ABS,     AND_ABS,   ROL_ABS,   BBR_I,
   /*3+*/ BMI,     AND_IND_Y, NULL,    NULL,  NULL,     AND_ZP_X, ROL_ZP_X, RMB_I, SEC,  AND_ABS_Y, DEC_ACC, NULL, NULL,        AND_ABS_X, ROL_ABS_X, BBR_I,
   /*4+*/ RTI,     NULL,      SAY,     TMA_I, BSR,      EOR_ZP,   LSR_ZP,   RMB_I, PHA,  EOR_IMM,   LSR_ACC, NULL, JMP_ABS,     EOR_ABS,   LSR_ABS,   BBR_I,
-  /*5+*/ BVC,     NULL,      NULL,    TAM_I, CSL,      NULL,     LSR_ZP_X, RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,        NULL,      LSR_ABS_X, BBR_I,
+  /*5+*/ BVC,     NULL,      NULL,    TAM_I, CSL,      EOR_ZP_X, LSR_ZP_X, RMB_I, CLI,  EOR_ABS_Y, PHY,     NULL, NULL,        NULL,      LSR_ABS_X, BBR_I,
   /*6+*/ RTS,     NULL,      CLA,     NULL,  STZ_ZP,   ADC_ZP,   ROR_ZP,   RMB_I, PLA,  ADC_IMM,   ROR_ACC, NULL, JMP_ABS_IND, ADC_ABS,   ROR_ABS,   BBR_I,
   /*7+*/ BVS,     NULL,      ADC_IND, NULL,  NULL,     NULL,     ROR_ZP_X, RMB_I, SEI,  ADC_ABS_Y, PLY,     NULL, JMP_ABS_X,   ADC_ABS_X, ROR_ABS_X, BBR_I,
   /*8+*/ BRA,     STA_IND_X, CLX,     NULL,  STY_ZP,   STA_ZP,   STX_ZP,   SMB_I, DEY,  BIT_IMM,   TXA,     NULL, STY_ABS,     STA_ABS,   STX_ABS,   BBS_I,
