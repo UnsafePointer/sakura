@@ -1159,14 +1159,21 @@ auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   processor->m_registers.program_counter.value += 1;
 
-  uint8_t result = processor->m_registers.accumulator -
-                   (imm + processor->m_registers.status.carry);
-  auto carry =
-      static_cast<uint8_t>(processor->m_registers.accumulator <
-                           (imm + processor->m_registers.status.carry));
+  imm = ~imm;
+
+  uint8_t result = processor->m_registers.accumulator + imm +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)imm & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (imm ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
