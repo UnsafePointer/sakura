@@ -2401,4 +2401,21 @@ auto Sakura::HuC6280::SBC_ZP(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::SBC_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("SBC {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
 #endif
