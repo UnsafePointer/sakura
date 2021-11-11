@@ -1082,9 +1082,12 @@ auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
         ((uint16_t)imm & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (imm ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1413,9 +1416,12 @@ auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1452,9 +1458,12 @@ auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1899,9 +1908,12 @@ auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -2005,9 +2017,12 @@ auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -2212,9 +2227,12 @@ auto Sakura::HuC6280::ADC_ABS_X(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
