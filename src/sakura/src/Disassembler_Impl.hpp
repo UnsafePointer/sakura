@@ -2524,4 +2524,23 @@ auto Sakura::HuC6280::SBC_IND_X(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::ADC_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("ADC ({:#04x}), Y  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
 #endif
