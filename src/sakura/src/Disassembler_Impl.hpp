@@ -2388,4 +2388,178 @@ auto Sakura::HuC6280::ORA_IND_Y(std::unique_ptr<Processor> &processor,
           .length = 2};
 }
 
+template <>
+auto Sakura::HuC6280::SBC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic =
+              fmt::format("SBC {:#04x}  @{:#06x}={:#04x}", zp, address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("SBC {:#06x}  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::ADC_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("ADC {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("SBC {:#04x}, X  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.x);
+
+  return {.mnemonic = fmt::format("SBC {:#06x}, X  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value + 1);
+
+  uint16_t address = hh << 8 | ll;
+
+  uint16_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  return {.mnemonic = fmt::format("SBC {:#06x}, Y  @{:#06x}={:#04x}", address,
+                                  address, value),
+          .length = 3};
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IND_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("ADC ({:#04x}, X)  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_IND_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  zp += processor->m_registers.x;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  return {.mnemonic = fmt::format("SBC ({:#04x}, X)  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("ADC ({:#04x}), Y  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
+template <>
+auto Sakura::HuC6280::SBC_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> Disassembled {
+  (void)opcode;
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+  return {.mnemonic = fmt::format("SBC ({:#04x}), Y  @{:#06x}={:#04x}", zp,
+                                  address, value),
+          .length = 2};
+}
+
 #endif

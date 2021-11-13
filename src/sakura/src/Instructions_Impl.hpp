@@ -1082,9 +1082,12 @@ auto Sakura::HuC6280::ADC_IMM(std::unique_ptr<Processor> &processor,
         ((uint16_t)imm & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (imm ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1156,14 +1159,21 @@ auto Sakura::HuC6280::SBC_IMM(std::unique_ptr<Processor> &processor,
       processor->m_registers.program_counter.value);
   processor->m_registers.program_counter.value += 1;
 
-  uint8_t result = processor->m_registers.accumulator -
-                   (imm + processor->m_registers.status.carry);
-  auto carry =
-      static_cast<uint8_t>(processor->m_registers.accumulator <
-                           (imm + processor->m_registers.status.carry));
+  imm = ~imm;
+
+  uint8_t result = processor->m_registers.accumulator + imm +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)imm & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (imm ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1413,9 +1423,12 @@ auto Sakura::HuC6280::ADC_ZP(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1452,9 +1465,12 @@ auto Sakura::HuC6280::ADC_ABS(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -1789,7 +1805,7 @@ auto Sakura::HuC6280::BIT_IMM(std::unique_ptr<Processor> &processor,
   uint8_t result = processor->m_registers.accumulator & imm;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
-  processor->m_registers.status.negative = (result >> 6) & 0b01;
+  processor->m_registers.status.overflow = (result >> 6) & 0b01;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   return 2;
@@ -1899,9 +1915,12 @@ auto Sakura::HuC6280::ADC_IND(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -2005,9 +2024,12 @@ auto Sakura::HuC6280::ADC_ABS_Y(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -2212,9 +2234,12 @@ auto Sakura::HuC6280::ADC_ABS_X(std::unique_ptr<Processor> &processor,
         ((uint16_t)value & 0xFF) +
         ((uint16_t)processor->m_registers.status.carry & 0x1)) &
        0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
   processor->m_registers.accumulator = result;
 
   processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = result == 0;
   processor->m_registers.status.carry = carry;
@@ -3676,6 +3701,455 @@ auto Sakura::HuC6280::ORA_IND_Y(std::unique_ptr<Processor> &processor,
       (processor->m_registers.accumulator >> 7) & 0b1;
   processor->m_registers.status.memory_operation = 0;
   processor->m_registers.status.zero = processor->m_registers.accumulator == 0;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ZP(std::unique_ptr<Processor> &processor,
+                             uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ZP) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ZP) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS(std::unique_ptr<Processor> &processor,
+                              uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ABS) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ABS) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (ZP, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled ADC (ZP, X) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ZP_X(std::unique_ptr<Processor> &processor,
+                               uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ZP, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)->critical("Unhandled SBC (ZP, X) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t address = processor->get_zero_page_address(zp);
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 4;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (ABS, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (ABS, X) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.x);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_ABS_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (ABS, Y) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (ABS, Y) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint16_t ll = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  uint16_t hh = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value =
+      processor->m_mapping_controller->load(address + processor->m_registers.y);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 5;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IND_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (IND, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (IND, X) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_IND_X(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (IND, X) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (IND, X) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+  zp += processor->m_registers.x;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::ADC_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (IND, Y) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled ADC (IND, Y) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
+  return 7;
+}
+
+template <>
+auto Sakura::HuC6280::SBC_IND_Y(std::unique_ptr<Processor> &processor,
+                                uint8_t opcode) -> uint8_t {
+  (void)opcode;
+  if (processor->m_registers.status.memory_operation &&
+      !processor->m_mos_6502_mode_enabled) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (IND, Y) with T flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  if (processor->m_registers.status.decimal) {
+    spdlog::get(LOGGER_NAME)
+        ->critical("Unhandled SBC (IND, Y) with D flag set");
+    exit(1); // NOLINT(concurrency-mt-unsafe)
+  }
+  uint8_t zp = processor->m_mapping_controller->load(
+      processor->m_registers.program_counter.value);
+  processor->m_registers.program_counter.value += 1;
+
+  uint16_t zp_address = processor->get_zero_page_address(zp);
+  uint16_t ll = processor->m_mapping_controller->load(zp_address);
+  uint16_t hh = processor->m_mapping_controller->load(zp_address + 1);
+
+  uint16_t address = hh << 8 | ll;
+  address += processor->m_registers.y;
+  uint8_t value = processor->m_mapping_controller->load(address);
+
+  value = ~value;
+
+  uint8_t result = processor->m_registers.accumulator + value +
+                   processor->m_registers.status.carry;
+  auto carry = static_cast<uint8_t>(
+      ((((uint16_t)processor->m_registers.accumulator & 0xFF) +
+        ((uint16_t)value & 0xFF) +
+        ((uint16_t)processor->m_registers.status.carry & 0x1)) &
+       0x100) == 0x100);
+  auto overflow = ((processor->m_registers.accumulator ^ result) &
+                   (value ^ result) & 0x80) != 0;
+  processor->m_registers.accumulator = result;
+
+  processor->m_registers.status.negative = (result >> 7) & 0b1;
+  processor->m_registers.status.overflow = overflow;
+  processor->m_registers.status.memory_operation = 0;
+  processor->m_registers.status.zero = result == 0;
+  processor->m_registers.status.carry = carry;
   return 7;
 }
 
